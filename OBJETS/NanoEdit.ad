@@ -1,0 +1,17 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! VUE
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!NanoEdit*vue*gl.height:300
+!NanoEdit*vue*gl.traversalOn:True
+!NanoEdit*vue*gl.sensitive:True
+!NanoEdit*vue*gl.highlightOnEnter: True
+!NanoEdit*vue*gl.highlightThickness: 1
+!NanoEdit*vue*XmToggleButton*fontList:-*-*-medium-r-*-*-*-80-*-*-p-*-iso8859-1
+!NanoEdit*vue*fontList:-*-*-medium-r-*-*-*-80-*-*-p-*-iso8859-1
+!NanoEdit*vue*defaultDistance:0
+!nanoedit.edite.vue*XmToggleButton*fontList:-*-*-medium-r-*-*-*-80-*-*-p-*-iso8859-1
+
+nanoedit.edite.vue*fontList:-*-*-medium-r-*-*-*-80-*-*-p-*-iso8859-1
+nanoedit*edite.vue*highlightThickness:0
+nanoedit*edite.vue*shadowThickness:1

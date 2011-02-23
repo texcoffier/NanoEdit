@@ -1,0 +1,28 @@
+style "nanoeditmenuitem" {
+font_name = "Monospace 10"
+}
+style "fond_rouge" {
+base[NORMAL] = {1.0,0.7,0.7}
+base[SELECTED] = {1.0,0.0,0.0}
+}
+style "operateur" {
+bg[ NORMAL] = {0.8,1.0,0.8}
+}
+style "non_editable" {
+base[NORMAL] = {0.9,0.9,0.9}
+}
+style "bascule" {
+bg[ACTIVE] = {1.0,1.0,0}
+}
+
+
+widget "*GtkMenu*" style "nanoeditmenuitem"
+class "GtkAccelLabel" style "nanoeditmenuitem"
+
+class "GtkToggleButton" style "bascule"
+
+widget "widget_fond_rouge" style "fond_rouge"
+widget "widget_non_editable" style "non_editable"
+
+widget "*operateur*" style "operateur"
+

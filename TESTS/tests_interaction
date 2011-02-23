@@ -1,0 +1,55 @@
+#!/bin/sh
+
+echo "Test de l'interface utilisateur"
+
+X=1
+
+t "Charge 4vues"      /appel/modele   0 charge     te_entree  4vues
+t "Création flottant" /appel/modele   0 creation   te_entree  flottant
+t "Clavier : 0f"      /appel/modele   0 oper_liste te_clavier "0f"
+t "Clavier : 0l"      /appel/modele   0 oper_liste te_clavier "0l"
+t "Clavier : 0."      /appel/modele   0 oper_liste te_clavier "0."
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Active flottant"   /appel/flottant 1 actif      c_sauve    "1"
+t "Active flottant"   /appel/flottant 2 actif      c_sauve    "1"
+t "Création point3"   /appel/modele   0 creation   te_entree  point3
+t "Création point3"   /appel/modele   0 creation   te_entree  point3
+t "Nomme le modèle"   /appel/modele   0 nom_modele c_sauve    xxTESTSxx
+rm MODELES/xxTESTSxx.ne >/dev/null 2>&1
+t "Sauvegarde modèle" /appel/modele   0 fichier    te_entree  sauve
+if [ ! -f MODELES/xxTESTSxx.ne ]      
+then				      
+  echo "Pas de sauvegarde" >&2 ;      
+  exit 1			      
+fi				      
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Destruction" /appel/modele 0 les_actifs te_entree  "detruire            <Delete>"
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Clavier : Delete"  /appel/modele   0 oper_liste te_clavier "0 Delete "
+t "Active point3"     /appel/point3   0 actif      c_sauve    "1"
+t "Active point3"     /appel/point3   1 actif      c_sauve    "1"
+t "Clavier : F3"      /appel/modele   0 oper_liste te_clavier "0 F3 "
+t "Active point3"     /appel/point3   0 actif      c_sauve    "1"
+t "Active point3"     /appel/point3   1 actif      c_sauve    "1"
+t "Création segment"  /appel/modele   0 creation   te_entree  segment_pt_pt
+t "Active segment"    /appel/segment_pt_pt 0 actif      c_sauve    "1"
+t "Clavier : PageDwn" /appel/modele   0 oper_liste te_clavier "0 Page_Down "
+t "Clavier : F3"      /appel/modele   0 oper_liste te_clavier "0 F3 "
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Clavier : PageUp"  /appel/modele   0 oper_liste te_clavier "0 Page_Up "
+t "Clavier : F3"      /appel/modele   0 oper_liste te_clavier "0 F3 "
+t "Active point3"     /appel/point3   1 actif      c_sauve    "1"
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Adopte fils"       /appel/modele   0 les_actifs te_entree "ajoute fils (fin)   <F6>"
+t "Active point3"     /appel/point3   0 actif      c_sauve    "1"
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Abandonne fils"    /appel/modele   0 les_actifs te_entree  "enleve fils         <F7>"
+t "Active flottant"   /appel/flottant 0 actif      c_sauve    "1"
+t "Clavier : Delete"  /appel/modele   0 oper_liste te_clavier "0 Delete "
+t "Active vue"        /appel/vue      0 actif      c_sauve    "1"
+t "Active vue"        /appel/vue      1 actif      c_sauve    "1"
+t "Active point3"     /appel/point3   0 actif      c_sauve    "1"
+t "Active point3"     /appel/point3   1 actif      c_sauve    "1"
+t "Inverse ordre"     /appel/modele   0 les_actifs te_entree  "inverse ordre       <F8>"
+t "Quitte modèle"     /appel/modele   0 les_actifs te_entree  "quitte modele"
+t "Enlève détruit"    /appel/modele   0 les_actifs te_entree  "enleve DETRUIT      <F9>"

@@ -1,0 +1,89 @@
+		  NanoÉdit : un modeleur algébrique
+			 Exposé le 24/05/2000
+	    Salle de conférence du 2ème étage Bâtiment 710
+				   
+Préambule
+---------
+
+Cet exposé s'adresse aux enseignants en informatique et à tous ceux
+qui ont besoin d'un outil simple permettant de faire de la
+modélisation ou bien d'accélérer leur cycle de développement logiciel.
+
+Voici les points qui vont être abordés durant l'exposé
+et la démonstration.
+
+
+La modélisation algébrique
+--------------------------
+
+Un modèle algébrique est un ensemble d'équations. Les équations sont
+composées de fonctions (ou opérateurs) et de litéraux (nombres,
+valeurs, variables, ...). Un programme écrit dans un langage
+fonctionnel est un modèle algébrique.
+
+La modélisation algébrique s'écarte de la programmation objet car les
+attributs de l'objet peuvent être déclarés de manière fonctionnel et
+un même objet peut avoir des attributs différents. Par exemple
+la sphère se trouve en deux endroits différents ``simultanément'' :
+
+a = SPHERE() ;
+b = UNION( a, APPLIQUE( TRANSLATION(VECTEUR(1,0,0)), a ) ) ;
+
+Cette méthode de modélisation permet d'instancier les attributs
+de nombreux objets à la fois sans modifier leur contenu (la sphère
+n'a pas de champ position).
+
+
+NanoÉdit : Un modeleur algébrique
+---------------------------------
+
+NanoÉdit a été créé au LIGIM afin de rendre les TP plus instructifs
+pour les étudiants. En effet, pour chaque TP les étudiants développent
+une application complète, ceci prend énormément de temps et ils
+passaient peu de temps à étudier le vif du sujet.
+
+NanoÉdit est un modeleur algébrique complet dans lequel les étudiants
+insèrent leur TP fournissant ainsi de nouveaux opérateurs et litéraux
+utilisables lors de la modélisation. Leur TP est facilement testable
+car NanoÉdit prend en charges toutes les entrées sorties et l'interface
+utilisateur.
+
+Les points intéressants de NanoÉdit sont les suivants :
+
+   - Création interactive de modèles algébriques.
+   - Undo/Redo, Sauvegarde/Récupération, Aide en ligne, ...
+   - Évaluation du modèle algébrique.
+   - Modifications des programmes sources sans quitter le modeleur.
+   - Le noyau de NanoÉdit est très petit (3500 lignes).
+     Cela montre aux étudiants l'importance d'une programmation modulaire.
+   - Pour étendre NanoÉdit, il suffit d'ajouter un seul fichier
+     (en langage C ou C++) contenant la description de l'extension.
+   - Les étudiants n'ont à connaître aucune fonction du noyau de NanoÉdit
+   - NanoÉdit utilise un ensemble de techniques de programmation
+     que les étudiants on rarement le temps d'aborder en cours/TP
+
+NanoÉdit a un énorme avantage, il permet de fusionner simplement
+les travaux de différentes personnes qui travaillent séparément
+et de faire communiquer les programmes qu'elles ont écrits
+même si ceux-ci n'utilisent pas les mêmes structures de données
+et les même langages de programmation.
+
+
+Démonstration
+-------------
+
+La démonstration sera faite dans un sous-domaine de la modélisation
+algébrique : la modélisation géométrique.
+
+
+Comment fonctionne le noyau et comment l'étendre
+------------------------------------------------
+
+Cette partie de l'exposé sera facultative
+elle servira aux gens qui veulent utiliser
+NanoÉdit pour l'enseignement ou la recherche.
+
+
+Pour en savoir plus :
+
+http://www710.univ-lyon1.fr/~exco/NanoEdit/nanoedit.html

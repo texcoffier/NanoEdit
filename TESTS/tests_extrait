@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo "Test d'extraction de paramètres"
+
+X=1500
+
+t "Charge extrait1"  /appel/modele    	   0 charge  te_entree extrait1
+t "Charge extrait2"  /appel/modele    	   0 charge  te_entree extrait2
+
+
+

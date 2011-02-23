@@ -1,0 +1,327 @@
+\documentclass[portrait,semrot]{seminar}
+
+\usepackage{graphics}
+\usepackage{colordvi}
+\usepackage{french}
+\input{sem-a4.sty}
+
+\title{Un éditeur interactif de formules comme intégrateur de modeleurs}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\begin{slide}
+  \maketitle
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{slide}
+%{
+%\scriptsize
+%\parskip -0.51mm
+%\tableofcontents
+%}
+%\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Introduction}
+
+  Cet éditeur a été créé afin de rendre les TP
+  des étudiants plus intéressants.
+  
+  Jusqu'à présent les étudiants développaient une application complète,
+  ceci leur prenait énormément de temps au dépend du
+  vif du sujet.
+
+  Désormais, ils étendront une application existante qui leur offrira
+  un environnement conviviale pour tester leurs TP.
+
+  D'autre part, les chercheurs du LIGIM sont intéressés
+  par un éditeur dans lequel il est facile d'intégrer ses propres
+  structures de données et algorithmes.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les buts poursuivis}
+
+  L'éditeur a été réalisé en respectant les idées suivantes~:
+  \begin{itemize}
+  \item Le plus \textbf{petit} possible.
+  \item Le plus \textbf{générique} possible.
+  \item Le plus \textbf{extensible} possible.
+  \item Une interface utilisateur \textbf{agréable}.
+  \item Des \textbf{sources ``propres''}.
+  \end{itemize}
+
+  Les performances de l'application ont été laissées de coté.
+
+  Le respect de ces contraintes a fait apparaître
+de nombreux concepts.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les grands concepts}
+  \begin{itemize}
+  \item La formule : base de modélisation.
+  \item Le noeud : ensemble de champs.
+  \item Classes de noeuds de formules.
+  \item Classes de stockages de champ.
+  \item Classes logiques de champ.
+  \item L'éditeur  ``interprète'' les classes.
+  \item Le noyau ne contient pas de classes.
+  \item Interface 3D, fonctions, état courant sont externes.
+  \item Ajout de classes sans appel de fonctions du noyau.
+  \end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Fonctionnalités}
+
+  Éditeur d'expressions. offrant~:
+  \begin{itemize}
+  \item Lecture/Écriture des formules.
+  \item Undo/Redo.
+  \item Menus déroulants, accélérateurs clavier.
+  \item Aide hypertexte interactive.
+  \item Édition ``textuelle'' des noeuds composant la formule.
+  \item Gestion des contraintes d'égalité.
+  \item Validité des valeurs.
+  \item Travail en groupe.
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les formules manipulées}
+
+  \resizebox{11cm}{!}{\includegraphics{segment.ps}}
+  
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Que modélise-t-on ?}
+
+  Les modèles :
+  \begin{itemize}
+  \item algébriques, géométrique ou non.
+  \item décomposable en valeurs et opérations sur ces valeurs.
+  \item paramétrés.
+  \item ``algorithmique''
+  \end{itemize}
+
+  Par exemple, dans le cas d'une B-Rep, il est préférable
+  de la stocker dans un noeud et d'utiliser des noeuds
+  opérants sur des B-Rep.
+  Mais on peut aussi, la décomposer en plusieurs noeuds.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Détails internes}
+  Nous allons détailler :
+  \begin{itemize}
+  \item Comment créer une classe de noeud.
+  \item Ce qu'est un champ.
+  \item Comment créer une classe de stockage.
+  \item Comment créer une classe logique.
+  \end{itemize}
+  
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les noeuds}
+
+  La classe de noeuds définit~:
+  \begin{itemize}
+  \item Nom de classe et de la surclasse.
+  \item Des méthodes~: affichage, évaluation, appliquation, destruction.
+  \item Une liste de champs.
+  \end{itemize}
+
+  Les classes sont toutes externes à l'éditeur~:
+  \begin{itemize}
+  \item L'interface utilisateur 3D.
+  \item Les noeuds variable/opérateur (modèle paramétré)
+  \item Le changement d'état courant (application).
+  \end{itemize}
+
+  Un fichier source (C) + fichier ressources + fichier aide.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les champs}
+
+  Ils sont définis par~:
+  \begin{itemize}
+  \item Un nom.
+  \item Une classe de stockage (int, float, float[3], chaîne, ...).
+  \item Une classe logique (point, vecteur, couleur, nombre, ...).
+  \item Des options~: éditable, affichable, sauvable, obligatoire, ...
+  \item Valeur par défaut.
+  \item Une contrainte d'égalité.
+  \end{itemize}
+
+  Les classes stockages/logiques sont externes à l'éditeur.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Classe de stockage}
+
+  La classe de stockage permet à l'éditeur :
+  \begin{itemize}
+  \item De lire/écrire le contenu du champ.
+  \item De libérer sa mémoire.
+  \item De faire apparaître un Widget permettant d'éditer sa valeur.
+   \item ...
+  \end{itemize}
+
+Il est possible de faire des classes de stockage virtuel.
+
+Le stockage permet de faire tenir dans un seul champ, un modèle
+classique complet et l'éditeur particulier permettant
+de l'éditer.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Classe logique}
+  
+  La classe logique permet à l'éditeur :
+  \begin{itemize}
+  \item De valider le type des arguments lors d'une création.
+  \item De créer des Menus contextuels.
+  \item De créer des ensembles définis par prédicat (R+).
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Les contraintes}
+
+  Ce n'est pas le type des arguments d'un noeud qui compte,
+  mais le type de ce qu'ils contiennent.
+  \begin{itemize}
+  \item Évite l'héritage multiple.
+  \item Très souple.
+  \item Simplifie l'interface utilisateur.
+  \end{itemize}
+
+  Actuellement, il gère les contraintes en les faisant
+  descendre et remonter. Il peut être nécessaire de recommencer
+  (comme pour un tableur).
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Interface utilisateur}
+  
+  \begin{itemize}
+  \item Interface Sujet/Verbe.
+  \item Menus et accélérateurs claviers contextuels.
+  \item Aide en HTML.
+  \item Fenêtre visualisant le graphe.
+  \item On peut ajouter des interfaces utilisateur particuliers.
+  \item Mise en évidence des noeuds/champs invalides.
+  \end{itemize}
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Programmation}
+
+  \begin{itemize}
+  \item Le noyau est très petit~: facilement évolutif.
+  \item L'ajout de classes (noeuds, stockage, logique) est facile.
+  \item L'extension se fait sans appeler de fonctions du noyau.
+  \item L'éditeur utilise un ensemble de techniques de programmation
+    que les étudiants ont rarement le temps de voir.
+  \item L'ajout de classes est prévu pour le travail en groupe.
+  \item Les champs permettent d'échanger des données.
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \begin{center}
+  \resizebox{8cm}{!}{\includegraphics{graphe.ps}}
+  \end{center}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \resizebox{11cm}{!}{\includegraphics{point.ps}}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \resizebox{11cm}{!}{\includegraphics{menu.ps}}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \begin{center}
+    \resizebox{6.5cm}{!}{\includegraphics{3d.ps}}
+\end{center}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \resizebox{11cm}{!}{\includegraphics{fonction.ps}}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}
+  \section{Conclusion}
+
+  L'éditeur conçu au départ pour les étudiants
+  est devenu un système complet et puissant,
+  utilisable pour le maquettage en modélisation.
+
+
+  Points forts :
+  \begin{itemize}
+  \item Environnement d'accueil.
+  \item Classes : noeud, stockage, logique.
+  \item Recopie/Extraction.
+  \item Minimal/Générique.
+  \end{itemize}
+
+  Le point faible est sa lenteur car rien n'a été fait
+  pour l'accélérer (et donc le compliquer)
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+

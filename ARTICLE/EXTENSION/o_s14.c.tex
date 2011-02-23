@@ -1,0 +1,22 @@
+% Remember to use the lgrind style
+
+\File{}{0000}{N/A}{00}{00:00}{0}
+\L{\LB{\K{\#include}_\S{}\3o\_objet.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3t\_geometrie.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3u\_graphique.h\3\SE{}___________________\C{}\1\*_Pour_avoir_t\_triplet_\*\1\CE{}}}
+\L{\LB{\K{\#include}_\<\V{GL}\1\V{gl}.\V{h}\>}}
+\L{\LB{\K{struct}_\V{segment}_\{__\V{Triplet}_\V{depart},_\V{arrivee}_;}}
+\L{\LB{}\Tab{16}{__\V{Booleen}_\V{visible}_;}}
+\L{\LB{}\Tab{8}{_______\}_;}\Tab{24}{___}}
+\L{\LB{\Proc{affiche\_segment}\K{static}_\K{void}_\V{affiche\_segment}(\K{struct}_\V{segment}_\*\V{s})}}
+\L{\LB{\{}}
+\L{\LB{__\K{if}_(_!\V{s}\-\!\>\V{visible}_)_\K{return}_;______________________________\C{}\1\*\*\1\CE{}}}
+\L{\LB{__\V{glBegin}(\V{GL\_LINES})_;_\V{t\_triplet}(\&\V{s}\-\!\>\V{depart})_;_\V{t\_triplet}(\&\V{s}\-\!\>\V{arrivee})_;_\V{glEnd}();}}
+\L{\LB{\}}}
+\L{\LB{\Proc{CLASSE}\V{CLASSE}(\V{segment14},}}
+\L{\LB{_______\K{struct}_\V{segment},}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{depart}_,_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{arrivee},_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{visible},_\V{L\_booleen}_\V{DEFAUT}(\S{}\31\3\SE{})_\V{Edite})________________________\C{}\1\*\*\1\CE{}}}
+\L{\LB{\Proc{CHAMP\_VIRTUEL}_______\V{CHAMP\_VIRTUEL}(\V{L\_affiche\_gl}(\V{affiche\_segment}))}}
+\L{\LB{______)}}

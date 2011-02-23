@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Affichage Polynome</title>
+  </head>
+
+  <body>
+    <h1>Affichage Polynome</h1>
+
+
+      Prenez le squelette de <a href="C/o_polynome.c">o_polynome.c</a>
+      et dans la fonction d'affichage
+      tracez (avec GL) la ligne bris&eacute;e repr&eacute;sentant
+      le polyn&ocirc;me dont les param&egrave;tres sont dans la structure C.
+
+    <P>
+
+      Essayez votre nouveau noeud :
+
+    <ul>
+      <li> Sans param&egrave;tre : il faudra &eacute;diter les
+	coefficients &agrave; la main.
+      <li> Vous pouvez par contre modifier le <TT>pas</TT> interactivement.
+	Il suffit d'activer le polynome puis d'essayez de le d&eacute;placer
+	suivant l'axe des X.
+      <li> Avec une table de flottants en param&egrave;tre,
+	on pourra alors d&eacute;placer les flottants int&eacute;ractivement
+	avec la souris (suivant l'axe des X).
+	<li> V&eacute;rifiez que l'on peut colorier le ``polynome''
+    </ul>
+
+    Vous avez remarqu&eacute; que lorsque l'on active le polynome,
+    il ne s'affiche pas en plus &eacute;pais...
+    Am&eacute;liorez ceci en vous inspirant de la fonction <TT>affiche</TT>
+    de <a href="../OBJETS/o_segment.c">o_segment.c</a>
+
+    <P>
+
+      Ajoutez maintenant le calcul des z&eacute;ros du polyn&ocirc;me.
+      Ceci est fait dans la fonction <TT>changement</TT>.
+      Ensuite modifiez interactivement les coefficients du polyn&ocirc;me
+      pour voir si cela recalcul bien les zeros.
+
+    <P>
+
+      Faites un affichage graphique de la position des zeros.
+      Affichez la pr&eacute;cision du z&eacute;ro ainsi que
+      le nombre d'it&eacute;rations.
+      On utilisera pour cela la fonction <TT>t_chaine</TT>
+      qui est utilis&eacute;e dans la fonction <TT>affiche</TT>
+      du noeud  d&eacute;crit dans <a href="../OBJETS/o_texte.c">o_texte.c</a>
+      
+      <P>
+      
+      Faites l'affichage graphique des &eacute;tapes de l'algorithme
+      qui trouve les z&eacute;ros.
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Thu Oct  2 09:57:54 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Fri Oct 17 15:28:01 METDST 1997
+<!-- hhmts end -->
+  </body>
+</html>

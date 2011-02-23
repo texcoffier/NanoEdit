@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Affichages simples</title>
+  </head>
+
+  <body>
+    <h1>Affichages simples</h1>
+
+Le but de ce TP et des suivants est de vous faire ajouter de nouvelles classes d'objet dans NanoEdit (comme le segment, la sph&egrave;re,
+...). Dans tous les cas, un squelette de programme en langage C
+vous est fourni et vous le modifiez afin d'ajouter l'affichage (avec Open
+GL) de l'objet en question. 
+
+    <h2>Premi&egrave;re &eacute;tape : recopier le squelette</h2>
+
+      Il faut recopier le
+      <a href="C/o_primitives.c">squelette de o_primitives.c</a>
+      dans le r&eacute;pertoire <tt>NE</tt> que vous
+      avez cr&eacute;&eacute; au pr&eacute;c&eacute;dent TP.
+      Pour ce faire, vous pouvez ex&eacute;cuter la commande :
+<pre>
+cp /home/exco/NE/stable/TP/C/o_primitives.c $HOME/NE
+</pre>
+
+    <h2>Deuxi&egrave;me &eacute;tape : compiler</h2>
+
+    Ensuite, vous allez dans le r&eacute;pertoire <tt>NE</tt>
+    et vous tapez <tt>/usr/local/bin/make</tt>. Une fois lanc&eacute;,
+    vous pouvez cr&eacute;er des instances de <tt>tp_carre</tt>, <tt>tp_cercle</tt>,
+    <tt>tp_cube</tt>, <tt>tp_cylindre</tt>, <tt>tp_sphere</tt>
+    (dans le menu <TT>TP Infographie</TT>)
+    <P>
+      Rien ne va s'afficher car votre travail est
+      de faire l'affichage de ces primitives.
+
+    <h2>Troisi&egrave;me &eacute;tape : programmer</h2>
+
+    <P>
+      Vous vous limiterez dans un premier temps
+      &agrave; un affichage filaire (sans facette).
+      N'oubliez pas d'appliquer un type d'affichage "Filaire"
+      &agrave; vos objets, sinon rien ne sera visible.
+      <EM>Encore plus simple : chargez le mod&egrave;le «TP/test_primitives»</EM>
+      Quand votre TP sera compl&egrave;tement termin&eacute;,
+      il devra afficher :<BR>
+      <IMG SRC="primitives.gif">
+    <P>
+      Les primitives sont ``unitaires'', elle sont toutes
+      de centre origine et de rayon (ou cot&eacute;) 1.
+    <P>
+      Chaque fois que vous modifiez le source vous arr&eacute;tez Nano&Eacute;dit
+      et vous relancez <tt>/usr/local/bin/make</tt>.
+      (Il est possible de laisser Nano&Eacute;dit en route et
+      de faire <tt>Fichier/R&eacute;initialise</tt>
+      mais cela ne marche pas &agrave; 100%).
+
+    <h2>Quatri&egrave;me &eacute;tape : affichage facette</h2>
+    Pour afficher les facettes, vous avez besoin de&nbsp;:
+    <P>
+    <UL>
+      <LI> <TT>glEnable(GL_LIGHTING)</TT> :
+	Pour indiquer que l'on veut tenir compte des sources lumineuses.
+	<P>
+      <LI> <TT>glEnable(GL_CULL_FACE)</TT> :
+	Pour ne pas afficher la facette si elle est &agrave; l'envers,
+	ceci est utile pour acc&eacute;l&eacute;rer l'affichage des volumes
+	poly&eacute;driques.
+	<P>
+      <LI> <TT>glNormal3f(vx,vy,vz)</TT> :
+	Pour indiquer la normale en chaque point de la facette.
+	La normale fait partie de l'&eacute;tat courant comme la couleur,
+	pas de besoin de la pr&eacute;ciser &agrave; nouveau si sa valeur
+	est inchang&eacute;e.
+	<P>
+    </UL>
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Fri Jan 14 11:42:25 MET 2000 -->
+<!-- hhmts start -->
+Last modified: Mon Sep 25 11:26:22 CEST 2000
+<!-- hhmts end -->
+  </body>
+</html>

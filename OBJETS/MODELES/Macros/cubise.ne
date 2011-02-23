@@ -1,0 +1,85 @@
+
+classe applique
+nom 136600448
+fils (136380448 137059576 136979776 136456976 136983472 136392208 136896528 136895392)
+
+classe applique
+nom 136380448
+fils (136982752 136406056)
+
+classe translation
+nom 136982752
+fils (136896432)
+
+classe vecteur3
+nom 136896432
+fils (137051936 136427056 136515912)
+
+classe variable
+nom 137051936
+fils (136407392)
+nom_variable 1=distance
+
+classe flottant
+nom 136407392
+valeur 1
+
+classe flottant
+nom 136427056
+valeur 0
+
+classe flottant
+nom 136515912
+valeur 0
+
+classe variable
+nom 136406056
+fils (136875928)
+nom_variable 0=objet
+
+classe sphere
+nom 136875928
+
+classe applique
+nom 137059576
+fils (137060704 136406056)
+
+classe translation
+nom 137060704
+fils (136911160)
+
+classe vecteur3
+nom 136911160
+fils (136427056 137051936 136515912)
+
+classe applique
+nom 136979776
+fils (137077528 136406056)
+
+classe translation
+nom 137077528
+fils (136867920)
+
+classe vecteur3
+nom 136867920
+fils (136515912 136427056 137051936)
+
+classe applique
+nom 136456976
+fils (136982752 137060704 136406056)
+
+classe applique
+nom 136983472
+fils (137060704 137077528 136406056)
+
+classe applique
+nom 136392208
+fils (136982752 137077528 136406056)
+
+classe applique
+nom 136896528
+fils (136982752 137060704 137077528 136406056)
+
+classe applique
+nom 136895392
+fils (136406056)

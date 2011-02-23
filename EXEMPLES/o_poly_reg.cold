@@ -1,0 +1,65 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include <math.h>		/* Pour sin/cos */
+#include "o_objet.h"
+
+struct polreg
+{
+  int nb_cotes ;		/* Nombre de cotés */
+} ;
+/*
+ * La fonction d'affichage.
+ * Elle affiche différemment si l'objet est activé ou non.
+ * On peut tester si l'affichage doit être rapide car interactif,
+ * si c'est le cas, on préfère afficher un polygone creux plutôt que plein.
+ *
+ * Le champ "c" est inutilisé.
+ */
+static void affiche_polreg(struct polreg *o, const Champ *c,const char *urgent)
+{
+  int i ;
+  float angle, delta_angle ;
+
+  if ( ACTIF(o) )		/* L'objet est actif ? */
+    {
+      glPushAttrib(GL_LINE_BIT) ;
+      glLineWidth(2.) ;
+    }
+
+  delta_angle = 2*M_PI/o->nb_cotes ;
+
+  if ( urgent[0] )
+    glBegin(GL_LINE_LOOP) ;
+  else
+    glBegin(GL_POLYGON) ;
+
+  for( i=0, angle=0 ;
+       i<o->nb_cotes ;
+       i++, angle += delta_angle )
+    glVertex2f( cos(angle), sin(angle) ) ;
+  glEnd() ;
+
+  if ( ACTIF(o) )
+    glPopAttrib() ;
+}
+/*
+ * Définition de la classe
+ */
+CLASSE(polygone_regulier,
+       struct polreg,
+       CHAMP(nb_cotes,
+	     L_Entier
+	     Edite Sauve Init3d
+	     DEFAUT("8")
+	     BULLE_D_AIDE("Nombre de cotés du polygone régulier")
+	     LABEL("Nb cotés")
+	     )
+       MENU("Exemple/Polygone régulier")
+       EVENEMENT("0p0r")
+       BULLE_D_AIDE("Objet affichant un polygone regulier")
+       /*
+	* Indiquer à NanoÉdit comment afficher.
+	*/
+       CHAMP(nb_cotes,	 /* Il faut donner un nom de champ (inutilisé) */
+	     L_Affiche_GL(affiche_polreg)
+	     )
+       )

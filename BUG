@@ -1,0 +1,29 @@
+
+BUG
+===
+- Menu détachés : marche pas   ================ BUG GTK ===============
+- Seulement le dernier info est éditable.
+- ouvert/fermé n'est pas mémorisé immédiatement : doit faire une autre action
+- Hemispehre : le sol scintille
+- Diaporama : bouton marche plus
+- XXX 27/07/2010 Pas utile avant version 2.0 : POURQUOI AJOUTER CELA ????
+- Miroir
+
+
+fonctionnalité à ajouter
+========================
+- D&D   (remetre reorderable et terminer)
+- Afficher l'observateur de la vue
+- Point jaune/rouge sur ligne brisee
+- ???? Déplacement à la souris dans vue perspective : lookat ???
+- ???? Fenetre restant ouvertes (secondes)
+- enlever les tags de creation sur table (option)
+
+
+
+64 BITS :
+=========
+- Pointeur objet vers numéro de liste ou bien nom d'objet
+   - o_divers.c:122
+   - o_ifs.c 363,667,947
+   - o_vue.c:803 Il a besoin du pointeur

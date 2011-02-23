@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Manipulations du rep&egrave;re courant</TITLE>
+</HEAD>
+<BODY>
+<H1>Manipulations du rep&egrave;re courant</H1>
+
+    Le squelette de ce TP est dans
+    <A HREF="C/o_ex_arbre.c"><tt>o_ex_arbre.c</tt></A>.
+    Il contient une fonction r&eacute;cursive d'affichage que vous devez terminer.
+<P>
+Remarques :
+<UL>
+      <LI>
+	<STRONG>Vous n'utiliserez pas de fonctions trigonom&eacute;triques</STRONG>
+      <LI>
+	Le sol est le plan XY et l'arbre pousse vers le haut.
+      <LI>
+	L'objet arbre peut &ecirc;tre param&eacute;tr&eacute;
+	par trois objets&nbsp;:
+	<UL>
+	  <LI> Le premier est une table de points (Racourci clavier : TNCP3)
+	  <LI> le deuxi&egrave;me d&eacute;fini le graphisme du tronc.<BR>
+	    On suppose que le tronc &agrave; une hauteur de 1.
+	  <LI> le troisi&egrave;me d&eacute;fini le graphisme de la feuille.
+	</UL>
+	<B>En chargeant le mod&egrave;le «TP/test_arbre» vous avez une
+	<A HREF="repere2.gif">``jolie'' sc&egrave;ne toute faite</A>.</B>
+	Qui s'affichera correctement quand le TP sera termin&eacute;.
+      <LI>
+	&Agrave; tous les embranchements de l'arbre,
+	il y a le m&ecirc;me nombre de branches.
+      <LI>
+	&Agrave; chaque embranchement de l'arbre les param&egrave;tres permettant
+	de dessiner les branches sont les m&ecirc;me.
+	Une branche est param&eacute;tr&eacute;e par un triplet de valeurs&nbsp;:
+	<UL>
+	  <LI> Angle de rotation (faire pencher la branche &agrave; gauche ou &agrave; droite suivant l'axe X).
+	  <LI> Facteur de rapetissement (de la branche)
+	  <LI> Un angle de rotation de la branche autour de son axe (axe Z). Cet
+	    angle sera appel&eacute; angle de ``torsion''.
+	</UL>
+	Le nombre de triplets indique le nombre de branches
+	(de sous-arbre) par embranchement.
+    </UL>
+    <P>
+
+L'arbre sera param&eacute;tr&eacute; par sa profondeur de r&eacute;cursion :
+<UL>
+<LI> 0 : Une feuille
+<LI> 1 : Le tronc avec X arbres de profondeur 0 (X feuilles)
+<LI> 2 : Le tronc avec X arbres de profondeur 1 (X branches feuillus)
+<LI> ...
+</UL>
+
+<P>
+
+Si vous trouver ceci trop simple&nbsp;:
+ajouter des param&egrave;tres suppl&eacute;mentaires
+afin de choisir les diff&eacute;rentes valeurs al&eacute;atoirement.
+(Voir les fonctions C <TT>rand</TT> et <TT>srand</TT>)
+</UL>
+
+<P>
+Dans la figure suivante (2D) l'angle ``torsion'' est nul,
+s'il n'est pas nul, alors la figure devient une figure 3D.
+De plus, il y a deux branches (X=2) au bout de chaque tronc.
+Et la profondeur de r&eacute;cursion est de neuf (N=9).
+Il n'y a pas de feuille.
+<P> 
+<IMG ALIGN=TOP SRC="repere.gif" ALT="Un arbre">
+<P>
+L'image pr&eacute;c&eacute;dente &agrave; &eacute;t&eacute; faite
+par le programme PostScript suivant&nbsp;:
+<SMALL>
+<PRE>
+/tronc {
+  newpath
+  -5 0   moveto
+  -5 100 lineto
+   5 100 lineto
+   5 0   lineto
+   0 0   lineto
+  closepath
+  stroke
+} def     % D&eacute;finition de la fonction affichant le tronc
+
+/arbre
+{
+  dup					% Sauvegarde la profondeur
+  0 ne					% Test si fin de r&eacute;cursion
+  {
+    1 sub				% Calcule la nouvelle profondeur
+    dup					% Duplique, car 2 appels r&eacute;cursif
+    tronc				% Affiche le tronc
+    gsave  0 100 translate  20 rotate .5 .5 scale arbre grestore
+    gsave  0 100 translate -40 rotate .7 .7 scale arbre grestore
+  }
+  {
+    pop					% Enl&egrave;ve le haut de pile
+  }
+  ifelse
+} def    % La fonction r&eacute;cursive prend un argument dans la pile (profondeur)
+
+200 0 translate
+2 2 scale
+11 arbre
+</PRE>
+</SMALL>
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Mon Sep 29 14:01:49 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Wed Aug 30 14:14:43 CEST 2000
+<!-- hhmts end -->
+</BODY>
+</HTML>

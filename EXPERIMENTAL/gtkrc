@@ -1,0 +1,29 @@
+style "nanoeditmenuitem2" {
+font = "-*-*-medium-r-*-*-*-140-*-*-m-*-iso8859-1"
+}
+style "nanoedittreeitem2" {
+font = "-*-*-medium-r-*-*-*-140-*-*-p-*-iso8859-1"
+}
+style "nanoeditminuscule2" {
+font = "-*-*-medium-r-*-*-*-100-*-*-p-*-iso8859-1"
+}
+style "fond_rouge" {
+fg[NORMAL] = {1.0,0,0}
+bg[SELECTED] = {1.0,0,0}
+}
+style "non_editable" {
+base[NORMAL] = {0.9,0.9,0.9}
+}
+style "bascule" {
+bg[ACTIVE] = {1.0,1.0,0}
+}
+
+class "GtkAccelLabel" style "nanoeditmenuitem2"
+class "GtkToggleButton" style "bascule"
+
+widget "*GtkFrame*" style "nanoedittreeitem2"
+widget "*GtkTreeItem.GtkLabel" style "nanoedittreeitem2"
+widget "*vue_ligne*" style "nanoeditminuscule2"
+
+widget "widget_fond_rouge" style "fond_rouge"
+widget "widget_non_editable" style "non_editable"

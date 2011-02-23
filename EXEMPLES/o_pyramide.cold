@@ -1,0 +1,105 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include "o_objet.h"
+
+struct pyramide
+{
+  Menu type_affichage ;
+} ;
+
+/*
+ * Les 5 sommets de la pyramide et les 5 normales aux facettes
+ */
+#define BG glVertex3f( 0., 0., 0.) /* Bas Gauche */
+#define BD glVertex3f( 2., 0., 0.) /* Bas Droit */
+#define HD glVertex3f( 2., 2., 0.) /* Haut Droit */
+#define HG glVertex3f( 0., 2., 0.) /* Haut Gauche */
+#define SO glVertex3f( 1., 1., 1.) /* Sommet */
+#define NG glNormal3f(-1., 0., 1.) /* Facette Gauche */
+#define ND glNormal3f( 1., 0., 1.) /* Facette Droite */
+#define NB glNormal3f( 0.,-1., 1.) /* Facette Bas */
+#define NH glNormal3f( 0., 1., 1.) /* Facette Haut */
+#define NS glNormal3f( 0., 0.,-1.) /* Facette Sol */
+/*
+ * La fonction d'affichage.
+ */
+static void affiche_pyramide(struct pyramide *o,
+			     const Champ *c,
+			     const char *urgent)
+{
+  if ( ACTIF(o) )		/* L'objet est actif ? */
+    {
+      glPushAttrib(GL_LINE_BIT|GL_POINT_BIT) ;
+      glLineWidth(2.) ;
+      glPointSize(2.) ;
+    }
+
+  switch(o->type_affichage.index)
+    {
+    case 0 :
+      glBegin(GL_POINTS) ; BG ; BD ; HD ; HG ; SO ; glEnd() ;
+      break ;
+    case 1 :
+      glBegin(GL_LINES) ;
+      HG ; BG ; BG ; SO ;
+      BG ; BD ; BD ; SO ;
+      HD ; HG ; HG ; SO ;
+      BD ; HD ; HD ; SO ;
+      glEnd() ;
+      break ;
+    case 2 :
+      glBegin(GL_LINE_STRIP) ; BG ; BD ; HD ; HG ; BG ; SO ; HD ; glEnd() ;
+      glBegin(GL_LINE_STRIP) ; HG ; SO ; BD ; glEnd() ;
+      break ;
+    case 3 :
+      glBegin(GL_LINE_LOOP) ; BG ; SO ; HD ; BD ; SO ; HG ; BG ; BD ; glEnd() ;
+      glBegin(GL_LINE_LOOP) ; HG ; HD ; glEnd() ;
+      break ;
+    case 4 :
+      glEnable(GL_LIGHTING) ;
+      glBegin(GL_TRIANGLES) ;
+      NB ; BG ; BD ; SO ;
+      ND ; BD ; HD ; SO ;
+      NH ; HD ; HG ; SO ;
+      NG ; HG ; BG ; SO ;
+      NS ; BG ; HG ; BD ;
+           BD ; HG ; HD ;
+      glEnd() ;
+      glDisable(GL_LIGHTING) ;
+      break ;
+    case 5 :
+      glEnable(GL_LIGHTING) ;
+      glBegin(GL_POLYGON) ; NB ; BG ; BD ; SO ;	     glEnd() ;
+      glBegin(GL_POLYGON) ; ND ; BD ; HD ; SO ;	     glEnd() ;
+      glBegin(GL_POLYGON) ; NH ; HD ; HG ; SO ;	     glEnd() ;
+      glBegin(GL_POLYGON) ; NG ; HG ; BG ; SO ;	     glEnd() ;
+      glBegin(GL_POLYGON) ; NS ; BG ; HG ; HD ; BD ; glEnd() ;
+      glDisable(GL_LIGHTING) ;
+      break ;
+    }
+
+  if ( ACTIF(o) )
+    glPopAttrib() ;
+}
+/*
+ * Définition de la classe
+ */
+CLASSE(pyramide, struct pyramide,
+       CHAMP(type_affichage,
+	     LABEL("Manière d'afficher la pyramide")
+	     L_Option_menu
+	     TE_TEXTE(
+		      "GL_POINTS\n"
+		      "GL_LINES\n"
+		      "GL_LINE_STRIP\n"
+		      "GL_LINE_LOOP\n"
+		      "GL_TRIANGLES\n"
+		      "GL_POLYGONS\n"
+		      )
+	     Extrait Edite Sauve DEFAUT("GL_LINES")
+	     )
+
+       MENU("Exemple/Pyramide")
+       EVENEMENT("0p0y")
+       BULLE_D_AIDE("Objet affichant une pyramide")
+       CHAMP(type_affichage, L_Affiche_GL(affiche_pyramide))
+       )

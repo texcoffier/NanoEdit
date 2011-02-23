@@ -1,0 +1,36 @@
+#include <math.h>		/* Pour sqrt() */
+#include "o_objet.h"
+
+struct racine
+{
+  Flottant racine_valeur ;	/* La racine carrée */
+  Flottant valeur ;		/* Le parametre */
+} ;
+/*
+ * Cette fonction n'est appelé que si c'est nécessaire.
+ * Cette fonction ce resume à une ligne si l'on ne tient pas compte
+ * de la validité du calcul.
+ */
+static void changement_sqrt(struct racine *o)
+{
+  if ( CHAMP_INVALIDE(o, valeur) )
+    {
+      /*
+       * Le champs "valeur" est invalide (<0 dans notre cas)
+       * On ne calcule rien et on note le champ comme invalide.
+       */
+      NOTE_CHAMP_INVALIDE(o, racine_valeur) ;
+    }
+  else
+    {
+      o->racine_valeur = sqrt(o->valeur) ; /* Le calcul */
+    }
+}
+
+CLASSE(sqrt, struct racine,
+       L_Nombre_Positif P_Flottant
+       CHAMP(racine_valeur, Affiche Init3d)
+       CHAMP(valeur,        Edite Extrait Sauve DEFAUT("2"))
+       CHANGEMENT(changement_sqrt)
+       MENU("Exemple/Racine")
+       )

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+echo "Test des points avec poids"
+
+# Fonctionnement actuel :
+# Quand on sauve un triplet dans un quadruplet on met le poids à 1
+
+X=1600
+
+t "Charge 4vues"      /appel/modele   	  0 charge     te_entree  4vues
+t "Création point4"   /appel/modele   	  0 creation   te_entree  point4
+t "Change point"      /appel/point4   	  0 quadruplet c_sauve    "11 22 33 2"
+t "Change point"      /appel/point4   	  0 quadruplet c_sauve    "11 22 33"
+t "Change point"      /appel/point4   	  0 quadruplet c_sauve    "11 22 33 2"
+t "Active point"      /appel/point4   	  0 actif      c_sauve    "1"
+t "Création table p3" /appel/modele   	  0 creation   te_entree  table_point3
+t "Touche table p3"   /appel/table_point3 0 actif      c_sauve    "00"
+t "Création point4"   /appel/modele   	  0 creation   te_entree  point4
+t "Active point"      /appel/point4   	  0 actif      c_sauve    "1"
+t "Active point"      /appel/point4   	  1 actif      c_sauve    "1"
+t "Création table p4" /appel/modele   	  0 creation   te_entree  table_point4
+t "Change table p4"   /appel/table_point4 0 t          c_sauve    "(100 101 102
+200 201 202 203)"
+t "Active table p4"    /appel/table_point4 0 actif      c_sauve    "1"
+t "Création grille 3" /appel/modele   	  0 creation   te_entree  grille_point3
+t "Active grille"     /appel/grille_point3 0 actif     c_sauve    "1"
+
+
+

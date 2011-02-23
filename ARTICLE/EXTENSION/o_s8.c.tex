@@ -1,0 +1,18 @@
+% Remember to use the lgrind style
+
+\File{}{0000}{N/A}{00}{00:00}{0}
+\L{\LB{\K{\#include}_\S{}\3o\_objet.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3t\_geometrie.h\3\SE{}}}
+\L{\LB{\K{struct}_\V{segment}_\{_\V{Triplet}_\V{depart},_\V{arrivee},_\V{vecteur}_;_\}_;_\C{}\1\*_Ajoute_vecteur_\*\1\CE{}}}
+\L{\LB{\Proc{changement\_segment}\K{static}_\K{void}_\V{changement\_segment}(\K{struct}_\V{segment}_\*\V{s})_______________\C{}\1\*\*\1\CE{}}}
+\L{\LB{\{}\Tab{64}{\C{}\1\*\*\1\CE{}}}
+\L{\LB{__\K{if}_(_\V{CHAMP\_CHANGE}(\V{s},_\V{depart})_\|\,\|_\V{CHAMP\_CHANGE}(\V{s},\V{arrivee})_)}\Tab{64}{\C{}\1\*\*\1\CE{}}}
+\L{\LB{____\V{s}\-\!\>\V{vecteur}_=_\V{u\_soustrait\_triplet}(\&\V{s}\-\!\>\V{arrivee},_\&\V{s}\-\!\>\V{depart})_;}\Tab{64}{\C{}\1\*\*\1\CE{}}}
+\L{\LB{\}_______________________________________________________________\C{}\1\*\*\1\CE{}}}
+\L{\LB{\Proc{CLASSE}\V{CLASSE}(\V{segment8},}}
+\L{\LB{_______\K{struct}_\V{segment},}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{depart}_,_\V{L\_point}___\V{P\_triplet}_\V{Edite}___\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{arrivee},_\V{L\_point}___\V{P\_triplet}_\V{Edite}___\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{vecteur},_\V{L\_vecteur}_\V{P\_triplet}_\V{Affiche})______________\C{}\1\*\*\1\CE{}}}
+\L{\LB{\Proc{CHANGEMENT}_______\V{CHANGEMENT}(\V{changement\_segment})___________________________\C{}\1\*\*\1\CE{}}}
+\L{\LB{______)}}

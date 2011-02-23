@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+# Ce script genere la version Y à partir de la version X
+#
+# configuration
+#
+
+export X=1.13
+export Y=1.14
+#
+# Tests anti-ecrasement
+#
+if [ -d $HOME/NE/$Y ]
+then
+  echo "La version existe déjà"
+  exit 1
+fi >&2
+#
+# Copie
+#
+cd $HOME/NE/
+cp -av $X $Y
+rm stable
+ln -s $X stable
+#
+# Creation de l'archive
+#
+cd $HOME/NE/$X
+make tar
+#
+# Changement version
+#
+cd $HOME/NE/$Y
+for I in \
+ Makefile.commun \
+ Makefile.proto \
+ ARTICLE/EXTENSION/extension.tex \
+ nanoedit.html \
+ HTML/installer.html \
+ SHELL/changement_version
+do
+  sed \
+   -e "s,NE/${X},NE/${Y}," \
+   -e "s,ne-${X}.tar.gz,ne-${Y}.tar.gz," \
+   -e "s,dit ${X}<,dit ${Y}<," \
+   -e "s,version{$X},version{$Y}," \
+   -e "s,X={$Y},Y=99," \
+   <$I >$I.new
+  mv $I.new $I
+done
+#
+# Recalcul les TAG et DEPENDANCE dans la nouvelle version
+#
+make verif depends tags

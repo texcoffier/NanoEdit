@@ -1,0 +1,250 @@
+
+classe vue
+nom 1088380992
+edite 135840264
+titre Vue X
+pas_vue 0.1
+angle_vue 0.1
+taille_vue 4
+point_de_vue 4 0 0
+b_persp 0
+geometrie 448 591 227 320
+
+classe vue
+nom 1088565312
+edite 135731056
+titre Vue Y
+pas_vue 0.1
+angle_vue 0.1
+taille_vue 4
+point_de_vue 0 4 0
+b_persp 0
+geometrie 682 590 227 320
+
+classe vue
+nom 1088749632
+edite 135593880
+titre Vue Z
+pas_vue 0.1
+angle_vue 0.1
+taille_vue 4
+point_de_vue 0 0 4
+haut 0 1 0
+b_persp 0
+geometrie 917 590 227 320
+
+classe iso_grille
+actif 5
+nom 136584752
+edite 137332960
+fils (136129552)
+
+classe grille_point3
+nom 136129552
+fils (137004592 137330280 136215024 136712872 136983704)
+
+classe table_point3
+nom 137004592
+fils (136933864 136143104 136143208 136392472 136392576)
+
+classe point3
+nom 136933864
+x -1.99099
+y 1.99099
+z 0.556043
+
+classe point3
+nom 136143104
+x -0.735411
+y 1.99099
+z 0.556043
+
+classe point3
+nom 136143208
+x 0.0179369
+y 1.99099
+z 0.556043
+
+classe point3
+nom 136392472
+x 0.807159
+y 1.99099
+z 0.556043
+
+classe point3
+nom 136392576
+x 1.57522
+y 1.96726
+z 0.538053
+
+classe table_point3
+nom 137330280
+fils (136269968 136270072 136219352 136219456 136214920)
+
+classe point3
+nom 136269968
+x -2.02687
+y 1.00446
+z 0.556043
+
+classe point3
+nom 136270072
+x -0.843033
+y 0.968591
+z 0.0538106
+
+classe point3
+nom 136219352
+x -0.0896843
+y 0.860969
+z 0.0538106
+
+classe point3
+nom 136219456
+x 0.725664
+y 0.99115
+z 0.0336283
+
+classe point3
+nom 136214920
+x 1.95512
+y 0.896843
+z 0.556043
+
+classe table_point3
+nom 136215024
+fils (136402200 136402304 136712664 136712768 136388624)
+
+classe point3
+nom 136402200
+x -2.02687
+y -0.143495
+z 0.556043
+
+classe point3
+nom 136402304
+x -0.986527
+y -0.0358737
+z 0
+
+classe point3
+nom 136712664
+x -0.0884956
+y -0.0707965
+z 1.97112
+
+classe point3
+nom 136712768
+x 0.79646
+y -0.0353982
+z 0.25574
+
+classe point3
+nom 136388624
+x 1.95512
+y -0.0358737
+z 0.556043
+
+classe table_point3
+nom 136712872
+fils (136983496 136983600 136453520 136453624 136938032)
+
+classe point3
+nom 136983496
+x -1.88337
+y -1.07621
+z 0.556043
+
+classe point3
+nom 136983600
+x -1.0224
+y -1.04034
+z 0
+
+classe point3
+nom 136453520
+x -0.0538106
+y -1.11209
+z 0
+
+classe point3
+nom 136453624
+x 0.707132
+y -0.831812
+z 0.283737
+
+classe point3
+nom 136938032
+x 2.06274
+y -1.04034
+z 0.556043
+
+classe table_point3
+nom 136983704
+fils (136394416 136394520 136230224 136230328 136203776)
+
+classe point3
+nom 136394416
+x -1.88337
+y -2.08068
+z 0.556043
+
+classe point3
+nom 136394520
+x -1.07965
+y -2.00088
+z 0.504425
+
+classe point3
+nom 136230224
+x -0.125558
+y -2.08068
+z 0.556043
+
+classe point3
+nom 136230328
+x 1.0224
+y -2.00893
+z 0.556043
+
+classe point3
+nom 136203776
+x 1.95512
+y -2.11655
+z 0.556043
+
+classe pov
+nom 136224008
+fils (1088933952 136453728)
+hau_max 388
+
+classe vue
+nom 1088933952
+edite 135950504
+titre Vue Perspective
+pas_vue 0.1
+angle_vue 0.1
+point_de_vue 5.47258 -0.40706 4.22908
+haut -0.612354 -0.128956 0.779996
+geometrie 717 140 427 448
+
+classe applique
+nom 136453728
+fils (136273848 136203880 136394624 136388824)
+
+classe lampe
+nom 136273848
+observateur 0 5 6
+	0 0 -1
+	0 0 0
+	0 1
+
+classe couleur
+nom 136203880
+
+classe diffuse
+nom 136394624
+
+classe facette_grille
+nom 136388824
+fils (136129552)

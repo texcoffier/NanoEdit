@@ -1,0 +1,100 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include "o_objet.h"
+
+struct systeme_solaire
+{
+  Flottant t ;
+  Flottant distance_soleil_terre, distance_terre_lune ;
+  Flottant lune_sur_elle_meme, soleil_sur_lui_meme, terre_sur_elle_meme ;
+  Flottant terre_autour_soleil, lune_autour_terre ;
+} ;
+/*
+ * Afichage des astres (Pas besoin de le réécrire pour l'examen)
+ */
+
+static const GLfloat g_carre[][4] = { {-1,-1,0}, {-1,1,0}, {1,1,0}, {1,-1,0}} ;
+
+static void carre(float taille, float r, float v, float b)
+{
+  glPushMatrix() ;		/* À cause du "glScalef" */
+  glScalef(taille, taille, taille) ;
+  glBegin(GL_LINE_LOOP) ;
+  glColor3f(r, v, b) ;
+  glVertex3fv(g_carre[0]) ;
+  glVertex3fv(g_carre[1]) ;
+  glVertex3fv(g_carre[2]) ;
+  glVertex3fv(g_carre[3]) ;
+  glEnd() ;
+  glPopMatrix() ;
+}
+
+static void soleil() { carre(.4 ,  1,  1, 0) ; }
+static void terre () { carre(.2, .3, .3, 1) ; }
+static void lune  () { carre(.1,  1,  1, 1) ; }
+
+static void rotation(float temps, float temps_pour_faire_un_tour)
+{
+  glRotatef( temps/temps_pour_faire_un_tour * 360,  0, 0, 1) ;
+}
+/*
+ * La fonction d'affichage.
+ */
+static void affiche_systeme_solaire(struct systeme_solaire *o,
+				    const Champ *c,
+				    const char *urgent)
+{
+  glPushAttrib(GL_LINE_BIT|GL_CURRENT_BIT) ;
+  glPushMatrix() ;
+
+  if ( ACTIF(o) )
+    glLineWidth(2.) ;
+  /*
+   * Affiche le soleil, an laissant le repère courant intact
+   */
+  glPushMatrix() ;
+  rotation(o->t, o->soleil_sur_lui_meme) ;
+  soleil() ;
+  glPopMatrix() ;
+  /*
+   * Affiche la terre, le repère sauvegardé ne tourne pas sur lui-même.
+   */
+  rotation(o->t, o->terre_autour_soleil) ;
+  glTranslatef(o->distance_soleil_terre, 0, 0) ;
+  rotation(o->t, -o->terre_autour_soleil) ; /* Correction de rotation */
+
+  glPushMatrix() ;
+  rotation(o->t, o->terre_sur_elle_meme) ;
+  terre() ;
+  glPopMatrix() ;
+  /*
+   * Affiche lune
+   */
+  rotation(o->t, o->lune_autour_terre) ;
+  glTranslatef(o->distance_terre_lune, 0, 0) ;
+  rotation(o->t, -o->lune_autour_terre) ;
+  rotation(o->t,  o->lune_sur_elle_meme) ;
+  lune() ;
+  /*
+   * Restaure l'environnement.
+   */
+  glPopMatrix() ;
+  glPopAttrib() ;
+}
+/*
+ * Définition de la classe
+ */
+CLASSE(systeme_solaire, struct systeme_solaire,
+       L_Flottant Edite Sauve Init3d
+       CHAMP(t, L_Flottant Extrait)
+       CHAMP(soleil_sur_lui_meme  , DEFAUT("10"))
+       CHAMP(distance_soleil_terre, DEFAUT("2"))
+       CHAMP(terre_autour_soleil  , DEFAUT("36.5"))
+       CHAMP(terre_sur_elle_meme  , DEFAUT(".1"))
+       CHAMP(distance_terre_lune  , DEFAUT(".5"))
+       CHAMP(lune_autour_terre    , DEFAUT("2.8"))
+       CHAMP(lune_sur_elle_meme   , DEFAUT("2.8"))
+       MENU("Exemple/Systeme Solaire")
+       EVENEMENT("0s0s")
+       BULLE_D_AIDE("Objet affichant un système solaire simplifié")
+       CHAMP(t, L_Affiche_GL(affiche_systeme_solaire))
+       )

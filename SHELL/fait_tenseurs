@@ -1,0 +1,43 @@
+#!/bin/sh
+# -*- ksh -*-
+
+for T in 2 3 4
+do
+(
+	cat ../OBJETS/MODELES/4vues.ne
+	echo
+	echo "classe tenseur_point3"
+	echo -n "t {"
+	K=0
+	while [ $K != $T ]
+	    do
+	      J=0
+	      echo -n "["
+	      while [ $J != $T ]
+	      do
+		I=0
+		echo -n "("
+		while [ $I != $T ]
+		do
+		  echo "	$I $J $K"
+		  I=`expr $I + 1`
+		done
+		echo -n "	)"
+		J=`expr $J + 1`
+	      done
+	      echo -n "]"
+	      K=`expr $K + 1`
+	    done
+	echo "}"
+) > ../OBJETS/MODELES/Grilles/${T}x${T}x${T}_point3_nc.ne
+done
+
+for T in 2 3 4
+do
+  sed 's/tenseur_point3/tenseur_point4/' \
+   <../OBJETS/MODELES/Grilles/${T}x${T}x${T}_point3_nc.ne \
+   >../OBJETS/MODELES/Grilles/${T}x${T}x${T}_point4_nc.ne
+done
+
+
+

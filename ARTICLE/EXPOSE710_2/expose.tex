@@ -1,0 +1,648 @@
+\documentclass[portrait,semrot]{seminar}
+
+%\usepackage{french}
+\usepackage{graphics}
+\usepackage{colordvi}
+\usepackage{../EXTENSION/lgrind}
+\input{sem-a4.sty}
+
+\title{Modélisation Algébrique}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\pagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \maketitle
+
+  La première partie définira la modélisation algébrique.
+
+  La deuxième présentera quelques concepts de NanoÉdit.
+
+  On terminera par une démonstration.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Modèle}
+
+  Un modèle est une représentation formelle
+  souvent simplifiée de la réalité.
+
+  \begin{itemize}
+  \item Bleu
+  \item Union(Sphère, Cube)
+  \item "P6$\backslash$n320 200$\backslash$n255$\backslash$nrvbrvbrvb...
+  \item ``Cet $<$EM$>$a priori$<$/EM$>$ est un mot latin.''
+  \item F est transitive si F(A,B) \& F(B,C) =$>$ F(A,C)
+  \item for(i=0;i$<$10;i++) printf("\%d", i) ;
+  \end{itemize}
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Méta-Modèle}
+
+  Le Méta-modèle d'un modèle est la
+  formalisation de la représentation formelle
+  du modèle.
+
+  \begin{itemize}
+  \item {Rouge, Vert, Bleu, Blanc, Gris, ...}
+  \item CSG
+  \item PPM
+  \item HTML
+  \item Mathématique
+  \item C
+  \end{itemize}
+
+  Le méta-modèle de HTML est SGML et SGML
+  est son propre méta-modèle.
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Modélisation}
+
+  La modélisation est l'acte de création
+  d'un modèle.
+
+  Un méta-modèle riche (expressif) autorise
+  une grande finesse de modélisation.
+
+  Un méta-modèle pauvre implique une plus
+  grande perte d'information dans l'acte
+  de modélisation.
+
+  Si le modèle permet de modifier le méta-modèle (langage de programmation Dylan)
+  il est possible de modéliser sans perte de sémantique.
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Structures de donnée}
+
+  Une structure de donnée est une représentation
+  informatique d'un méta-modèle.
+\begin{verbatim}
+struct liste_int {
+  struct liste *suivant ; /* NULL si pas de suivant */
+  int valeur ;
+} ;
+\end{verbatim}
+
+  Une instance de structure de donnée est une
+  représentation informatique d'un modèle.
+\begin{verbatim}
+Adresse 4  {suivant=29, valeur=1996}
+Adresse 20 {suivant=0 , valeur=1998}
+Adresse 29 {suivant=20, valeur=1997}
+\end{verbatim}
+  
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Modélisation par langage}
+
+  Les instances de structures de donnée sont générées
+  par l'exécution d'un programme.
+
+  La donnée du programme et de ses entrées
+  contient plus de sémantique que les données
+  engendrées.
+\begin{verbatim}
+l = nouvelle_liste() ;
+ajoute_fin(l, 1997) ;
+ajoute_fin(l, 1997+1) ;
+ajoute_debut(l, 1996) ; /* On a retrouvé le backup :-) */
+\end{verbatim}
+  C'est toujours le cas car la structure de donnée est
+  forcément créée séquenciellement.
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Modélisation algébrique}
+
+
+  Pour avoir plus de sémantique,
+  il ne faut pas instancier les données
+  mais le programme permettant
+  de les instancier.
+
+  {\small
+  C'est encore mieux d'instancier
+  le programme permettant de générer
+  le programme permettant de les instancier...
+}
+
+Les langages de programmation courants et le langage
+des mathématiques peuvent être mis sous
+une forme algébrique.
+\begin{verbatim}
+FOR(:=(i,0), <(i,10), INC(i), PRINTF("%d", i))
+\end{verbatim}
+
+L'avantage d'un expression algébrique est
+sa syntaxe uniforme et son affichage
+graphique trivial.
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Édition de modèle}
+
+  Elle se fait en éditant le programme
+  générant le modèle.
+
+  Si la modification représente une démarche de construction
+  elle devra figurer explicitement dans le programme.
+
+  Si la modification fait une modification sémantiquement
+  sans intérêt, elle ne figurera pas dans le programme.
+
+  Par exemple, on peut remplacer 1998 par 1999 :
+  \begin{itemize}
+  \item par substitution dans le modèle
+  \item en ajoutant une fonction de substitution
+  \item en détruisant/recréant l'élément
+  \item ...
+  \end{itemize}
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Traitements}
+
+  Les traitements que l'on fait se classent en deux catégories~: ceux qui sont
+  fait une seule et unique fois et les autres.
+
+  Comme on ne sait pas à l'avance si un traitement sera refait,
+  on considérera donc que tous les traitements sont
+  répétitifs si on les fait une fois.
+
+  Les traitements doivent donc être inclus dans le modèle
+  avec les données à traiter.
+
+  En conséquence, le modeleur n'implémente pas
+  les traitements sur le modèle.
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Compression}
+
+  Une instance de structure de donnée classique
+  contient beaucoup de redondance.
+  On ne sait pas si elles ont un sens ou non.
+
+  La modélisation par langage permet d'éliminer
+  ces redondances en ajoutant de la sémantique.
+
+\begin{verbatim}
+adresse="1, Av. des Chants Elisés" ;
+téléphone="555 685 456" ;
+personne("François Mitterrand", adresse, téléphone) ;
+personne("Jacques Chirac", adresse, téléphone) ;
+\end{verbatim}
+
+  On voit donc que l'utilisation d'un langage
+  permet d'ajouter une sémantique quelconque
+  non prévue dans le modèle initial.
+  ({\em cf.} JavaScript/HTML)
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{État courant}
+
+  On peut ajouter au programme précédent la notion
+  d'état courant permettant encore de le simplifier.
+
+\begin{verbatim}
+adresse_courante("1, Av. des Chants Elisés") ;
+téléphone_courant("555 685 456") ;
+personne("François Mitterrand") ;
+personne("Jacques Chirac") ;
+\end{verbatim}
+
+En poussant la démarche à l'extrème.
+\begin{verbatim}
+nom_courant("François Mitterrand") ;
+personne() ;
+nom_courant("Jacques Chirac") ;
+personne() ;
+\end{verbatim}
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Instanciation de la structure de donnée}
+
+  Elle n'est ni obligatoire ni nécessaire.
+
+  La plupart des traitements peuvent s'effectuer
+  directement en interprétant le programme
+  dans le contexte spécifique du traitement.
+
+  Certaine accélérations sont possibles car
+  les traitements sont fait au niveau ``méta''
+  donc formellement quand c'est possible.
+
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Avantages de l'approche}
+
+  \begin{itemize}
+  \item Le modèle prend peu de place.
+  \item On perd moins de sémantique.
+  \item L'historique de la modélisation est inutile
+    car il est inclus dans le modèle.
+  \item On peut travailler sur le modèle algébrique sans
+    générer son instance (qui peut être de taille infini).
+  \end{itemize}
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Modeleur algébrique}
+
+  Un modeleur peut être découpé en~:
+
+  Un noyau comportant un ensemble de fonctions de base
+  permettant la gestion des classes et leur instanciation.
+
+  Un ensemble de classes qui sont instanciées pour créer
+  les noeuds et feuille du modèle algébrique.
+  Les plus particulières sont~:
+
+  \begin{itemize}
+  \item Interface utilisateur (WWW, MOTIF, ...)
+  \item Modeleur : l'éditeur du modèle
+  \item Vue : un afficheur Open GL
+  \item Opérateur/Variable : définition de fonctions.
+  \end{itemize}
+
+  Toutes ces classes peuvent être redéfinies.
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Le but du modeleur}
+
+  On doit pouvoir ajouter facilement de nouveaux
+  type de noeuds sans avoir à modifier des programmes
+  existants.
+
+  On ne doit pas à avoir à utiliser des fonctions (programmation)
+  du modeleur.
+
+  Il doit être facile à utiliser et offrir toutes les fonctionnalités
+  que l'on attend d'un modeleur.
+
+  Il doit permettre de faire {\bf communiquer des fonctions
+  développées dans des environnements différents}.
+
+  Le 3D et la modélisation géométrique ne doivent pas faire
+  partie du modeleur afin de ne pas le limiter.
+
+  Le noyau du modeleur doit être petit et facilement maintenable.
+
+\vfill
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{La philosophie}
+
+\vspace{-2mm}
+  Plusieurs idées importantes~:
+  \begin{itemize}
+  \item Le programmeur décrit sa classe, le noyau utilise la classe.
+    Le programmeur n'appelle pas de fonctions du noyau.
+  \item Chaque donnée contenu dans les noeuds à trois types au lieu d'un~:
+    Stockage, Sémantique, Édition
+  \item Il y a une hiérarchie des classes (de noeud) et
+    des types sémantiques.
+  \item On utilise l'{\em abus de langage} pour simplifier la construction
+    du modèle. Le noeud de l'arbre n'attend pas une classe particulière
+    pour son fils mais une donnée particulière dans celui ci.\\
+    {\bf Le segment de droite défini par 2 points veut
+      trouver des points dans ses 2 fils quelque soit ses fils}
+  \end{itemize}
+  
+
+\vfill
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{L'implémentation}
+
+  Afin de minimiser les risques d'erreur, l'implémentation
+  a été faite le plus proprement possible au détriment
+  de la vitesse.
+
+  Pour l'interface, il faut que l'utilisateur
+  puisse éditer textuellement ses données.
+  C'est ce format textuel neutre qui assure la transmission
+  d'informations entre objets.
+
+  Le noyau garantit que les structures de données sont initialisées.
+  Il les libère après usage.
+
+  Il demande à chaque instance de s'évaluer en la prévenant
+  des changements qui ont eu lieu.
+  
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Le noyau}
+
+  Le noyau assure :
+  \begin{itemize}
+  \item L'initialisation des classes.
+  \item La création des instances de classes.
+  \item L'évaluation du modèle.
+  \item La validation du modèle.
+  \item Le transport des informations.
+  \item La répartition des tâches.
+  \end{itemize}
+  
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les classes de noeuds}
+
+  Il y a quelques classes particulières permettant
+  au modeleur de fonctionner.
+
+  Et toute les classes ``normales''
+
+\vfill
+\end{slide}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{Interface utilisateur}
+
+  L'interface utilisateur ne fait pas parti du noyau.
+
+  L'instance de la classe ``interface'' assure~:
+  \begin{itemize}
+  \item La gestion des ouvertures/fermeture de fenêtre.
+  \item La génération du contenu des fenêtres.
+  \item La mise à jour du contenu.
+  \item Les bulles d'aides.
+  \item Le service WWW pour la navigation dans toutes
+    les structures de données du système.
+  \end{itemize}
+
+  C'est la classe choisie qui détermine le système
+  de Widget utilisé.
+
+\vfill
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{La classe modeleur}
+
+  Le modeleur ne fait pas parti du noyau.
+
+  L'instance de la classe modeleur assure~:
+  \begin{itemize}
+  \item Les fonctions d'édition du graphe du modèle
+  \item Lecture/Sauvegarde du modèle
+  \item Undo/Redo
+  \end{itemize}
+ 
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{La classe afficheur}
+
+  L'affichage et l'interaction 3D sont gérés par des
+  instances d'une classe affichage.
+
+  Avantages~:
+  \begin{itemize}
+  \item La vue graphique fait partie du modèle.
+  \item On peut créer d'autres vues
+  \end{itemize}
+  
+  Les autres classes doivent fournir des méthodes
+  afin de pouvoir être affichées (Open GL et POV).
+
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{Les classes Opérateur/Variable}
+
+  Une instance de ``Opérateur'' est en fait un appel
+  de fonction. Les fils de l'opérateur étant les
+  paramètres de la fonction.
+
+  Une instance de ``Variable'' indique le nom de
+  la variable et sa valeur par défaut.
+
+  L'évaluation est faite par substitution.
+
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les types des valeurs}
+
+  \begin{itemize}
+  \item Stockage
+  \item Sémantique
+  \item Éditeur
+  \end{itemize}
+  
+
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{Le type de stockage des valeurs}
+
+\vspace{-5.52pt}
+  On utilise des CoDec analogues à ceux de XDR dans les RPC Sun.
+
+  On dispose de nombreux types de bases qui supportent
+  les méthodes~:
+  \begin{itemize}
+  \item Conversion de/vers chaîne de caractères
+  \item Informations sur le stockage (taille, méthodes, ...)
+  \item Libération mémoire
+  \item ...
+  \end{itemize}
+
+  L'utilisateur définit les nouveaux types en écrivant {\bf une seule}
+  fonction C qui définit toutes les méthodes.
+
+\begin{verbatim}
+codec_int(a->date_de_naissance) ;
+codec_linefeed() ;
+codec_L(&a->adresses, &a->nb_adresses, codec_adresse) ;
+\end{verbatim}
+  
+
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection{Le type sémantique}
+
+  Il y a une hiérarchie de type sémantiques.
+  A cette hiérarchie s'ajoute deux méthodes permettant
+  d'ajouter des extensions.
+
+  Une méthode ``prédicat'' permettant de réduire la classe
+  (aux nombres positifs par exemple)
+
+  Une méthode ``sous-classage'' permettant de l'augmenter en testant
+  si l'on peut la rattacher ailleurs (variable, opérateur).
+  Ceci permet de faire de l'héritage multiple ou contextuel.
+  
+\vfill
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Le type d'éditeur}
+
+  Ce type indique quel Widget est utilisé pour modifier
+  la valeur.
+
+  Par défaut c'est un éditeur de texte.
+
+  Cela peut-être un ascenseur, une palette de couleur, un
+  éditeur d'image, ...
+
+\vfill
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{slide}
+%  \subsection{Démonstration}
+
+  
+
+%\vfill
+%\end{slide}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+

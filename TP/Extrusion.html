@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+  <HEAD>
+    <TITLE>Affichage d'une extrusion par rotation ou translation</TITLE>
+  </HEAD>
+  <BODY>
+    <H1>Affichage d'une extrusion par rotation ou translation</H1>
+
+      L'extrusion d'une forme suivant une trajectoire
+      est compos&eacute;e par l'ensemble des points
+      sur lesquels est pass&eacute; la forme en parcourant
+      la trajectoire.
+      <p>
+	En se limitant &agrave; une forme filaire,
+	l'extrusion permet d'obtenir une surface.
+	Pour visualiser la surface, on peut afficher
+	des isoparam&eacute;triques.
+	L'un des param&egrave;tres est la position sur le contour
+	et l'autre la ``position'' sur la trajectoire.
+      <p>
+	Les deux types d'extrusions les plus utilis&eacute;es
+	sont l'extrusion par translations et
+	l'extrusion par rotation.
+	En effet, elles correspondent &agrave; des proc&eacute;d&eacute;s de
+	fabrication physique.
+      <p>
+	Exemples :<br>
+<table border>
+<tr><th>Contour<th>Extrusion par rotation<th>Extrusion par translation perpendiculaire au contour
+<tr><td>Carr&eacute;<td>Axe=un des cot&eacute;s du carr&eacute;<br>Cylindre<td>Cube
+<tr><td>Cercle<td>Axe=un diam&egrave;tre du cercle<br>Sph&egrave;re<td>Cylindre
+<tr><td>Cercle<td>Axe=dans le plan du cercle<br>Tore<td>Cylindre
+<tr><td>Triangle<td>Axe=une bissectrice<br>Cone<td>Prisme triangulaire
+</table>
+      L'image suivante montre l'extrusion par translation et rotation
+      d'une ligne bris&eacute;e
+      form&eacute;e de 5 points .
+      Il n'y a pas superposition des lignes bris&eacute;es de d&eacute;part
+      car il y a un dilatation &eacute;gale &agrave; 1.5 du contour
+      au d&eacute;part de la translation (et de 0 &agrave; la fin).
+      L'extrusion par translation ``part en biais'' car
+      le contour n'est pas centr&eacute; sur l'origine.
+      Le vecteur de la translation est l'axe des Y et
+      celui de rotation l'axe des Z.
+
+      <p>
+      <img src="extrusion.gif">
+
+
+
+<h2>Extrusion par translation</h2>
+
+      Recopiez le
+      <a href="C/o_ex_translation.c">squelette de o_ex_translation.c</a>
+      dans le r&eacute;pertoire <tt>Nanoedit</tt>.
+      Pour ce faire, vous pouvez ex&eacute;cuter la commande :
+<pre>
+cp /home/exco/NanoEdit/TP/C/o_ex_translation.c $HOME/NanoEdit
+</pre>
+
+      Il ne vous qu'&agrave; faire l'affichage des iso-param&eacute;triques
+      de la surface extrud&eacute;e.
+
+
+<h2>Extrusion par rotation</h2>
+
+      Recopiez le
+      <a href="C/o_ex_rotation.c">squelette de o_ex_rotation.c</a>
+      dans le r&eacute;pertoire <tt>Nanoedit</tt>.
+      Pour ce faire, vous pouvez ex&eacute;cuter la commande :
+<pre>
+cp /home/exco/NanoEdit/TP/C/o_ex_rotation.c $HOME/NanoEdit
+</pre>
+
+      Il ne vous qu'&agrave; faire l'affichage des iso-param&eacute;triques
+      de la surface extrud&eacute;e.
+
+<h2>Extrusion par translation/rotation</h2>
+
+      Si ce sujet de TP vous a sembl&eacute; trop simple,
+      alors ajouter un param&egrave;tre de rotation
+      &agrave; l'extrusion par translation.
+      Cela vous permettra par exemple de faire
+      un pas de vis.
+
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Mon Sep 29 14:01:49 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Wed Jan  6 12:33:35 CET 1999
+<!-- hhmts end -->
+  </BODY>
+</HTML>

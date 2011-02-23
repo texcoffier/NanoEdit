@@ -1,0 +1,1870 @@
+#include <math.h>               /* floor function */
+#include "t_gl.h"
+#include <GL/glu.h>             /* Utilitaires GL */
+#include "t_geometrie.h"
+#include "u_graphique.h"           /* Pour t_repere */
+#include "o_objet.h"            /* Car il faut pouvoir definir la classe */
+#include "u_xt_interface.h"     /* Pour widget vers objet */
+#include "s_string.h"
+#include "u_vue.h"
+#include "u_repartiteur.h"
+#include "u_etat_courant.h"
+#include "u_fichier.h"
+#include <sys/times.h>
+#include <time.h>
+
+#define BUFSIZE         1000
+
+
+
+typedef struct vue
+{
+  Booleen b_persp ;
+  Booleen b_entier ;
+  Booleen b_local ;
+  Booleen b_repere ;
+  Booleen b_grille ;
+  Booleen b_stereo ;
+  t_observateur observateur ;
+  Triplet regard, droite ;	/* Ceux-ci sont calcule */
+  char *titre ;
+  Gl gl ;
+  Flottant dts ;		/* Cote du carre (en pixel) de designation */
+  Flottant ratio ;
+  Flottant pas_vue ;
+  Flottant angle_vue ;
+  Menu menu_observateur ;
+  Menu menu_qualite ;
+  char *geometrie ;
+  int x_init, y_init ;		/* Position curseur debut de déplacement */
+  int x__init, y__init ;	/* Position curseur debut de déplacement */
+  int mosaicf, mosaicx, mosaicy ;
+  Triplet couleur_fond ;
+  int temps_en_clockticks ;
+  Booleen bouton_2_et_3_deviennent_1 ;
+  Booleen deplacement_observateur_a_la_souris ;
+
+
+  int nb ;			/* Nombre d'objet cliqués */
+  /*
+   * Les objets cliqués.
+   * BUFSIZE/4 car BUFSIZE est la taille du buffer de sélection
+   * hors celui-ci contient au moins 4 entiers par objet : 
+   *    Taille_Nom Nom ZMin ZMax
+   */
+  struct selection
+  {
+    void *objet ;
+    int sous_objet ;
+    unsigned int position ;
+    struct globale_etat_courant etat_courant ;
+  } designes[BUFSIZE/4] ;
+
+} Vue ;
+
+
+
+typedef struct
+{
+  Vue vue ;
+  int xmin, xmax, ymin, ymax ;
+  Booleen efface ;
+  Booleen affiche_contenu ;
+} Vue_incluse ;
+
+
+/*
+ *
+ */
+
+
+static void u_vue_matrice_suite(const Vue *vue)
+{
+  float regard, angle ;
+
+  if ( vue->ratio < 0.01 )
+    ((Vue*)vue)->ratio = 0.01 ;
+
+  if ( vue->b_persp )
+    {
+      angle = atan(vue->observateur.focale) ;
+      gluPerspective(angle/M_PI*180,            /* Angle perspective */
+                     vue->ratio,        /* Largeur/Hauteur */
+                     0.1,               /* Z min */
+                     1000.       /* Z max */
+                     ) ;
+    }
+  else
+    {
+      /*
+      if ( fabs(vue->regard.x) > fabs(vue->regard.y)
+           && fabs(vue->regard.x) > fabs(vue->regard.z) )
+        regard = vue->observateur.point_de_vue.x ;
+      else
+        {
+          if ( fabs(vue->regard.y) > fabs(vue->regard.x)
+               && fabs(vue->regard.y) > fabs(vue->regard.z) )
+            regard = vue->observateur.point_de_vue.y ;
+          else
+            regard = vue->observateur.point_de_vue.z ;
+        }
+      regard *= vue->observateur.focale ;
+      */
+      regard = vue->observateur.focale ;
+      glOrtho(-regard*vue->ratio, regard*vue->ratio,
+              -regard, regard,
+              1, 1000) ;
+    }
+
+  gluLookAt( vue->observateur.point_de_vue.x, vue->observateur.point_de_vue.y, vue->observateur.point_de_vue.z,
+             vue->observateur.point_vise.x  , vue->observateur.point_vise.y  , vue->observateur.point_vise.z  ,
+             vue->observateur.haut.x        , vue->observateur.haut.y        , vue->observateur.haut.z   ) ;
+
+  glMatrixMode(GL_MODELVIEW) ;
+}
+
+void u_vue_matrice_init(const Vue *vue)
+{
+  glMatrixMode(GL_MODELVIEW) ;
+  glLoadIdentity() ;
+  glMatrixMode(GL_PROJECTION) ;
+  glLoadIdentity() ;
+  if ( vue->mosaicf )
+    {
+      glTranslatef(-(-vue->mosaicf+1+2*vue->mosaicx),
+		   -(-vue->mosaicf+1+2*vue->mosaicy),
+		   0) ;
+      glScalef(vue->mosaicf, vue->mosaicf, 1) ;
+    }
+}
+
+static void u_vue_matrice(const Vue *vue)
+{
+  u_vue_matrice_init(vue) ;
+  u_vue_matrice_suite(vue) ;
+}
+
+void u_vue_2d_3d(Vue* vue, int x, int y, Triplet *pt)
+{
+  GLdouble mv[16], pr[16] ;
+  GLint vp[4] ;
+  GLdouble xx, yy, zz, d, d2 ;
+
+  /*
+  glMatrixMode(GL_PROJECTION) ;
+  glPushMatrix() ;
+  glMatrixMode(GL_MODELVIEW) ;
+  glPushMatrix() ;
+  */
+  u_vue_matrice(vue) ;
+
+  glGetDoublev(GL_MODELVIEW_MATRIX,mv) ;
+  glGetDoublev(GL_PROJECTION_MATRIX,pr) ;
+  glGetIntegerv(GL_VIEWPORT,vp) ;
+
+  gluUnProject( (float)x,
+		(float)(vp[3]-y),
+		(float)1.,
+		mv,
+		pr,
+		vp,
+		&xx, &yy, &zz) ;
+  /*
+  glMatrixMode(GL_PROJECTION) ;
+  glPopMatrix() ;
+  glMatrixMode(GL_MODELVIEW) ;
+  glPopMatrix() ;
+  */
+  if ( !vue->b_persp )
+    {
+      if ( vue->regard.y==0 && vue->regard.z==0 ) xx = 0 ;
+      if ( vue->regard.x==0 && vue->regard.z==0 ) yy = 0 ;
+      if ( vue->regard.x==0 && vue->regard.y==0 ) zz = 0 ;
+    }
+  else
+    {
+      /*
+       * Ramène à une distance raisonnable
+       */
+      d = u_distance_triplet(&vue->observateur.point_de_vue,
+			     &vue->observateur.point_vise) ;
+      pt->x = xx ;
+      pt->y = yy ;
+      pt->z = zz ;
+      d2 = u_distance_triplet(&vue->observateur.point_de_vue, pt) ;
+      *pt = u_ponderation_2_triplet(pt, d/d2,
+				    &vue->observateur.point_de_vue, 1-d/d2) ;
+      xx = pt->x ;
+      yy = pt->y ;
+      zz = pt->z ;
+    }
+  if ( vue->b_entier )
+    {
+      xx = floor( xx + 0.5 ) ;
+      yy = floor( yy + 0.5 ) ;
+      zz = floor( zz + 0.5 ) ;
+    }
+  
+  pt->x = xx ;
+  pt->y = yy ;
+  pt->z = zz ;
+}
+
+static Booleen applique_vue(const Interface_widget *iw)
+{
+  applique_fenetre(iw->objet) ;
+  return(0) ;
+}
+
+static void affiche_gl_qualite(const Vue *vue, const Liste *a_afficher)
+{
+  char qualite_et_urgent[2] ;
+
+  qualite_et_urgent[0] = vue->menu_qualite.selection[0] ;
+  qualite_et_urgent[1] = '\0' ;
+  affiche_gl(a_afficher, qualite_et_urgent) ;
+}
+
+/*
+ * Verifie si le haut est perpendiculaire au regard
+ */
+
+static void changement_vue(Vue *o)
+{
+  if ( FILS_CHANGE(o) )
+    recupere_fenetre(o) ;
+  if ( !UN_CHAMP_CHANGE(o) )
+    return ;
+
+  if ( OBJET(o)->edite )
+    {
+      Gl_start(&o->gl) ;
+      o->ratio = o->gl.lar / (float)o->gl.hau ;
+    }
+  else
+    o->ratio = o->observateur.ratio ;
+
+  /*
+  if ( CHAMP_CHANGE(o, observateur) && o->ratio != o->observateur.ratio &&
+       OBJET(o)->edite && !CREATION(o) )
+    {
+      o->gl.hau = o->gl.lar/o->observateur.ratio ;
+      widget_resize(o->gl.gl, o->gl.lar, o->gl.hau) ;
+    }
+  else
+  */
+      o->observateur.ratio = o->ratio ;
+
+  o->regard = u_soustrait_triplet(&o->observateur.point_vise,
+				  &o->observateur.point_de_vue) ;
+  o->droite = u_pv_triplet( &o->regard, &o->observateur.haut) ;
+  
+  if ( fabs(u_ps_triplet(&o->observateur.haut, &o->regard)) > 1e-4)
+    {
+      /*
+       * Ne teste pas le cas nul... BEURK
+       */
+      o->observateur.haut = u_pv_triplet(&o->observateur.haut, &o->regard) ;
+      o->observateur.haut = u_pv_triplet(&o->regard, &o->observateur.haut) ;
+      o->observateur.haut = u_normalise_triplet(&o->observateur.haut) ;
+    }
+}
+
+
+static void u_mouvement_observateur_tp(Vue *vue, Flottant teta, Flottant phi)
+{
+  Triplet tmp[3] ;  
+  int i ;
+
+  tmp[0] = vue->regard ;
+  tmp[1] = vue->observateur.haut ;
+  tmp[2] = vue->droite ;
+  for(i=0;i<3;i++)
+    {
+      tmp[i] = u_rotation_triplet(&tmp[i], &vue->observateur.haut,  teta/100) ;
+      tmp[i] = u_rotation_triplet(&tmp[i], &vue->droite, phi/100) ;
+    }
+  vue->regard = tmp[0] ;
+  vue->observateur.haut   = tmp[1] ;
+  vue->droite = tmp[2] ;
+  
+  vue->observateur.point_de_vue =
+    u_soustrait_triplet(&vue->observateur.point_vise, &vue->regard) ;
+}
+
+
+static void u_vue_trace_reel(const Vue *o)
+{
+  Flottant d ;
+
+  u_vue_matrice(o) ;
+  
+  if ( o->b_grille )
+    {
+      d = u_norme_triplet(&o->regard) ;
+      t_sol(&o->regard, d>10 ? 10. : d) ;
+    }
+  if ( o->b_repere )
+    t_repere() ;
+  
+  glColor3f(1.,1.,1.) ;
+
+  affiche_gl_qualite(o, fils_a_afficher(o)) ;
+}
+
+const Flottant global_teta = 4 ; /* Écart des yeux pour la stéréo */
+
+static void u_vue_trace(const Interface_widget *iw)
+{
+  Vue *o ;
+  struct tms tms_debut, tms_fin ;
+
+  times(&tms_debut) ;
+  o = iw->objet ;
+  /*
+  if ( o->gl.gl == 0 )
+    return ;
+  */
+  Gl_start(&o->gl) ;
+  o->ratio = o->gl.lar / (float)o->gl.hau ;
+
+  if ( TRACE(o) )
+    {
+      o_dump(o) ;
+    }
+
+  glDepthMask(1) ;
+  glEnable(GL_DEPTH_TEST) ;     /* Elimine les faces cachees */
+  glEnable(GL_NORMALIZE) ;
+  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, o->b_local) ;
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 1) ;
+  glClearColor(o->couleur_fond.x,o->couleur_fond.y,o->couleur_fond.z,0) ;
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ; /* Efface TOUT */
+
+
+  if ( o->b_stereo )
+    {
+      o->ratio /= 2 ;
+      glViewport(o->gl.lar/2, 0, o->gl.lar/2, o->gl.hau) ; /* BUG GL ? */
+      glViewport(o->gl.lar/2, 0, o->gl.lar/2, o->gl.hau) ;
+      u_mouvement_observateur_tp(o, -global_teta, 0.) ;
+      u_vue_trace_reel(o) ;
+      glViewport(0, 0, o->gl.lar/2, o->gl.hau) ;
+      u_mouvement_observateur_tp(o, 2*global_teta, 0.) ;
+      u_vue_trace_reel(o) ;
+      o->ratio *= 2 ;
+      u_mouvement_observateur_tp(o, -global_teta, 0.) ;
+      glViewport(0, 0, o->gl.lar, o->gl.hau) ;
+    }
+  else
+    {
+      u_vue_trace_reel(o) ;
+    }
+
+  if ( TRACE(o) )
+   eprintf("Fin affichage\n") ;
+  Gl_stop(&o->gl) ;
+
+  times(&tms_fin) ;
+  o->temps_en_clockticks = tms_fin.tms_utime - tms_debut.tms_utime ;
+
+  /*
+  if ( OBJET(o)->urgent )
+    OBJET(o)->mettre_a_jour_widget = Vrai ;
+  */
+}
+
+static Vue *globale_vue_courante ;
+
+static void trouve_etat_courant(void *o, unsigned int pos)
+{
+  int i ;
+
+  for(i=0; i<globale_vue_courante->nb; i++)
+    {
+      if ( TRACE(o) )
+	eprintf("[%d/%d] %p/%d == %p/%d ?\n", i , globale_vue_courante->nb
+		, o
+		, pos
+		, globale_vue_courante->designes[i].objet
+		, globale_vue_courante->designes[i].position
+		) ;
+
+      if ( globale_vue_courante->designes[i].objet == o
+	   && globale_vue_courante->designes[i].position == pos )
+	{
+	  globale_vue_courante->designes[i].etat_courant =
+	    globale_etat_courant ;
+	}
+    }
+}
+
+static int m_trouve_objet(Vue *o, int x, int y, struct selection *trouve)
+{
+  GLuint selectBuf[BUFSIZE] ;
+  GLint vp[4] ;
+  int hits ;
+  int i, j ,position, taille ;
+  int nb, nb2 ;
+  Vue_incluse *vue_incluse, *vi ;
+
+  if ( 1 || TRACE(o) )
+   eprintf("Designation o=%p (%s)\n", o, OBJET(o)->classe->nom) ;
+
+  o->x_init  = x ;
+  o->y_init  = y ;
+  o->x__init = x ;
+  o->y__init = y ;
+  vue_incluse = ( strcmp(OBJET(o)->classe->nom, "vue_incluse") == 0 )
+    ? (Vue_incluse*)o : NULL ;
+
+  if ( o->b_stereo )
+    {
+      o->ratio /= 2 ;
+      if ( x < o->gl.lar/2 )
+	{
+	  u_mouvement_observateur_tp(o, -global_teta, 0.) ;
+	  glViewport(0, 0, o->gl.lar/2, o->gl.hau) ;
+	}
+      else
+	{
+	  u_mouvement_observateur_tp(o, global_teta, 0.) ;
+	  glViewport(o->gl.lar/2, 0, o->gl.lar/2, o->gl.hau) ;
+	}
+    }
+
+  if ( vue_incluse )
+    {
+      glViewport(vue_incluse->xmin
+		 , vue_incluse->ymin
+		 , vue_incluse->xmax-vue_incluse->xmin
+		 , vue_incluse->ymax-vue_incluse->ymin) ;
+      
+    }
+  glGetIntegerv(GL_VIEWPORT,vp) ;
+  glSelectBuffer(BUFSIZE, selectBuf ) ;
+  glRenderMode(GL_SELECT) ;
+
+  u_vue_matrice_init(o) ;
+
+  if ( 0 && vue_incluse )
+    {
+      gluPickMatrix( (float)x-vue_incluse->xmin
+		     , (float)(vp[3]-y)-vue_incluse->ymin
+		     , o->dts, o->dts, vp ) ;
+    }
+  else
+    {
+      gluPickMatrix( (float)x, (float)(vp[3]-y), o->dts, o->dts, vp ) ;
+    }
+  glViewport(x-o->dts/2, (vp[3]-y)-o->dts/2, o->dts, o->dts) ;
+  u_vue_matrice_suite(o) ;
+  globale_etat_courant.designable = Vrai ;
+  if ( vue_incluse )
+    {
+      eprintf("Fils a afficher : ") ;
+      POUR(void*, f, fils_a_afficher(o), eprintf(" %s", OBJET(f)->classe->nom););
+      eprintf("\n") ;
+    }
+  affiche_gl_qualite(o, fils_a_afficher(o)) ;
+  globale_etat_courant.designable = Faux ;
+  hits = glRenderMode(GL_RENDER) ;
+
+
+  if ( o->b_stereo )
+    {
+      o->ratio *= 2 ;
+      if ( x < o->gl.lar/2 )
+	{
+	  u_mouvement_observateur_tp(o, global_teta, 0.) ;
+	}
+      else
+	{
+	  u_mouvement_observateur_tp(o, -global_teta, 0.) ;
+	}
+    }
+  glViewport(vp[0], vp[1], vp[2], vp[3]) ;
+  nb = 0 ;
+
+  position = 0 ;
+  if ( TRACE(o) )
+   eprintf("hits=%d\n",hits) ;
+  for(i=0;i<hits;i++)
+    {
+      taille = selectBuf[position] ;
+      if ( TRACE(o) )
+        eprintf("taille=%d min=%d max=%d position=%d objet=%p sous_objet=%p\n",
+               taille, selectBuf[position+1], selectBuf[position+2],
+               selectBuf[position+3], selectBuf[position+4]
+		,selectBuf[position+5]) ;
+      if ( selectBuf[position+4] )
+        {
+	  trouve[nb].position = (unsigned int) selectBuf[position+3] ;
+	  trouve[nb].objet = (void*) selectBuf[position+4] ;
+
+	  if ( strcmp(OBJET(trouve[nb].objet)->classe->nom,"vue_incluse")==0 )
+	    {
+	      eprintf("Vue incluse touchée : cherche contenu\n") ;
+	      vi = trouve[nb].objet ;
+	      vi->affiche_contenu = Vrai ;
+	      nb2 = m_trouve_objet(&vi->vue, x, y, vi->vue.designes) ;
+	      eprintf("Vue incluse touchée : fin affichage contenu\n") ;
+	      vi->affiche_contenu = Faux ;
+	      for(j=0; j<nb2; j++)
+		{
+		  trouve[nb++] = vi->vue.designes[j] ;
+		  eprintf("Trouve %s\n", OBJET(trouve[nb-1].objet)->classe->nom) ;
+		}
+	    }
+	  if ( taille>=3 )
+	    trouve[nb].sous_objet = (int) selectBuf[position+5] ;
+	  else
+	    trouve[nb].sous_objet = -1 ;
+	  
+	  for(j=0;j<nb;j++)
+	    if ( trouve[j].objet == trouve[nb].objet
+		 && trouve[j].sous_objet == trouve[nb].sous_objet )
+	      {
+		nb-- ;
+		break ;
+		  }
+	  nb++ ;
+        }
+      position += 3 + taille ;
+    }
+
+  /*
+   * Retrouve les états courants
+   */
+  globale_vue_courante = o ;
+  o->nb = nb ;
+  globale_etat_courant.detourne_affichage = trouve_etat_courant ;
+  glRenderMode(GL_SELECT) ;
+  globale_etat_courant.designable = Vrai ;
+  glViewport(vp[0], vp[1], vp[2], vp[3]) ;
+  affiche_gl_qualite(o, fils_a_afficher(o)) ;
+  globale_etat_courant.designable = Faux ;
+  glRenderMode(GL_RENDER) ;
+  globale_etat_courant.detourne_affichage = NULL ;
+
+  if ( TRACE(o) )
+    {
+      eprintf("Ce qui a été désigné :\n") ;
+      for(i=0;i<nb;i++)
+	{
+	  eprintf("objet=%p(%s) position=%8d sous_objet=%8x\n"
+		  , trouve[i].objet, OBJET(trouve[i].objet)->classe->nom
+		  , trouve[i].position, trouve[i].sous_objet) ;
+	  eprintf("TRANSFO = %s\n"
+		  , codec_recupere_texte(codec_transfo
+					 , &trouve[i].etat_courant.transfo
+					 )) ;
+	}
+      eprintf("Fin liste\n") ;
+    }
+      
+
+  return(nb) ;
+}
+
+/*
+ * Trouve la coordonnée qu'il ne faut pas changer
+ * par ce que clea n' pas de sens (vue X Y ou Z).
+ * Si on peut toute les changer, cela retourne "4"
+ */
+
+static int numero_mauvaise_coordonnee(const Vue *vue)
+{
+  int i, j ;
+
+  j = 5 ;
+  for(i=0;i<3;i++)
+    if ( abs( (&vue->observateur.point_de_vue.x)[i] - (&vue->observateur.point_vise.x)[i]) > 1e-4 )
+      {
+	if ( j == 5 )
+	  j = i ;		/* Cette coordonnée est mauvaise */
+	else
+	  {
+	    j = 4 ;		/* NON : elle sont toutes bonne (persp) */
+	    break ;
+	  }
+      }
+  return(j) ;
+}
+
+
+static void u_mouvement_observateur(Vue *vue, int x, int y, Triplet vecteur)
+{
+  if ( !vue->b_persp )
+    {
+      vue->observateur.point_de_vue = u_ajoute_triplet( &vue->observateur.point_de_vue, &vecteur) ;
+      vue->observateur.point_vise = u_ajoute_triplet( &vue->observateur.point_vise, &vecteur) ;
+    }
+  else
+    {
+      u_mouvement_observateur_tp(vue, vue->x_init - x, vue->y_init - y) ;
+    }
+}
+
+static const Champ *trouve_tag(const void *o, int n)
+{
+  const Champ *ch ;
+
+  ch = u_champ_trouve_n(&o, n, O_Init3d) ;
+  if ( ch == NULL )
+    {
+      c_trouve_type(&o, &ch, &infos_L_tag) ;
+      if ( ch==NULL )
+	{
+	  eprintf("Ne trouve pas le tag %d dans l'objet\n", n) ;
+	  o_sauve(o, stderr) ;		
+	  return(NULL) ;
+	}
+      if ( TRACE2(o) )
+	eprintf("Tag trouve : %x\n", n) ;
+      ecrit_numero_tag(ch,n) ;
+    }
+  return(ch) ;
+}
+
+static Triplet repositionne_point(const Transfo *inverse
+				  , const Triplet *cible
+				  , const Triplet *orig
+				  , int mauvaise_coordonnee
+				  )
+{
+  /*
+    3 équation de la forme, avec une seule inconnue : cible->[xyz]
+    v1.x*cible->x + v2.x*cible->y + v3.x*cible->z + o.x = nouveau.x
+
+    Dérivée de la Distance entre "orig" et "nouveau" qui doit être
+    nulle si l'on veut être au plus près du point :
+    orig->x-nouveau.x + orig->y-nouveau.y + orig->y-nouveau.z = 0
+
+Petit Programme Maple
+---------------------
+
+nx := v1x*cx+v2x*cy+v3x*cz+ox ;
+ny := v1y*cx+v2y*cy+v3y*cz+oy ;
+nz := v1z*cx+v2z*cy+v3z*cz+oz ;
+solve(diff((nx-px)^2 + (ny-py)^2 + (nz-pz)^2, cx) = 0, cx );
+
+Bizarrement, il faut inverser le signe donné par Mapple
+pour intégrer cela dans le programme.
+JE NE COMPREND PAS.
+
+  */
+  Triplet c ;
+
+#define v1x (inverse->v1.x)
+#define v1y (inverse->v1.y)
+#define v1z (inverse->v1.z)
+#define v2x (inverse->v2.x)
+#define v2y (inverse->v2.y)
+#define v2z (inverse->v2.z)
+#define v3x (inverse->v3.x)
+#define v3y (inverse->v3.y)
+#define v3z (inverse->v3.z)
+#define ox (inverse->origine.x)
+#define oy (inverse->origine.y)
+#define oz (inverse->origine.z)
+#define cx (c.x)
+#define cy (c.y)
+#define cz (c.z)
+#define px (orig->x)
+#define py (orig->y)
+#define pz (orig->z)
+
+  c = *cible ;
+  switch(mauvaise_coordonnee)
+    {
+    case 0:
+      cx = -(-v1x*px+v1x*v2x*cy+v1x*v3x*cz+v1x*ox-v1y*py+v1y*v2y*cy+v1y*v3y*cz+v1y*oy-v1z*pz+v1z*v2z*cy+v1z*v3z*cz+v1z*oz)/(v1x*v1x+v1y*v1y+v1z*v1z) ;
+      break ;
+    case 1:
+      cy = -(v2x*v1x*cx+v2x*v3x*cz+v2x*ox-v2x*px+v2y*v1y*cx+v2y*v3y*cz+v2y*oy-v2y*py+v2z*v1z*cx+v2z*v3z*cz+v2z*oz-v2z*pz)/(v2x*v2x+v2y*v2y+v2z*v2z) ;
+      break ;
+    case 2:
+      cz = -(v3x*v1x*cx+v3x*v2x*cy+v3x*ox-v3x*px+v3y*v1y*cx+v3y*v2y*cy+v3y*oy-v3y*py+v3z*v1z*cx+v3z*v2z*cy+v3z*oz-v3z*pz)/(v3x*v3x+v3y*v3y+v3z*v3z) ;
+      break ;
+    }
+
+#undef v1x
+#undef v1y
+#undef v1z
+#undef v2x
+#undef v2y
+#undef v2z
+#undef v3x
+#undef v3y
+#undef v3z
+#undef ox
+#undef oy
+#undef oz
+#undef cx
+#undef cy
+#undef cz
+#undef px
+#undef py
+#undef pz
+  
+  return(u_transforme(inverse, &c)) ;
+}
+
+
+static void u_deplace_tag(const Vue *vue, struct selection *s
+			  , const Triplet *p
+			  , int x, int y)
+{
+  const Champ *ch ;
+  Triplet pt, regard, pt_de_vue ;
+  char *v ;
+  char *b ;
+  int i ;
+  Transfo t ;
+  struct globale_etat_courant ec ;
+  static Chaine st ;
+  Flottant poids ;
+
+  ch = trouve_tag(s->objet, s->sous_objet) ;
+  if ( ch )
+    {
+      poids = 0 ;
+      v = strdup(c_recupere_ici_sans_copie(s->objet, ch)) ;
+      b = strstr(v," ") ;
+
+      /*
+       * Calcul du vecteur regard
+       */
+      t = inversion_transfo(&s->etat_courant.transfo) ;
+      pt = u_transforme(&t, p) ;
+      
+      if ( vue->b_persp )
+	{
+	  pt_de_vue = u_transforme(&t, &vue->observateur.point_de_vue);
+	  regard = u_soustrait_triplet(&pt,&pt_de_vue);
+	}
+      else
+	{
+	  regard = u_transforme(&t, &vue->regard);
+	  /* Beurk, il faut transfo*vecteur */
+	  regard = u_soustrait_triplet(&regard, &t.origine) ;
+	}
+      /*
+       *
+       */
+      if ( b == NULL )
+	{
+	  /* Une valeur simple (pas de blanc) */
+	  u_annule_triplet(&pt) ;
+	  pt.x = x/100. ;
+	}
+      else
+	{
+	  b = strchr(b+1, ' ') ;
+	  if ( b == NULL )
+	    {
+	      /* Une paire de valeur */
+	      u_annule_triplet(&pt) ;
+	      pt.y = y/100. ;
+	      pt.x = x/100. ;
+	    }
+	  else
+	    {
+	      b = strchr(b+1, ' ') ;
+	      if ( b )
+		{
+		  /*
+		   * La quatrième valeur est un poids à ne pas changer
+		   */
+		  poids = atof(b) ;
+		}
+	      i = numero_mauvaise_coordonnee(vue) ;
+	      if ( 1 || i >= 3 )
+		{
+		  /*
+		   * Changement position dans ``vue 3d''
+		   */
+		}
+	      else
+		{
+		  /*
+		   * Changement position dans vue ``orthogonale''.
+		   * Le but est de ne pas changer l'une des coordonnées
+		   * alors que le point a subit des transformations.
+		   */
+		  pt = char_vers_triplet(v) ;
+		  pt = repositionne_point(&t, p, &pt, i) ;
+		}
+	    }
+	}
+      free(v) ;
+
+      s_efface(&st) ;
+      s_printf(&st, "%s", triplet_vers_char(&pt)) ;
+      if ( poids )
+	s_printf(&st, " %s", flottant_vers_char(poids)) ;	
+      /*
+       * Vecteur Regard dans le repère de l'objet
+       */
+      s_printf(&st, " (%s)", triplet_vers_char(&regard)) ;
+
+      /*
+       * La restauration de l'état courant avant la sauvegarde
+       * a été introduit parce que c'était nécessaire dans le cas
+       * ou le fonctionnement dépendait des variables courantes.
+       * Exemple :
+       *    - Un opérateur contenant un "segment" paramétré par des variables.
+       *      Ce qui doit être déplacé par le tag est le vrai point
+       *      et non celui par défaut.
+       */
+      ec = globale_etat_courant ;
+      globale_etat_courant = s->etat_courant ;
+
+      c_sauve_ici(s->objet, ch, s_char(&st) ) ;
+      globale_etat_courant = ec ;
+
+      /* A cause des OPERATEUR pour remonter le changement */
+      evaluation(s->objet) ;
+    }
+}
+
+static void u_mouvement_tag(Vue *vue, int x, int y, const Triplet *p)
+{
+  int i, j ;
+
+  for(i=0;i<vue->nb;i++)
+    if ( vue->designes[i].sous_objet != -1 )
+      {
+	for(j=0;j<i;j++)
+	  if ( vue->designes[i].objet==vue->designes[j].objet)
+	    break ;
+	if ( 1 || i==0 || j == i )
+	  {
+	    u_deplace_tag(vue, &vue->designes[i], p,x,y) ;
+	  }
+      }
+}
+
+
+static void u_vue_mouvement(const Interface_widget *iw)
+{
+  Triplet depart, arrivee, vecteur ;  
+  Vue *vue ;
+
+  vue          = iw->objet ;
+
+  Gl_start(&vue->gl) ;
+  u_vue_2d_3d(vue, iw->x, iw->y, &arrivee) ;
+      
+  if ( vue->nb == 0 )
+    {
+      if ( !vue->deplacement_observateur_a_la_souris )
+	return ;
+
+      u_vue_2d_3d(vue, vue->x_init, vue->y_init, &depart) ;
+      vecteur = u_soustrait_triplet(&depart,&arrivee) ;
+      u_mouvement_observateur(vue, iw->x, iw->y, vecteur) ;
+    }
+  else
+    u_mouvement_tag(vue, iw->x-vue->x__init, iw->y-vue->y__init, &arrivee) ;
+
+  vue->x_init = iw->x ;
+  vue->y_init = iw->y ;
+}
+
+static Booleen u_vue_entree(const Interface_widget *iw)
+{
+  int i, j ;
+  Triplet v ;
+  Booleen un_non_deplacable, un_sous_objet ;
+  Vue *vue ;
+  int bouton ;
+
+  vue          = iw->objet                                       ;
+  Gl_start(&vue->gl) ;
+  vue->nb      = m_trouve_objet( vue, iw->x, iw->y, vue->designes) ;
+
+  if ( vue->bouton_2_et_3_deviennent_1 )
+    bouton = 0 ;
+  else
+    bouton = iw->b ;
+
+
+  if ( vue->nb )
+    {
+      u_annule_triplet(&v) ;
+      u_vue_2d_3d(vue, iw->x, iw->y, &v) ; /* Ajout du 09/01/2001 */
+
+      /*
+       * Traite les TAG en premier si c'est le bouton de gauche
+       */
+      if ( TRACE(vue) )
+	{
+	  eprintf("b=%d\n", bouton) ;
+	  for(i=0;i<vue->nb;i++)
+	    eprintf("objet=%p, sous-tag=%x\n",
+		    vue->designes[i].objet
+		    , vue->designes[i].sous_objet) ;
+	}
+      if ( bouton==0 )
+	{
+	  un_non_deplacable = Faux ;
+	  un_sous_objet = Faux ;
+	  for(i=0;i<vue->nb;i++)
+	    {
+	      if ( vue->designes[i].sous_objet != -1 )
+		{
+		  /*
+		   * 24/12/2000 Ajoute le 1 || pour
+		   * que les TAGS soient aussi gérés même si l'objet
+		   * n'est pas actif
+		   */
+		  if ( 1 || ACTIF(vue->designes[i].objet) )
+		    {
+		      un_sous_objet = Vrai ;
+		      if ( !TAG_DEPLACABLE(vue->designes[i].sous_objet) )
+			un_non_deplacable = Vrai ;
+		    }
+		}
+	    }
+	  if ( TRACE(vue) )
+	    {
+	      eprintf("un_non_deplacable = %d\n", un_non_deplacable) ;
+	    }
+	  if ( un_non_deplacable )
+	    {
+	      for(i=0;i<vue->nb;i++)
+		{
+		  if ( vue->designes[i].sous_objet != -1 )
+		    if ( !TAG_DEPLACABLE(vue->designes[i].sous_objet) )
+		      {
+			for(j=0;j<i;j++)
+			  if ( vue->designes[i].objet==vue->designes[j].objet)
+			    break ;
+			if ( i==0 || j == i )
+			  {
+			    u_deplace_tag(vue, &vue->designes[i],
+					  &v,
+					  iw->x-vue->x__init,
+					  iw->y-vue->y__init);
+			    if ( TRACE(vue) )
+			      eprintf("Déplace objet=%p, sous-tag=%x\n",
+				      vue->designes[i].objet
+				      , vue->designes[i].sous_objet) ;
+			  }
+		      }
+		}
+	      /*
+	       * Le 14/01/2001 c'était return(0)
+	       * Le but est de mélanger tag non déplacable et déplacable
+	       */
+	      return(1) ;
+	    }
+	  if ( un_sous_objet )
+	    return(1) ;
+	  }
+      /*
+       * Si aucun TAG : active/inactive objet ou sous-objet
+       */
+      for(i=0;i<vue->nb;i++)
+	{
+	  if ( bouton==0 )
+	    {
+	      o_bascule_actif(vue->designes[i].objet) ;
+	      evaluation(vue->designes[i].objet) ; /* A cause des OPERATEUR pour remonter le changement */
+	    }
+	  else
+	    o_bascule_sous_actif( vue->designes[i].objet
+				  , vue->designes[i].sous_objet ) ;
+        }
+      return(0) ;
+    }
+  else
+    {
+      return(1) ;
+    }
+}
+
+
+
+
+
+/*
+ * Deplacement de l'oeil
+ */
+
+static void e_rotation(Vue* o, int dir)
+{
+  Triplet axe ;
+
+  switch( dir )
+    {
+    case 0 : axe = u_triplet_fois_flottant(&o->observateur.haut, -1.)   ; break ;
+    case 1 : axe = o->observateur.haut                                  ; break ;
+    case 2 : axe = o->droite                                ; break ;
+    case 3 : axe = u_triplet_fois_flottant(&o->droite, -1.) ; break ;
+    case 4 : axe = u_triplet_fois_flottant(&o->regard, -1.) ; break ;
+    case 5 : axe = o->regard                                ; break ;
+    }
+
+  if ( dir>=2 )
+    o->observateur.haut = u_rotation_triplet(&o->observateur.haut, &axe, o->angle_vue) ;
+
+  if ( dir<4 )
+    {
+      o->regard = u_rotation_triplet(&o->regard, &axe, o->angle_vue) ;
+      o->observateur.point_vise = u_ajoute_triplet(&o->observateur.point_de_vue, &o->regard) ;
+    }
+}
+
+static void e_rotation_origine(Vue* o, int dir)
+{
+  Triplet axe ;
+
+  switch( dir )
+    {
+    case 0 : axe = o->observateur.haut ; break ;
+    case 1 : axe = u_triplet_fois_flottant(&o->observateur.haut, -1.) ; break ;
+    case 2 : axe = u_triplet_fois_flottant(&o->droite, -1.) ; break ;
+    case 3 : axe = o->droite ; break ;
+    }
+  o->regard = u_rotation_triplet(&o->regard, &axe, o->angle_vue) ;
+  o->observateur.point_de_vue = u_soustrait_triplet(&o->observateur.point_vise, &o->regard) ;
+  if ( dir<2 )
+    {
+      o->droite = u_rotation_triplet(&o->droite, &axe, o->angle_vue) ;
+      o->observateur.haut = u_pv_triplet(&o->droite, &o->regard) ;
+    }
+  else
+    {
+      o->observateur.haut = u_rotation_triplet(&o->observateur.haut, &axe, o->angle_vue) ;
+      o->droite = u_pv_triplet(&o->regard, &o->observateur.haut) ;
+    }
+
+  o->droite = u_normalise_triplet(&o->droite) ;
+  o->observateur.haut = u_normalise_triplet(&o->observateur.haut) ;
+}
+/*
+ *
+ */
+
+static void e_deplace(Vue *o, int dire)
+{
+  Triplet regard, dir, haut ;
+
+  if ( !o->b_persp )
+    {
+      if ( dire == 5 )
+	{
+	  o->observateur.focale += o->pas_vue ;
+	  return ;
+	}
+      if ( dire == 4 )
+	{
+	  o->observateur.focale -= o->pas_vue ;
+	  return ;
+	}
+    }
+
+  o->regard = u_normalise_triplet(&o->regard) ;
+  o->droite = u_normalise_triplet(&o->droite) ;
+  regard = u_triplet_fois_flottant(&o->regard, o->pas_vue) ;
+  haut = u_triplet_fois_flottant(&o->observateur.haut, o->pas_vue) ;
+
+  switch( dire )
+    {
+    case 0 : dir = u_triplet_fois_flottant(&o->droite,  o->pas_vue) ; break ;
+    case 1 : dir = u_triplet_fois_flottant(&o->droite, -o->pas_vue) ; break ;
+    case 2 : dir = haut                                         ; break ;
+    case 3 : dir = u_triplet_fois_flottant(&haut, -1.)          ; break ;
+    case 4 : dir = regard                                       ; break ;
+    case 5 : dir = u_triplet_fois_flottant(&regard, -1.)        ; break ;
+    }
+
+  o->observateur.point_de_vue = u_ajoute_triplet( &o->observateur.point_de_vue, &dir) ;
+
+  if ( dire!=4 && dire!=5 )
+    o->observateur.point_vise = u_ajoute_triplet( &o->observateur.point_vise, &dir) ;
+}
+
+static void e_reinit_vue(Vue *o, int dire)
+{
+  static const struct
+  {
+    char *titre ;
+    Booleen persp ;
+    Triplet point_de_vue, haut ;
+    Flottant focale ;
+  } t[] =
+    {
+      {"Vue Perspective", Vrai, {4,4,4}, {0,0,1}, 1 },
+      {"Vue X"          , Faux, {4,0,0}, {0,0,1}, 4 },
+      {"Vue Y"          , Faux, {0,4,0}, {0,0,1}, 4 },
+      {"Vue Z"          , Faux, {0,0,4}, {0,1,0}, 4 },
+    } ;
+  
+  o->b_persp = t[dire].persp ;
+  o->observateur.point_de_vue = t[dire].point_de_vue ;
+  o->observateur.haut = t[dire].haut ;
+  o->observateur.focale = t[dire].focale ;
+  u_annule_triplet(&o->observateur.point_vise) ;  
+  c_sauve(o, "titre", t[dire].titre) ;
+
+  o->b_grille = Vrai ;
+  o->b_repere = Vrai ;
+}
+
+#define TOUCHE(S) ( strncmp(S, v+2, strlen(S)) == 0 )
+
+static void dump_image(Vue *o, const Champ *ch, const char *v) ;
+
+static Booleen menu_observateur(const Interface_widget *iw)
+{
+  static const struct
+  {
+    void (*fct)(Vue*o,int dir) ;
+    int dir ;
+    char *arg ;
+  } t[] =
+    {
+      { e_deplace ,0 }, { e_deplace ,1 }, { e_deplace ,2 },{ e_deplace ,3 },
+      { e_rotation,0 }, { e_rotation,1 }, { e_rotation,2 },{ e_rotation,3 },
+      { e_rotation,5 }, { e_rotation,4 }, { e_deplace ,4 },{ e_deplace ,5 },
+      { e_rotation_origine ,0 }, { e_rotation_origine ,1 },
+      { e_rotation_origine ,2 },{ e_rotation_origine ,3 },
+      { e_reinit_vue, 0 },{ e_reinit_vue, 1 },
+      { e_reinit_vue, 2 },{ e_reinit_vue, 3 },
+      { (void (*)(Vue*,int))dump_image, -1, "1 1"},
+      { (void (*)(Vue*,int))dump_image, -1, "2 2"},
+      { (void (*)(Vue*,int))dump_image, -1, "2 1"},
+      { (void (*)(Vue*,int))dump_image, -1, "4 4"},
+      { (void (*)(Vue*,int))dump_image, -1, "4 2"},
+      { (void (*)(Vue*,int))dump_image, -1, "8 4"},
+      { (void (*)(Vue*,int))dump_image, -1, "8 2"},
+      { (void (*)(Vue*,int))dump_image, -1, "16 2"},
+    } ;
+
+  Vue *o ;
+  int i ;
+  char *arg ;
+
+  o = iw->objet ;
+  i = t[T(Menu, o, iw->ch).index].dir ;
+  arg = t[T(Menu, o, iw->ch).index].arg ;
+   
+  if ( i >= 0 )
+    (*t[T(Menu, o, iw->ch).index].fct)(o, i) ;
+  else
+    {
+      (*(void (*)(void*,const Champ*, const char*))t[T(Menu, o, iw->ch).index].fct)(o, iw->ch, arg) ;
+    }
+  return(0) ;
+}
+
+static void clavier(const Interface_widget *iw)
+{
+  Vue *vue ;
+  char *t ;
+  const char *p, *v ;
+  Triplet pt ;
+  int x, y ;
+  void *o ;
+
+  vue = iw->objet ;
+  Gl_start(&vue->gl) ;
+  v = iw->texte ;
+  if ( TRACE(vue) )
+    eprintf("Touche = (%s)\n", v) ;
+  if ( v[1] == ' ' )
+    {
+      /*
+       * Pas une touche standard : 123..abc..AB..,;
+       * Donc F1, Left, ...
+       * On intercepte seulement celle qui nous intéressent
+       * Le reste remonte au modeleur.
+       */
+      switch( v[0] )
+        {
+        case '0':
+          if ( TOUCHE("Right") ) e_deplace(vue, 0) ; else
+            if ( TOUCHE("Left") ) e_deplace(vue, 1) ; else
+              if ( TOUCHE("Up") ) e_deplace(vue, 2) ; else      
+                if ( TOUCHE("Down") ) e_deplace(vue, 3) ; else
+                  break ;
+          return ;
+        case '1':
+          if ( TOUCHE("Right") ) e_rotation(vue, 0) ; else
+            if ( TOUCHE("Left") ) e_rotation(vue, 1) ; else
+              if ( TOUCHE("Up") ) e_rotation(vue, 2) ; else     
+                if ( TOUCHE("Down") ) e_rotation(vue, 3) ; else
+                  break ;
+          return ;
+        case '2':
+          if ( TOUCHE("Right") ) e_rotation(vue, 5) ; else
+            if ( TOUCHE("Left") ) e_rotation(vue, 4) ; else
+              if ( TOUCHE("Up") ) e_deplace(vue, 4) ; else      
+                if ( TOUCHE("Down") ) e_deplace(vue, 5) ; else
+                  break ;
+          return ;
+        case '3':
+          if ( TOUCHE("Right") ) e_rotation_origine(vue, 0) ; else
+            if ( TOUCHE("Left") ) e_rotation_origine(vue, 1) ; else
+              if ( TOUCHE("Up") ) e_rotation_origine(vue, 2) ; else     
+                if ( TOUCHE("Down") ) e_rotation_origine(vue, 3) ; else
+                  break ;
+          return ;
+        }
+      c_sauve( FILS(u_racine(vue),0), "u_ajoute_touche", v) ;
+      return ;
+    }
+
+  p = v + strlen(v) - 1 ;
+  while( *p != ' ' ) p-- ;
+  p-- ;
+  while( *p != ' ' ) p-- ;
+  sscanf(p, "%d%d", &x, &y) ;
+  
+  u_vue_2d_3d(vue, x, y, &pt) ;
+
+  ALLOUER(t, strlen(v)+200) ;
+  sprintf(t
+	  , "%s %d %s!"
+	  , v
+	  , numero_mauvaise_coordonnee(vue)
+	  , triplet_vers_char(&pt)
+	  ) ;
+
+  /*
+   * Trouve l'objet à qui filer la chaine de caractères
+   */
+  for(o=vue; o!=u_modele(o) && !EST_OPERATEUR(o) ; )
+    o = l_element( OBJET(o)->parent, 0) ;
+
+  c_sauve( o, "u_ajoute_touche", t) ;
+
+  free(t) ;
+}
+
+/*
+ *
+ */
+
+static const char * vue_aide(const Interface_widget *iw)
+{
+  static Chaine s ;
+  int i, j ;
+  void *o ;
+  const char *v ;
+  const Champ *ch ;
+  Vue *vue ;
+
+  vue = iw->objet ;
+  if ( vue->bouton_2_et_3_deviennent_1 )
+    return( "" ) ;
+
+
+  Gl_start(&vue->gl) ;
+
+
+  s_efface(&s) ;
+
+  vue->nb = m_trouve_objet( vue, iw->x, iw->y, vue->designes) ;
+
+  if ( TRACE(vue) )
+    eprintf("Début aide sur vue nb=%d\n", vue->nb) ;
+  if ( vue->nb )
+    for(i=0;i<vue->nb;i++)
+      {
+	o = vue->designes[i].objet ;
+	for(j=i+1;j<vue->nb;j++)
+	  if ( o == vue->designes[j].objet )
+	    break ;
+	if ( j == vue->nb )
+	  {
+	    s_printf(&s,"----------- %s ------------\n",
+		     OBJET(o)->classe->nom) ;
+	    POUR_LES_CHAMPS_CLASSE
+	      (o, ch,
+	       {
+		 if ( AFFICHE(ch) )
+		   {
+		     v = c_recupere_ici_sans_copie(o, ch) ;
+		     if ( v[0] )
+		       s_printf(&s, "%17s ====> %s\n", ch->nom_champ, v) ;
+		   }
+	       }
+	       ) ;
+	    for(j=0;j<=i;j++)
+	      if ( o == vue->designes[j].objet
+		   && vue->designes[j].sous_objet!=-1 )
+		{
+		  ch = trouve_tag(o, vue->designes[j].sous_objet) ;
+		  s_printf(&s, "TAG 0x%x = %s\n",
+			   vue->designes[j].sous_objet,
+			   ch ? c_recupere_ici_sans_copie(o, ch) : "Pas de valeur"
+			   ) ;
+		}
+	  }
+      }
+  else
+    {
+      if ( TRACE(vue) )
+	eprintf("u_aide_champ\n") ;
+      s_strcat(&s, u_aide_champ(iw->objet, iw->ch)) ;
+    }
+
+  s_printf(&s,
+	   "\nTemps mis pour le dernier affichage = %g seconde\n"
+	   "Soit %g images par seconde.\n"
+	   ,vue->temps_en_clockticks/(float)CLK_TCK
+	   ,CLK_TCK/(float)vue->temps_en_clockticks
+	   ) ;
+
+  s_printf(&s, "GL Vendor = %s\n", glGetString(GL_VENDOR)) ;
+  s_printf(&s, "GL Renderer = %s\n", glGetString(GL_RENDERER)) ;
+  s_printf(&s, "GL Version = %s\n", glGetString(GL_VERSION)) ;
+
+  if ( TRACE(vue) )
+    eprintf("Fin aide sur vue\n") ;
+
+  /*  s_printf(&s, "\nFenêtre GL %d/%d = %g\n", vue->gl.lar, vue->gl.hau, vue->ratio); */
+
+  return(s_char(&s)) ;
+}
+
+/*
+ *
+ */
+
+struct observateur
+{
+  t_observateur observateur ;
+} ;
+
+CLASSE(observateur, struct observateur,
+       MENU("Divers/Observateur")
+       BULLE_D_AIDE(
+		    "Les champs ont la même signification\n"
+		    "que dans l'objet `vue'.\n"
+		    "\n"
+		    "En attendant l'interface graphique,\n"
+		    "vous pouvez utilisez les touche 1,2,3,4\n"
+		    "pour déplacer interactivement l'observateur\n"
+		    "dans l'espace.\n"
+		    "\n"
+		    "Vous pouvez paramétrer l'observateur par une\n"
+		    "vue, dans ce cas le déplacement de l'observateur\n"
+		    "change l'observateur de la vue!.\n"
+		    )
+       EVENEMENT("OB")
+       CHAMP(observateur, NOM("camera") L_observateur)
+       Edite Sauve Extrait Init3d
+       CHAMP(observateur.point_de_vue, L_point3   DEFAUT("1 0 0"))
+       CHAMP(observateur.point_vise  , L_point3   DEFAUT("0 0 0"))
+       CHAMP(observateur.haut        , L_point3   DEFAUT("0 0 1"))      
+       CHAMP(observateur.focale      , L_flottant DEFAUT("1"))
+       CHAMP(observateur.ratio       , L_flottant DEFAUT("1"))
+)
+
+struct observateur_repere
+{
+  t_observateur observateur ;
+  Transfo t ;
+} ;
+
+static void changement_observateur_repere(struct observateur_repere *o)
+{
+  Triplet pt ;
+  /*
+  if ( CREATION(o) )
+    return ;
+  */
+  if ( FILS_CHANGE(o) )
+    {
+      o->observateur.point_de_vue = o->t.origine                              ;
+      o->observateur.point_vise   = u_ajoute_triplet(&o->t.origine, &o->t.v1) ;
+      o->observateur.haut         = o->t.v3                                   ;
+      o->observateur.focale       = u_norme_triplet(&o->t.v2)
+	/ u_norme_triplet(&o->t.v1)     ;
+    }
+  else
+    if ( CHAMP_CHANGE(o, observateur) )
+      {
+	o->t.origine = o->observateur.point_de_vue ;
+	o->t.v1 = u_soustrait_triplet(&o->observateur.point_vise,
+				      &o->observateur.point_de_vue) ;
+	o->t.v3 = o->observateur.haut ;
+	pt = u_pv_triplet(&o->t.v3, &o->t.v1) ;
+	pt = u_normalise_triplet(&pt) ;
+	o->t.v2 = u_triplet_fois_flottant(&pt,
+					  o->observateur.focale
+					  *u_norme_triplet(&o->t.v1)) ;
+      }
+}
+
+CLASSE(observateur_repere, struct observateur_repere,
+       SUR_CLASSE("observateur") HERITE_PAS_DES_CHAMPS
+       BULLE_D_AIDE(
+		    "Transformation d'un repère en un observateur\n"
+		    )
+       CHAMP(observateur, NOM("camera") L_observateur Edite TE_HAUTEUR(100))
+       CHAMP(t, L_transfo Extrait Edite Obligatoire)
+       CHANGEMENT(changement_observateur_repere)
+)
+
+/*
+ *
+ */
+     /*
+static void offscreen(int quoi)
+{
+  static OSMesaContext osmc ;
+
+  if ( quoi == 0 )
+    {
+      osmc = OSMesaCreateContext(OSMESA_RGBA, NULL) ;
+      OSMesaMakeCurrent(osmc, 
+    }
+}
+*/
+
+
+#if 0
+#define EPRINTF eprintf
+#else
+#define EPRINTF if(0) eprintf
+#endif
+
+static void dump_image_reel(Vue *o, int zoomin, int zoomout,FILE *f)
+{
+  unsigned char *image, *p ;
+  Interface_widget iw ;
+  int i, j, x, y, r, v, b, largeur, decalage, nouveau_decalage ;
+
+  Gl_start(&o->gl) ;
+  Gl_stop(&o->gl) ;
+  o->mosaicf = zoomin ;
+  largeur = o->mosaicf * o->gl.lar * 3 ;
+  ALLOUER(image, largeur*(o->gl.hau+zoomout)) ;
+  glPixelStorei(GL_PACK_ALIGNMENT, 1) ;
+  glPixelStorei(GL_PACK_ROW_LENGTH, o->mosaicf*o->gl.lar) ;
+  iw.objet = o ;
+
+  glPushAttrib(GL_LINE_BIT|GL_POINT_BIT) ;
+  u_multiplie_epaisseur_ligne(o->mosaicf) ;
+  u_multiplie_taille_point(o->mosaicf) ;
+
+  fprintf(f, "P6\n%d %d\n255\n"
+	  , (o->mosaicf*o->gl.lar)/zoomout
+	  , (o->mosaicf*o->gl.hau)/zoomout
+	  ) ;
+  EPRINTF("hauteur image generee=%d hauteur fenetre %d\n",
+	  (o->mosaicf*o->gl.hau)/zoomout, o->gl.hau) ;
+
+  decalage = 0 ;
+  for(o->mosaicy = o->mosaicf-1; o->mosaicy>=0 ; o->mosaicy--)
+    {
+      for(o->mosaicx = 0 ; o->mosaicx<o->mosaicf; o->mosaicx++)
+	{
+	  u_vue_trace(&iw) ;
+	  
+	  glReadPixels(0, 0, o->gl.lar, o->gl.hau, GL_RGB, GL_UNSIGNED_BYTE,
+		       image + o->mosaicx*3*o->gl.lar
+		       ) ;
+	}
+      nouveau_decalage = (o->gl.hau + decalage)%zoomout ;
+      EPRINTF("Y=%d decalage=%d nouveau+decalage=%d zoomout=%d\n"
+	      , o->mosaicy, decalage, nouveau_decalage, zoomout);
+
+      for(j=o->gl.hau+decalage-zoomout; j>=nouveau_decalage; j -= zoomout)
+	for(i=0; i<o->gl.lar*o->mosaicf; i += zoomout)
+	  {
+	    p = image + 3*i + j*largeur ;
+	    if ( zoomout != zoomin )
+	      {
+		r = v = b = 0 ;
+		for(y=0; y<zoomout; y++)
+		  {
+		    for(x=0; x<zoomout; x++)
+		      {
+			r += *p++ ;
+			v += *p++ ;
+			b += *p++ ;
+		      }
+		    p += -zoomout + largeur ;
+		  }
+		putc(r/zoomout/zoomout, f) ;
+		putc(v/zoomout/zoomout, f) ;
+		putc(b/zoomout/zoomout, f) ;
+	      }
+	    else
+	      {
+		putc(*p++, f) ;
+		putc(*p++, f) ;
+		putc(*p++, f) ;
+	      }
+	  }
+      if ( ((o->gl.hau+decalage-zoomout-nouveau_decalage)%zoomout) != 0 )
+	ICI ;
+      EPRINTF("genere %d lignes\n"
+	      , (o->gl.hau+decalage-zoomout-nouveau_decalage)/zoomout) ;
+      memcpy(image + o->gl.hau*largeur, image, nouveau_decalage*largeur) ;
+      decalage = nouveau_decalage ;
+    }
+
+  glPopAttrib() ;
+
+  o->mosaicf = 0 ;
+  free(image) ;
+  glPixelStorei(GL_PACK_ROW_LENGTH, 0) ;
+}
+
+#undef EPRINTF
+
+void calcul_nom_fichier(Vue *o, NomFichier fichier)
+  {
+    int i ;
+    sprintf(fichier, "%s_%s.ppm"
+	    , basename((char*)c_recupere_sans_copie(u_modele(o),"nom_modele"))
+	    , o->titre) ;
+    for(i=0; fichier[i]; i++)
+      if ( fichier[i]==' ' )
+	fichier[i] = '_' ;
+  }
+
+static void dump_image(Vue *o, const Champ *ch, const char *vv)
+{
+  int zoomin, zoomout ;
+  NomFichier fichier, commande ;
+  FILE *f ;
+
+  calcul_nom_fichier(o, fichier) ;
+  f = fopen(fichier, "w") ;
+  if ( f==NULL )
+    {
+      perror(fichier) ;
+      return ;
+    }
+  sscanf(vv, "%d%d", &zoomin, &zoomout) ;
+  if ( zoomin < 1 )
+    zoomin = 1 ;
+  if ( zoomout < 1 )
+    zoomout = 1 ;
+  dump_image_reel(o, zoomin, zoomout, f) ;
+  fclose(f) ;
+  if ( !((Interface*)u_racine(o))->http_ecrit )
+    {
+      /*
+       * On n'affiche que dans le cas interactif
+       */
+      sprintf(commande, "exec xv '%s' &", fichier) ;
+      system(commande) ;
+    }
+}
+
+static void print_image(Vue *o, const Champ *ch, const char *vv)
+{
+  int zoomin, zoomout ;
+  FILE *f ;
+  NomFichier commande ;
+  int x, y, l, h ;
+
+  zoomin = zoomout = 1 ;
+  sscanf(vv, "%d%d", &zoomin, &zoomout) ;
+
+  x = 0 ;
+  y = 0 ;
+  l = (zoomin*o->gl.lar)/zoomout ;
+  h = (zoomin*o->gl.hau)/zoomout ;
+  sscanf(vv, "%*d%*d%d%d%d%d", &x, &y, &l, &h) ;
+
+  sprintf(commande, "print_image %d %d %d %d", x, y, l, h) ;
+  f = popen(commande, "w") ;
+  dump_image_reel(o, zoomin, zoomout, f) ;
+  pclose(f) ;
+}
+
+
+CLASSE(vue, Vue,
+       MENU("Divers/Vue")
+       EVENEMENT("0v0u")
+       AFFICHE_CHAMP_CLASSE(Faux)
+       CHAMP(observateur , L_observateur Extrait /*OPTION(O_Edite)*/) /* 2/2/2000 Met Extrait */
+       Edite Sauve
+       CHAMP(titre    , L_titre InitChaine DEFAUT("vue_utilisateur"))
+       DEBUT_BOITE(HORIZONTALE BoiteHomogene)
+       CHAMP(pas_vue     , LABEL("Pas")    L_flottant DEFAUT(".1")
+	     TE_LARGEUR(30)
+             BULLE_D_AIDE
+             ("Indique la distance que vous parcourez lorsque\n"
+              "l'observateur se déplace.\n"
+              )
+             )
+       CHAMP(angle_vue   , LABEL("DØ")     L_flottant DEFAUT(".1")
+	     TE_LARGEUR(30)
+             BULLE_D_AIDE
+             ("Indique le changement d'angle de vue (en radian)\n"
+              "lorsque l'observateur tourne ou penche la tête.\n"
+              )
+             )
+       CHAMP(observateur.focale  , NOM("taille_vue") LABEL("Focale") L_flottant DEFAUT("1")
+	     TE_LARGEUR(30)
+             BULLE_D_AIDE
+             ("Cette valeur représente l'angulaire\n"
+              "si votre vue est avec perspective.\n"
+              "Dans le dessin suivant : `o' est l'oeil\n"
+              "La focale est égale à b/a\n"
+              "\n"
+              "         /| ^    \n"
+              "        / | |    \n"
+              "       /  | |    \n"
+              "      /   | |    \n"
+              "     /    | |b   \n"
+              "    /     | |    \n"
+              "   /      | |    \n"
+              "  /       | |    \n"
+              " o--------+ v    \n"
+              "  <------->      \n"
+              "      a\n"
+              "\n"
+	      "Sans perspective, c'est la hauteur de ce qui est\n"
+	      "vu sur l'écran\n"
+              )
+             )
+       CHAMP(dts         , LABEL("Pix")    L_flottant DEFAUT("6")
+	     TE_LARGEUR(20)
+             BULLE_D_AIDE
+             ("Lorsque vous cliquez dans la vue, les objets qui\n"
+              "se trouvent à une distance pixel inférieure à celle\n"
+              "indiquée voit leur sélection changer d'état.\n"
+              )
+             )
+       FIN_BOITE
+       DEBUT_BOITE(HORIZONTALE BoiteHomogene)
+       NonLabel
+       CHAMP(observateur.point_de_vue, NOM("point_de_vue")                L_point3   DEFAUT("1 1 1")
+             BULLE_D_AIDE
+             ("La position de l'observateur.\n")
+             )
+       CHAMP(observateur.point_vise  , NOM("point_vise")                 L_point3   DEFAUT("0 0 0")
+             BULLE_D_AIDE
+             ("Le point regardé (ou point visé).\n")
+             )
+       CHAMP(observateur.haut        , NOM("haut")                L_point3   DEFAUT("0 0 1")
+             BULLE_D_AIDE
+             ("Le vecteur indique le haut pour l'observateur.\n"
+              "Pour avoir l'axe Z vers le haut : (0 0 1)\n")
+             )
+       FIN_BOITE
+       Label
+       /*
+       CHAMP(filtre      , NonLabel        L_chaine   DEFAUT("*")
+             BULLE_D_AIDE
+             ("Non utilisé pour l'instant : Filtre/calque\n")
+              )
+       */
+       DEBUT_BOITE(HORIZONTALE BoiteHomogene NOM("vue_ligne"))
+       CHAMP(b_persp     , LABEL("Persp")  L_booleen  DEFAUT("1")
+             BULLE_D_AIDE
+             ("Choix entre la projection perspective et orthogonale.\n")
+             )
+       CHAMP(b_entier    , LABEL("Entier") L_booleen  DEFAUT("0")
+             BULLE_D_AIDE
+             ("Si actif, alors les coordonnées saisies sont des\n"
+              "valeur entières en non flottantes.\n")
+             )
+       CHAMP(b_grille    , LABEL("Grille") L_booleen  DEFAUT("1")
+             BULLE_D_AIDE
+             ("Faire apparaître ou non la grille\n")
+             )
+       CHAMP(b_repere    , LABEL("Repère") L_booleen  DEFAUT("1")
+             BULLE_D_AIDE
+             ("Faire apparaître ou non le repère\n")
+             )
+       CHAMP(b_local     , LABEL("Local")  L_booleen  DEFAUT("0")
+             BULLE_D_AIDE
+             ("Changement d'algo d'affichage de GL")
+             )
+       CHAMP(b_stereo     , LABEL("Stéréo")  L_booleen  DEFAUT("0")
+             BULLE_D_AIDE
+             ("Affichage stéréo")
+             )
+       CHAMP(menu_qualite , L_option_menu
+	     BULLE_D_AIDE("Qualité d'affichage dans cette vue")
+	     LABEL("Qualité")
+             TE_TEXTE(
+		      "2: Inacceptable\n"
+		      "3: Très mauvaise\n"
+		      "4: Mauvaise\n"
+		      "5: Normale\n"
+		      "6: Bonne\n"
+		      "7: Très bonne\n"
+		      "8: Parfaite\n"
+                      )
+	     DEFAUT("5: Normale")
+	     NonLabel
+             )
+       CHAMP(menu_observateur , L_commande_menu(menu_observateur)
+	     LABEL("Observ")
+             /*
+              * Ne pas changer l'ordre du menu
+              */
+             TE_TEXTE(
+                      "va à droite                 <Right>\n"
+                      "va à gauche                 <Left>\n"
+                      "va en haut                  <Up>\n"
+                      "va en bas                   <Down>\n"
+                      "regarde à droite            Shift<Right>\n"
+                      "regarde à gauche            Shift<Left>\n"
+                      "regarde en haut             Shift<Up>\n"
+                      "regarde en bas              Shift<Down>\n"
+                      "penche à droite             Control<Right>\n"
+                      "penche à gauche             Control<Left>\n"
+                      "avance                      Control<Up>\n"
+                      "recule                      Control<Down>\n"
+                      "va à droite du point visé   Shift-Control<Right>\n"
+                      "va à gauche du point visé   Shift-Control<Left>\n"
+                      "va au dessus du point visé  Shift-Control<Up>\n"
+                      "va au dessous du point visé Shift-Control<Down>\n"
+		      "Devient vue Perspective\n"
+		      "Devient vue X\n"
+		      "Devient vue Y\n"
+		      "Devient vue Z\n"
+		      "Dump image fois 1 div 1\n"
+		      "Dump image fois 2 div 2\n"
+		      "Dump image fois 2 div 1\n"
+		      "Dump image fois 4 div 4\n"
+		      "Dump image fois 4 div 2\n"
+		      "Dump image fois 8 div 4\n"
+		      "Dump image fois 8 div 2\n"
+		      "Dump image fois 16 div 2\n"
+                      )
+             )
+       CHAMP(b_local  , LABEL("Applique") NOM("ooook") L_bouton(applique_vue) 
+             BULLE_D_AIDE
+             ("Appuyez ici pour valider les modifications que vous\n"
+              "avez fait sur les champs.\n"
+	      )
+             )
+       FIN_BOITE
+       CHAMP(gl,
+	     L_gl
+	     TE_ENTREE(u_vue_entree)
+	     TE_ECRIT(u_vue_trace)
+	     TE_MOUVEMENT(u_vue_mouvement)
+             TE_CLAVIER(clavier) 
+	     TE_AIDE(vue_aide)
+       BULLE_D_AIDE("Interface 3D OpenGL pour NanoÉdit.\n"
+                    "S'il n'a pas de fils, le contenu du modèle est\n"
+                    "affiché sinon seul les fils le sont.\n"
+                    "\n"
+                    "On clique avec le bouton de gauche dans\n"
+                    "la zone graphique pour activer/inactiver\n"
+                    "les objets graphiques.\n"
+		    "Si l'on clique et déplace :\n"
+		    "  - Sur rien : rotation ou translation de la vue.\n"
+		    "  - Sur un tag : déplace le tag.\n"
+		    "\n"
+		    "Le bouton du milieu permet d'activer/inactiver\n"
+		    "un sous-objet d'un objet complexe.\n"
+		    "\n"
+		    "Le bouton de droite donne le contenu\n"
+		    "des objets pointés.\n"
+                    )
+	     )
+       CHAMP_VIRTUEL( L_prevenir_si_modele_change(me_prevenir))
+       CHAMP(bouton_2_et_3_deviennent_1, L_booleen NonAffiche DEFAUT("0"))
+       CHAMP(deplacement_observateur_a_la_souris, L_booleen NonAffiche DEFAUT("1"))
+
+       CHANGEMENT(changement_vue)
+       PAQUET(NB_ACTIFS)
+       CHAMP(geometrie   , L_geometrie Cree Modifiable DEFAUT("0 0 400 400"))
+       CHAMP(couleur_fond, L_couleur P_triplet DEFAUT("0 0 0") NonAffiche Sauve)
+       CHAMP_VIRTUEL(NOM("dump_image") L_fonction(dump_image))
+       CHAMP_VIRTUEL(NOM("print_image") L_fonction(print_image))
+
+       ajoute_crochet_changement(destruction_liste_objet) ;
+       ajoute_crochet_destruction(destruction_liste_objet) ;
+       )
+
+static void affiche_vue_incluse(Vue_incluse *o, const Champ *c
+				, const char *qualite)
+{
+  Triplet pt[4] ;
+
+  o->vue.ratio = (o->xmax-o->xmin)/(o->ymax-o->ymin) ;
+
+  if ( globale_etat_courant.designable && !o->affiche_contenu )
+    {
+      u_2d_3d(o->xmin, o->ymin, &pt[0]) ;
+      u_2d_3d(o->xmax, o->ymin, &pt[1]) ;
+      u_2d_3d(o->xmax, o->ymax, &pt[2]) ;
+      u_2d_3d(o->xmin, o->ymax, &pt[3]) ;
+
+      glBegin(GL_QUADS) ;
+      t_triplet(&pt[0]) ;
+      t_triplet(&pt[1]) ;
+      t_triplet(&pt[2]) ;
+      t_triplet(&pt[3]) ;
+      glEnd() ;      
+      return ;
+    }
+
+  glPushAttrib(GL_VIEWPORT_BIT|GL_CURRENT_BIT) ;
+  glViewport(o->xmin, o->ymin, o->xmax-o->xmin, o->ymax-o->ymin) ;
+
+  glMatrixMode(GL_PROJECTION) ;
+  glPushMatrix() ;
+  glLoadIdentity() ;
+  glMatrixMode(GL_MODELVIEW) ;
+  glPushMatrix() ;
+  glLoadIdentity() ;
+
+  if ( o->efface )
+    {
+      glDepthFunc(GL_ALWAYS) ;
+      glDepthRange(1,1) ;
+      glColor3f(o->vue.couleur_fond.x
+		,o->vue.couleur_fond.y
+		,o->vue.couleur_fond.z
+		) ;
+      glBegin(GL_QUADS) ;
+      glVertex2f(-1,-1) ;
+      glVertex2f(1,-1) ;
+      glVertex2f(1,1) ;
+      glVertex2f(-1,1) ;
+      glEnd() ;
+      glDepthRange(-1,1) ;
+      glDepthFunc(GL_LESS) ;
+    }
+
+  eprintf("Affiche Vue incluse\n") ;
+  u_vue_trace_reel(&o->vue) ;
+
+  glPopMatrix() ;
+  glMatrixMode(GL_PROJECTION) ;
+  glPopMatrix() ;
+  glMatrixMode(GL_MODELVIEW) ;
+
+  glPopAttrib() ;
+}
+
+
+
+CLASSE(vue_incluse, Vue_incluse,
+       DEBUT_BOITE(HORIZONTALE BoiteHomogene)
+       CHAMP(xmin,DEFAUT("100")L_nombre P_entier Edite Sauve Init3d)
+       CHAMP(xmax,DEFAUT("200")L_nombre P_entier Edite Sauve Init3d)
+       CHAMP(ymin,DEFAUT("100")L_nombre P_entier Edite Sauve Init3d)
+       CHAMP(ymax,DEFAUT("200")L_nombre P_entier Edite Sauve Init3d)
+       CHAMP(efface, L_booleen DEFAUT("0"))
+       FIN_BOITE
+       SUR_CLASSE("vue")
+       MENU("Divers/Vue Incluse")
+       EVENEMENT("VI")
+       CHAMP_VIRTUEL(L_affiche_gl(affiche_vue_incluse)
+		     AFFICHAGE(Toujours_different))
+
+       CHAMP_VIRTUEL(Obligatoire L_void)
+       )

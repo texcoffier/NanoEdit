@@ -1,0 +1,8 @@
+\rule{0mm}{0mm}\#define\ STRUCTURE1(NOM,\ TYPE,\ CHAMP,\ SUITE...)\ declare\_\#\#NOM\#\#\_\#\#CHAMP()\ \{\ \}\ STRUCTURE1!(NOM,\ SUITE)\ TYPE\ CHAMP\ ;\ \ \\
+\rule{0mm}{0mm}\#define\ STRUCTURE(NOM,\ SUITE...)\ declare\_\#\#NOM()\ \{\ \}\ struct\ NOM\ \{\ STRUCTURE1(NOM,\ SUITE)\ \}\ ;\ \ \\
+\rule{0mm}{0mm}\ \\
+\rule{0mm}{0mm}\ STRUCTURE(ma\_structure,\ \\
+\rule{0mm}{0mm}	\ \ \ int,\ toto,\ \\
+\rule{0mm}{0mm}	\ \ \ float,\ titi\ \\
+\rule{0mm}{0mm}\ \ \ )\ \\
+\ 

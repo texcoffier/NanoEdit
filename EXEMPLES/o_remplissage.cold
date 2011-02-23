@@ -1,0 +1,142 @@
+#include "o_classe.h"
+#include "c_champ.h"
+#include "o_objet.h"
+#include "t_graphe.h"
+#include "t_liste.h"
+#include "t_void.h"
+#include "t_base.h"
+#include "t_widget.h"
+#include "m_modele.h"
+#include "w_fenetre.h"
+
+struct moi
+{
+  struct objet objet ;
+  struct t_graphe g ;		/* Le graphe à innonder */
+  struct l_liste *pile ;	/* La pile pour l'algo stupide */
+  int    col ;			/* Couleur de l'étape courante */
+  int    taille_pile ;		/* Taille courante de la pile */
+  int    prend_base ;		/* Si vrai prend base au lieu de sommet pile */
+} ;
+
+static void u_calcul(struct objet *o, const struct champ *c)
+{
+  int i,j,k ;
+
+  EPRINTF("u_calcul\n") ;
+  
+  if ( l_vide(MOI->pile) )
+    return ;
+
+  /*
+   * Prend le sommet/base de la pile, le colorie/désactive
+   * et active/empile les voisins non encore colorié.
+   */
+
+  MOI->col = 1 + (MOI->col%6) ;
+
+  if ( MOI->prend_base )
+    i = (int)l_enleve_queue(&MOI->pile) ;
+  else
+    i = (int)l_enleve_tete(&MOI->pile) ;
+  MOI->g.noeuds[i].actif   = 0 ;
+  MOI->g.noeuds[i].couleur = MOI->col ;
+  for(j=0;j<MOI->g.noeuds[i].nb_aretes;j++)
+    {
+      k = MOI->g.noeuds[i].aretes[j].noeud ;
+      if ( MOI->g.noeuds[k].couleur==0 && MOI->g.noeuds[k].actif==0 )
+	{
+	  l_ajoute(&MOI->pile, (void*)k) ;
+	  MOI->g.noeuds[k].actif = 1 ;
+	  MOI->g.noeuds[i].aretes[j].couleur = MOI->col ;
+	}
+    }
+  /*
+   * Ceci indique à la fonction changement que
+   * c'est un pas du calcul qui a modifié le graphe
+   * et non l'utilisateur
+   */
+  CHANGEMENT_CHAMP(pile) ;
+  /*
+   * Préviens l'éditeur que le graphe a changé
+   */
+  CHANGEMENT_CHAMP(g) ;
+  /*
+   * Demande à l'éditeur de mettre tout à jour et de sauvegarder
+   */
+  u_change_et_affiche(o) ;
+}
+
+PREPARE_DEFINITION_CHAMPS
+
+static struct champ champs_remplissage[] =
+{
+  /*
+   * Le bouton permettant d'avancer d'un pas de calcul
+   */
+  CHAMP_BOUTON("execute_un_pas_de_calcul",u_calcul),
+  /*
+   * L'utilisateur indique s'il prend le somme ou la base de la pile
+   */
+  CHAMP_BOOLEEN("prend_base_pile_au_lieu_sommet", prend_base, "0"),
+  /*
+   * Les champs suivants sont des informations fournies par le noeud
+   * à l'utilisateur qui doivent être sauvegardées
+   * si l'on veut que le Undo sur l'algorithme fonctionne
+   */
+  {"couleur"       , P_Entier , L_Void  , Affiche|Sauve,CHAMP(col), "7"},
+  {"pile"          , P_Liste  , L_Void  , Affiche|Sauve,CHAMP(pile), ""},
+  {"taille_pile"   , P_Entier , L_Void  , Affiche      ,CHAMP(taille_pile),""},
+  /*
+   * Le graphe sur lequel on fait tourner l'algorithme
+   */
+  {"editeur_graphe", P_Graphe , L_Graphe, Extrait      , CHAMP(g), "", 0},
+  {NULL}
+} ;
+
+static void changement_remplissage(struct objet *o)
+{
+  int i,j ;
+
+  EPRINTF("changement\n") ;
+
+  MOI->taille_pile = l_longueur(MOI->pile) ;
+  /*
+   * Si la pile a changée, cela veut dire que le changement du graphe
+   * est dû à un pas du calcul.
+   * On ne reinitialise donc pas.
+   * Mais si tout change, cela veut que l'on viens de charger le ficher,
+   * il faut donc reinitialiser.
+   * De même, je choisis de ne pas réinitialiser l'algo
+   * si l'on decide de prendre le bas ou le haut de la pile...
+   */
+
+  if ( CHAMP_CHANGE(pile) || CHAMP_CHANGE(prend_base) )
+    return ;
+
+  EPRINTF("initialisation remplissage\n") ;
+
+  /*
+   * Les noeuds de départ sont les noeuds actifs.
+   * Au départ, tous les noeuds et arêtes sont en NOIR (couleur 0)
+   */
+  l_detruit(&MOI->pile) ;	/* Vide la pile */
+  for(i=0;i<MOI->g.nb_noeuds;i++)
+    {
+      if ( MOI->g.noeuds[i].actif )
+	l_ajoute(&MOI->pile, (void*)i) ;
+      MOI->g.noeuds[i].couleur = 0 ;
+      for(j=0;j<MOI->g.noeuds[i].nb_aretes;j++)
+	MOI->g.noeuds[i].aretes[j].couleur = 0 ;
+    }
+  CHANGEMENT_CHAMP(pile) ;
+  CHANGEMENT_CHAMP(g) ;
+}
+
+void init_classe_remplissage(struct classe *c)
+{
+  c->nom              = "remplissage" ;
+  c->taille_structure = sizeof(struct moi) ;
+  c->champs           = champs_remplissage ;
+  c->changement       = changement_remplissage ;
+}

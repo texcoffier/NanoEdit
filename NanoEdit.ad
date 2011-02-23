@@ -1,0 +1,46 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Positionnement et titrage des fenetres
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+NanoEdit.edite*nom_modele*translations: #override <Key>Return:beginning-of-line()
+NanoEdit*help_label.background:white
+NanoEdit*help_label.alignment:alignment_beginning
+NanoEdit*saveUnder: True
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Configuration globales
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+NanoEdit*keyboardFocusPolicy : pointer
+NanoEdit*popup*fontList: -*-*-bold-r-*-*-*-100-*-*-m-*-iso8859-1
+NanoEdit*pulldown*fontList: -*-*-bold-r-*-*-*-100-*-*-m-*-iso8859-1
+NanoEdit*help_label.fontList:-*-*-medium-r-*-*-*-100-*-*-m-*-iso8859-1
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Configuration generiques
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+NanoEdit*shadowThickness: 2
+NanoEdit*fontList: -*-*-medium-r-*-*-*-100-*-*-m-*-iso8859-1
+NanoEdit*background: #CCCCCC
+NanoEdit*resizable: True
+
+NanoEdit*XmPushButton.marginHeight:1
+NanoEdit*XmPushButton.marginWidth:1
+
+NanoEdit*XmText.marginHeight:1
+NanoEdit*XmText.marginWidth:1
+NanoEdit*XmText*background: #AAAAAA
+NanoEdit*XmText*editMode: MULTI_LINE_EDIT
+
+NanoEdit*XmForm.shadowThickness: 0
+NanoEdit*XmForm.horizontalSpacing: 0
+NanoEdit*XmForm.verticalSpacing: 0
+
+NanoEdit*XmToggleButton.background: #EEEEEE
+NanoEdit*XmToggleButton.marginTop:1
+NanoEdit*XmToggleButton.marginBottom:1
+NanoEdit*XmToggleButton.fillOnSelect: True
+NanoEdit*XmToggleButton.indicatorOn: False
+NanoEdit*XmToggleButton.selectColor: #FFFF00
+

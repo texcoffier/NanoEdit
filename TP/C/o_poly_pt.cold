@@ -1,0 +1,59 @@
+/*
+ * Vous devez modifier la fonction "affiche" de ce fichier
+ */
+#include "o_classe.h"		/* Definition des classe */
+#include "o_objet.h"		/* Definition des noeuds */
+#include "c_champ.h"		/* POUR POUVOIR AJOUTER DES CHAMPS */
+#include "u_triplet.h"		/* struct u_triplet, struct u_quadruplet */
+#include "t_base.h"		/* Valeur flottante */
+#include "t_table.h"		/* Structure t_table_triplet */
+#include <GL/gl.h>		/* Pour OpenGL */
+
+struct moi			/* Le nom "moi" est obligatoire */
+{
+  struct objet objet ;		/* Obligatoire */
+  float tmin, tmax ;		/* indique les bornes du parametre */
+  float pas ;			/* Pour incrementer le parametre */
+  struct t_table_triplet points ; /* Table des points */
+} ;
+
+PREPARE_DEFINITION_CHAMPS	/* CETTE LIGNE EST OBLIGATOIRE */
+/*
+ * Ceci permet a l'editeur de connaitre le contenu de
+ * la structure C et ce qu'il doit en faire
+ */
+static struct champ champs[] =
+{
+  {"pas"    ,P_Flottant     ,L_Nombre     ,Edite|Sauve, CHAMP(pas)   ,".1"},
+  {"tmin"   ,P_Flottant     ,L_Nombre     ,Edite|Sauve, CHAMP(tmin)  ,"-6"},
+  {"tmax"   ,P_Flottant     ,L_Nombre     ,Edite|Sauve, CHAMP(tmax)  , "6"},
+  {"points" ,P_Table_triplet,L_Table_point,Extrait    , CHAMP(points),
+   "0 0 0\n1 0 0\n1 1 0\n0 1 0", 0}, /* Par defaut 4 coins du carre unitaire */
+  {NULL}
+} ;
+
+static void affiche(struct objet *o)
+{
+  /*
+   * Affichage du polynome.
+   * Le nombre de points definissant le polynome : MOI->points.nb
+   * Les coordonnees des points                  : MOI->points.table
+   *
+   * L'Exemple affiche une ligne brisee passant par tous les points.
+   */
+  int i ;
+  glBegin(GL_LINE_STRIP) ;
+  for(i=0;i<MOI->points.nb;i++)
+    glVertex3f(MOI->points.table[i].x,
+	       MOI->points.table[i].y,
+	       MOI->points.table[i].z) ;
+  glEnd() ;
+}
+
+void init_classe_poly_pt(struct classe *c)
+{
+  c->taille_structure= sizeof(struct moi); /* Indique la taille */
+  c->nom	     = "poly_pt" ;         /* Nom du noeud */
+  c->champs	     = champs ;            /* Indique les champs */
+  c->affichage       = affiche ;           /* Methode affichant iso_surface */
+}

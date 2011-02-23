@@ -1,0 +1,205 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include "o_classe.h"
+#include "c_champ.h"
+#include "o_objet.h"
+#include <math.h>		/* Pour sin/cos */
+#include "t_base.h"		/* Pour P_Entier, L_Nombre */
+#include "s_string.h"
+#include "t_geometrie.h"
+#include "t_widget.h"
+#include "m_modele.h"
+#include "t_void.h"
+#include "w_fenetre.h"
+#include <stdlib.h>
+
+/*
+ * Pour simplifier l'acces aux point P et Q.
+ * Ceci est malheureusement du au fait
+ * que pour le moment il n'y a pas le triplet d'entier.
+ */
+
+#define X1 (floor(MOI->p.x+.5))
+#define Y1 (floor(MOI->p.y+.5))
+#define X2 (floor(MOI->q.x+.5))
+#define Y2 (floor(MOI->q.y+.5))
+
+
+struct moi
+{
+  struct objet objet ;		/* Obligatoire pour tous les objets */
+  struct u_triplet p ;		/* Point départ */
+  struct u_triplet q ;		/* Point d'arrivée */
+  int i ;			/* Etape du calcul */
+  char *commentaire ;		/* Commentaire de l'étape */
+  /*
+   * Valeurs internes pour Bresenham
+   */
+  Booleen invalide ;
+  int x, y, dx, dy, c, dc1, dc2, i_courant ;
+} ;
+
+/*
+ * Action des boutons de la fenetres d'edition
+ */
+
+static void maj(struct objet *o)
+{
+  CHANGEMENT_CHAMP(i) ;
+  u_change_et_affiche(o) ;
+}
+
+static void u_suivante(struct objet *o, const struct champ *c)
+{
+  MOI->i++ ;
+  maj(o) ;
+}
+
+static void u_precedente(struct objet *o, const struct champ *c)
+{
+  MOI->i-- ;
+  maj(o) ;
+}
+
+/*
+ * Les champs
+ */
+
+PREPARE_DEFINITION_CHAMPS
+
+static struct champ champs[] =
+{
+  CHAMP_BOUTON("etape_suivante",u_suivante),
+  CHAMP_BOUTON("etape_precedente",u_precedente),
+  {"etape"	, P_Entier, L_Nombre, Extrait, CHAMP(i), "0"  ,0},
+  {"depart"	, P_Triplet, L_Point, Extrait, CHAMP(p), "-3 -2",1},
+  {"arrive"	, P_Triplet, L_Point, Extrait, CHAMP(q), "8 5" ,2},
+  {"le_texte"   , P_Chaine, L_Chaine, Affiche, CHAMP(commentaire), ""},
+  {NULL}
+} ;
+
+/*
+ * L'algorithme de Bresenham
+ */
+
+static void bresenham_initialise(struct objet *o)
+{
+  MOI->dx = X2 - X1 ;
+  MOI->dy = Y2 - Y1 ;
+  if ( MOI->dx<0 || MOI->dy<0 || MOI->dx<MOI->dy )
+    MOI->invalide = Vrai ;
+  else
+    MOI->invalide = Faux ;
+  MOI->i_courant = 0 ;
+  MOI->c         = 2*MOI->dy - MOI->dx ;
+  MOI->dc1 	 = 2*MOI->dy ;
+  MOI->dc2 	 = 2*MOI->dy - 2*MOI->dx ;
+  MOI->x 	 = X1 ;
+  MOI->y 	 = Y1 ;
+}
+
+static Booleen bresenham_avance(struct objet *o)
+{
+  if ( MOI->x == X2 )
+    return(Faux) ;
+  if ( MOI->i_courant >= MOI->i )
+    return(Faux) ;
+
+  if ( MOI->c<0 )
+    {
+      MOI->c += MOI->dc1 ;
+    }
+  else
+    {
+      MOI->c += MOI->dc2 ;
+      MOI->y++ ;
+    }
+  MOI->x++ ;
+  MOI->i_courant++ ;
+
+  return(Vrai) ;
+}
+
+/*
+ * Calcul du commentaire
+ */
+
+static void changement(struct objet *o)
+{
+  static struct s_string commentaire ;
+
+  bresenham_initialise(o) ;
+  while( bresenham_avance(o) ) /* Vide */ ;
+
+  s_efface(&commentaire) ;
+
+  if ( MOI->invalide )
+    s_printf(&commentaire, "Le segment doit être dans le premier octant\n") ;
+  else
+    {
+      s_printf(&commentaire
+	       ,"Bresenham, étape %d\n"
+	       "Dernier pixel allumé : (%d,%d)\n"
+	       "Valeur courante de C' : %d\n"
+	       "C'  est %s\n"
+	       "On ajoute %s (%d) à C'\n"
+	       , MOI->i, MOI->x, MOI->y, MOI->c
+	       , MOI->c>=0
+	       ? "positif donc on monte (y++)"
+	       : "négatif donc on ne monte pas (y reste identique)"
+	       , MOI->c>=0
+	       ? "2dy-2dx"
+	       : "2dy"
+	       , MOI->c >=0
+	       ? MOI->dc2
+	       : MOI->dc1
+	       ) ;
+    }
+  if ( MOI->commentaire )
+    free( MOI->commentaire ) ;
+  MOI->commentaire = strdup( s_char(&commentaire) ) ;
+  CHANGEMENT_CHAMP(commentaire) ;
+}
+
+/*
+ * Affichage de la droite
+ */
+
+static void affiche(struct objet *o)
+{
+  /*
+   * Trace le segment de droite
+   */
+  
+  glPushAttrib( GL_CURRENT_BIT ) ; /* Empile la couleur */
+  glBegin(GL_LINES) ;
+  glColor3f(1.,0.,0.) ;
+  glVertex3f(X1, Y1,.001) ;
+  glVertex3f(X2, Y2,.001) ;
+  glEnd() ;
+  glPopAttrib() ;		/* Depile la couleur */
+  /*
+   * Trace la droite pixel par pixel
+   */
+  bresenham_initialise(o) ;
+  if ( MOI->invalide )
+    return ;
+  do
+    {
+      glBegin(GL_QUADS) ;
+      glVertex2f(MOI->x-0.5  , MOI->y-0.5  ) ;
+      glVertex2f(MOI->x+1-0.5, MOI->y-0.5  ) ;
+      glVertex2f(MOI->x+1-0.5, MOI->y+1-0.5) ;
+      glVertex2f(MOI->x-0.5  , MOI->y+1-0.5) ;
+      glEnd() ;
+    }
+  while( bresenham_avance(o) ) ;
+}
+
+void init_classe_trace_droite(struct classe *c)
+{
+  c->nom              = "trace_droite" ;
+  c->taille_structure = sizeof(struct moi) ;
+  c->champs           = champs ;
+  c->affichage        = affiche ;
+  c->changement       = changement ;
+}

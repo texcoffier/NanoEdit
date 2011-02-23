@@ -1,0 +1,134 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include <math.h>
+#include <string.h>
+#include "t_image.h"
+#include "o_objet.h"		/* Car il faut definir un objet */
+#include "t_geometrie.h"
+#include "u_fichier.h"
+
+typedef struct
+{
+  Table_triplet t ;
+  int du, dv, dt ;
+  Image imag ;
+} Tbl ;
+
+#define P(i,j) p[(j)%o->t.nb+o->t.nb*((i)%o->dt)].point
+#define N(i,j) p[(j)%o->t.nb+o->t.nb*((i)%o->dt)].normale
+
+static void affiche_ufr(Tbl *o, const Champ *ch, const char *urgent)
+{
+  int i,j ;
+  Triplet axe, vx, vy ;
+  struct
+  {
+    Triplet point, normale ;
+  } *p ;
+  Flottant *iv, dt ;
+  /*
+   *
+   */
+  if ( TRACE(o) ) eprintf("Inatialisations GL\n") ;
+  glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	       LAR(&o->imag), HAU(&o->imag),
+	       0 , GL_RGB, GL_FLOAT,
+	       o->imag.image) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) ;
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL) ;
+  glEnable(GL_TEXTURE_2D) ;
+  glEnable(GL_LIGHTING) ;
+  /*
+   *
+   */
+  if ( TRACE(o) ) eprintf("Allocation\n") ;
+  dt = (M_PI*2)/o->dt ;
+
+  ALLOUER(p, o->dt * o->t.nb) ;
+  ALLOUER(iv, o->t.nb) ;
+  if ( TRACE(o) ) eprintf("Calcul des points\n") ;
+  axe.x = axe.y = 0 ;
+  axe.z = 1. ;
+  for(i=0;i<o->dt;i++)
+    {
+      for(j=0;j<o->t.nb;j++)
+	{
+	   P(i,j) = u_rotation_triplet(&o->t.table[j], &axe, i*dt) ;
+	}
+    }
+  iv[0] = 0. ;
+  if ( TRACE(o) ) eprintf("Calcul des distances\n") ;
+  for(j=1;j<o->t.nb;j++)
+    {
+      iv[j] = iv[j-1] + u_distance_triplet(&o->t.table[j], &o->t.table[j-1]) ;
+    }
+  if ( TRACE(o) ) eprintf("Calcul des normales\n") ;
+  for(i=0;i<o->dt;i++)
+    {
+      for(j=0;j<o->t.nb;j++)
+	{
+	  vx = u_soustrait_triplet(&P(i+1,j), &P(i-1,j)) ;
+	  vy = u_soustrait_triplet(&P(i,j+1), &P(i,j-1)) ;
+	  N(i,j) = u_pv_triplet(&vx, &vy) ;
+	}
+    }
+  /*
+   *
+   */
+
+#define V(i,j)						\
+  glTexCoord2f((i)*dt/M_PI*o->du,		\
+	       (iv[j]/iv[o->t.nb-1])*o->dv) ;	\
+  glNormal3f(N(i,j).x, N(i,j).y, N(i,j).z) ;		\
+  glVertex3f(P(i,j).x, P(i,j).y, P(i,j).z) ;
+
+  if ( TRACE(o) ) eprintf("Affichage\n") ;
+
+  glBegin(GL_QUADS) ;
+
+  for(i=0;i<o->dt;i++)
+    {
+      for(j=1;j<o->t.nb;j++)
+	{
+	  V(i  , j-1) ;
+	  V(i+1, j-1) ;
+	  V(i+1, j  ) ;
+	  V(i  , j  ) ;
+	}
+    }
+  glEnd() ;
+
+  glDisable(GL_TEXTURE_2D) ;
+  glDisable(GL_LIGHTING) ;
+
+  free(iv) ;
+  free(p) ;
+}
+
+/*
+ *
+ */
+
+
+CLASSE(ufr, Tbl,
+       CHAMP(t,
+	     L_Table_point3
+	     Edite Extrait Sauve
+	     )
+       CHAMP(du, L_Entier Edite Sauve Extrait DEFAUT("4"))
+       CHAMP(dv, L_Entier Edite Sauve Extrait DEFAUT("8"))
+       CHAMP(dt, L_Entier Edite Sauve Extrait DEFAUT("16"))
+       CHAMP(imag, LABEL("Nom Image")
+	     BULLE_D_AIDE("L'image doit être au format PPM,\n"
+			  "taper son nom sans l'extension.\n")
+	     L_Image Extrait Sauve Edite
+	     DEFAUT("ufr")
+	     )
+
+       EVENEMENT("3u3f3r")
+       MENU("Figures/3d/UFR")
+       CHAMP(imag, L_Affiche_GL(affiche_ufr))
+       )
+

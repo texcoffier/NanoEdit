@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Installation de Nano&Eacute;dit</title>
+  </head>
+
+  <body>
+    <h1>Installation de Nano&Eacute;dit</h1>
+
+    Pour l'essayer chez vous il faut&nbsp;:
+    <UL>
+      <LI> UNIX (&ccedil;a marche au moins avec Linux/HPUX/IRIX)
+      <LI> Une commande "make" supportant VPATH et l'option "-I",
+	il faut donc utiliser le "make" du GNU.
+      <LI> Les
+	<A HREF="http://www710.univ-lyon1.fr/~exco/ne-1.16.tar.gz">sources version pour GTK1</A> Version obsolette à ne pas installer.
+      <LI> Les
+	<A HREF="http://www710.univ-lyon1.fr/~exco/ne-2.1.tar.gz">sources version pour GTK2</A>
+    </UL>
+    Proc&eacute;dure d'installation :
+    <UL>
+      <LI> Modifier la variable BASE dans <TT>Makefile.commun</TT>
+	et <TT>Makefile.proto</TT>
+      <LI> Tapez <TT>make tags depends</TT> pour recalculer les d&eacute;pendances.
+      <LI> Tapez <TT>make</TT> pour compiler (ou <TT>make lib</TT>
+	pour g&eacute;n&eacute;rer les librairies)
+      <LI> Modifier le fichier <TT>configuration</TT>
+	si les r&eacute;pertoires et biblioth&egrave;ques
+	ne sont pas aux m&ecirc;mes endroits.
+    </UL>
+
+
+    <hr>
+    <address><a href="mailto:exco@liris.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Thu Mar 22 14:46:53 CET 2001 -->
+<!-- hhmts start -->
+Last modified: Wed Jul 28 15:44:59 CEST 2010
+<!-- hhmts end -->
+  </body>
+</html>

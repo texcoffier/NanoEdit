@@ -1,0 +1,13 @@
+t_blob.o: t_blob.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h t_blob.h

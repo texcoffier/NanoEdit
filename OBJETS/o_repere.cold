@@ -1,0 +1,547 @@
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include "o_objet.h"
+#include "t_geometrie.h"
+#include "u_graphique.h"
+#include "u_etat_courant.h"
+#include "u_vue.h"
+
+static const Flottant dist_tag_dilatation = 0.85 ;
+static const Flottant dist_tag_rotation = 0.70 ;
+
+#define TAG_MASQUE      0x0FF
+#define TAG_DILATATION  0x100
+#define TAG_ROTATION    0x200
+#define TAG_DEPLACEMENT 0x400
+
+typedef struct repere
+{
+  Transfo t ;		/* Le repere defini par origine et 3 vecteur */
+  Triplet   px;		/* L_point au bout de l'axe de X */
+  Triplet   py;		/* L_point au bout de l'axe de Y */
+  Triplet   pz;		/* L_point au bout de l'axe de Z */
+  Flottant angle ;	/* De rotation ou coef homo */
+  Triplet vecteur ;	/* Axe de rotation ou vecteur dilatation */
+  Booleen fleche ;	/* Affiche des flèches */
+  Booleen cache_tag ;
+} Repere ;
+
+static void affiche_repere(Repere *o)
+{
+  Triplet pt ;
+  Booleen trois_d ;
+  Booleen repere_points ;
+  int tag_deplacement ;
+  GLfloat w ;
+
+  trois_d = ( strcmp(OBJET(o)->classe->nom, "repere_pts2d")  != 0 )
+    &&  ( strcmp(OBJET(o)->classe->nom, "repere_2d")  != 0 ) ;
+  repere_points = ( strcmp(OBJET(o)->classe->nom, "repere_pts2d")  == 0 )
+    ||  ( strcmp(OBJET(o)->classe->nom, "repere_pts")  == 0 ) ;
+
+  if ( repere_points )
+    tag_deplacement = 1 ;
+  else
+    tag_deplacement = TAG_DEPLACEMENT ;
+
+  glPushAttrib( GL_CURRENT_BIT|GL_LINE_BIT ) ;
+
+  glGetFloatv(GL_LINE_WIDTH, &w) ;
+  /*
+  if ( trois_d )
+    glLineWidth(1.5*w) ;
+  */
+  glColor3f(1.,0.,0.) ;
+  if ( o->fleche )
+    t_fleche_proportionnelle(&o->t.origine, &o->px, 0, 0.1) ;
+  glBegin(GL_LINES) ;
+  glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+  glVertex3f(o->px.x        , o->px.y        , o->px.z ) ;
+  glEnd() ;
+
+  glColor3f(0.,1.,0.) ;
+  if ( o->fleche )
+    t_fleche_proportionnelle(&o->t.origine, &o->py, 0, 0.1) ;
+  glBegin(GL_LINES) ;
+  glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+  glVertex3f(o->py.x        , o->py.y        , o->py.z ) ;
+  glEnd() ;
+
+  if ( trois_d )
+    {
+      glColor3f(0.,0.,1.) ;
+      if ( o->fleche )
+	t_fleche_proportionnelle(&o->t.origine, &o->pz, 0, 0.1) ;
+      glBegin(GL_LINES) ;
+      glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+      glVertex3f(o->pz.x        , o->pz.y        , o->pz.z ) ;
+      glEnd() ;
+    }
+
+  glPopAttrib() ;
+  if ( ACTIF(o) )
+    {
+      if ( strcmp(OBJET(o)->classe->nom, "dilatation") == 0
+	   || strcmp(OBJET(o)->classe->nom, "homothetie") == 0 )
+	{
+	  pt = u_ajoute_triplet(&o->px, &o->t.v2) ;
+	  pt = u_ajoute_triplet(&pt, &o->t.v3) ;
+	  t_tag_origine(0, &pt) ;
+	  return ;
+	}
+      t_tag_origine(0, &o->t.origine) ;
+      
+      if ( strcmp(OBJET(o)->classe->nom, "translation") == 0 )
+	return ;
+      
+      if ( strcmp(OBJET(o)->classe->nom, "rotation") == 0 )
+	{
+	  glBegin(GL_LINES) ;
+	  glVertex3f(0.,0.,0.) ;
+	  glVertex3f(o->vecteur.x , o->vecteur.y , o->vecteur.z) ;
+	  glEnd() ;
+	  t_tag_origine(1, &o->vecteur) ;
+	  return ;
+	}
+
+      t_tag_origine(tag_deplacement, &o->px) ;
+      if ( trois_d && !o->cache_tag )
+	{
+	  pt = u_barycentre_2_triplet(&o->t.origine, dist_tag_dilatation, &o->px);
+	  t_tag_dilatation(TAG_DILATATION, &pt) ;
+	  pt = u_barycentre_2_triplet(&o->t.origine, dist_tag_rotation, &o->px);
+	  t_tag_rotation(TAG_ROTATION, &pt) ;
+	}
+
+      t_tag_origine(tag_deplacement+1, &o->py) ;
+      if ( trois_d && !o->cache_tag  )
+	{
+	  pt = u_barycentre_2_triplet(&o->t.origine, dist_tag_rotation, &o->py);
+	  t_tag_rotation(TAG_ROTATION+1, &pt) ;
+	  pt = u_barycentre_2_triplet(&o->t.origine, dist_tag_dilatation, &o->py);
+	  t_tag_dilatation(TAG_DILATATION+1, &pt) ;
+	}
+
+      if ( trois_d )
+	{
+	  t_tag_origine(tag_deplacement+2, &o->pz) ;
+	  if ( !o->cache_tag )
+	    {
+	      pt = u_barycentre_2_triplet(&o->t.origine,dist_tag_rotation,&o->pz);
+	      t_tag_rotation(TAG_ROTATION+2, &pt) ;
+	      pt =u_barycentre_2_triplet(&o->t.origine,dist_tag_dilatation,&o->pz);
+	      t_tag_dilatation(TAG_DILATATION+2, &pt) ;
+	    }
+	}
+    }
+}
+
+
+
+
+static void ecrit_pov_repere(Repere *o, const Champ *c, const char *v)
+{
+  fprintf( (FILE*)atoi(v),
+	   "matrix <%g, %g, %g,  %g, %g, %g,  %g, %g, %g,  %g, %g, %g>\n",
+	   o->t.v1.x     , o->t.v1.y     , o->t.v1.z,
+	   o->t.v2.x     , o->t.v2.y     , o->t.v2.z,
+	   o->t.v3.x     , o->t.v3.y     , o->t.v3.z,
+	   o->t.origine.x, o->t.origine.y, o->t.origine.z
+	   ) ;
+}
+
+static void applique_repere(Repere *o, const Champ *ch, Booleen *modif)
+{
+  globale_etat_courant.transfo = u_produit_transfo(&globale_etat_courant.transfo, &o->t) ;
+  *modif = Vrai ;
+}
+
+static void applique_gl_repere(Repere *o)
+{
+  u_change_repere(&o->t) ;
+}
+
+static const char * attributs_gl_repere(Repere *o, const Champ *ch)
+{
+  return( int_vers_char(NANOEDIT_MATRIX_BIT) ) ;
+}
+
+static void repere_valide(Repere *o)
+{
+  if ( determinant_transfo(&o->t) <= 1e-4 )
+    NOTE_CHAMP_INVALIDE(o, t) ;
+}
+
+static void changement_repere(Repere*o)
+{
+  o->px = u_ajoute_triplet(&o->t.v1, &o->t.origine) ;
+  o->py = u_ajoute_triplet(&o->t.v2, &o->t.origine) ;
+  o->pz = u_ajoute_triplet(&o->t.v3, &o->t.origine) ;    
+  repere_valide(o) ;
+}
+
+static void changement_repere2d(Repere*o)
+{
+  o->px = u_ajoute_triplet(&o->t.v1, &o->t.origine) ;
+  o->py = u_ajoute_triplet(&o->t.v2, &o->t.origine) ;
+  o->t.v3 = u_pv_triplet(&o->t.v1, &o->t.v2) ;
+  o->pz = u_ajoute_triplet(&o->t.v3, &o->t.origine) ;    
+  repere_valide(o) ;
+}
+
+#define CHAMP_REPERE_COMMUN						\
+       NON_OPTION(~0)							\
+       CHAMP(t, L_transfo NonInitialiser)				\
+       CHAMP_VIRTUEL(L_attribut_pov)					\
+       CHAMP_VIRTUEL(L_affiche_gl(affiche_repere)			\
+		     AFFICHAGE(Toujours_different))			\
+       CHAMP_VIRTUEL(L_applique_gl_rapide(applique_gl_repere		\
+					  ,attributs_gl_repere))	\
+       CHAMP_VIRTUEL(L_applique(applique_repere)) \
+       CHAMP(fleche, L_booleen Edite Sauve DEFAUT("0") LABEL("Affiche les flèches")) \
+       CHAMP(cache_tag, L_booleen Edite Sauve DEFAUT("0") LABEL("Ne pas afficher les Tag rotation et dilatation"))
+
+static void changement_repere_pts(Repere*o)
+{
+  o->t.v1 = u_soustrait_triplet(&o->px, &o->t.origine) ;
+  o->t.v2 = u_soustrait_triplet(&o->py, &o->t.origine) ;
+  o->t.v3 = u_soustrait_triplet(&o->pz, &o->t.origine) ;    
+  repere_valide(o) ;
+}
+
+static void changement_repere_pts2d(Repere*o)
+{
+  Triplet pt ;
+
+  o->t.v1 = u_soustrait_triplet(&o->px, &o->t.origine) ;
+  o->t.v2 = u_soustrait_triplet(&o->py, &o->t.origine) ;
+  pt = u_pv_triplet(&o->t.v1, &o->t.v2) ;
+  o->t.v3 = u_normalise_triplet(&pt) ;
+  repere_valide(o) ;
+}
+
+
+void ecrit_tag_repere(Repere *o, const Champ *c, const char *v)
+{
+  int i , j;
+  Triplet *axe, in ;
+  Flottant angle, ac ;
+
+  i = lit_numero_tag(c) ;
+  axe = &(&o->t.v1)[i & TAG_MASQUE] ;
+
+  if ( i & TAG_DILATATION )
+    {
+      in = char_vers_triplet(v) ;
+      ac = u_projete_triplet(&in, &o->t.origine, axe) ;
+      ac /= dist_tag_dilatation ;
+      *axe = u_triplet_fois_flottant(axe, ac) ;
+    }
+  if ( i & TAG_ROTATION )
+    {
+      angle = atof(v) ;
+      for(j=0;j<3;j++)
+	if ( i != j )
+	  {
+	    (&o->t.v1)[j] = u_rotation_triplet(&(&o->t.v1)[j], axe,
+					       angle - o->angle) ;
+	  }
+      o->angle = angle ;      
+    }
+  if ( i & TAG_DEPLACEMENT )
+    {
+      *axe = char_vers_triplet(v) ;
+      *axe = u_soustrait_triplet(axe, &o->t.origine) ;
+    }
+  changement_repere(o) ;
+}
+
+const char* lit_tag_repere(Repere *o, const Champ *c)
+{
+  int i ;
+  Triplet *axe, pt ;
+
+  i = lit_numero_tag(c) ;
+  axe = &(&o->px)[i & TAG_MASQUE] ;
+
+  if ( i & TAG_ROTATION )
+    {
+      pt = u_barycentre_2_triplet(&o->t.origine, dist_tag_dilatation, axe);
+      return( triplet_vers_char(&pt)) ;
+    }
+   if ( i & TAG_DILATATION )
+     return("0") ;
+   if ( i & TAG_DEPLACEMENT )
+     return( triplet_vers_char(axe) ) ;
+   ICI ;
+   return("") ;
+}
+
+CLASSE(repere, Repere,
+       Extrait Edite Sauve Init3d
+       CHAMP(t.origine, LABEL("Origine") L_point P_triplet DEFAUT("0 0 0"))
+       L_vecteur P_triplet
+       CHAMP(t.v1, LABEL("vx") DEFAUT("1 0 0"))
+       CHAMP(t.v2, LABEL("vy") DEFAUT("0 1 0"))
+       CHAMP(t.v3, LABEL("vz") DEFAUT("0 0 1"))
+       NonEdite NonSauve Affiche NonExtrait NonInit3d
+       L_point P_triplet
+       CHAMP(px, LABEL("px"))
+       CHAMP(py, LABEL("py"))
+       CHAMP(pz, LABEL("pz"))
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_repere))
+       CHAMP_VIRTUEL(L_tag(ecrit_tag_repere,lit_tag_repere))
+       CHANGEMENT(changement_repere)
+       CHAMP_REPERE_COMMUN
+       MENU("Attributs/Géométrique 3D/Repère")
+       EVENEMENT("R3V")
+       A_EMPILER(globale_etat_courant.transfo) /* Hérité par les fils */
+       )
+
+
+CLASSE(repere_pts, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       CHAMP(t.origine, LABEL("Origine") Extrait Edite Sauve L_point P_triplet DEFAUT("0 0 0") Init3d)
+       L_vecteur P_triplet Affiche
+       CHAMP(t.v1, LABEL("vx"))
+       CHAMP(t.v2, LABEL("vy"))
+       CHAMP(t.v3, LABEL("vz"))
+       Extrait Edite Sauve
+       L_point P_triplet
+       CHAMP(px, LABEL("px") DEFAUT("1 0 0") Init3d)
+       CHAMP(py, LABEL("py") DEFAUT("0 1 0") Init3d)
+       CHAMP(pz, LABEL("pz") DEFAUT("0 0 1") Init3d)
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_repere))
+       CHAMP_VIRTUEL(L_tag(ecrit_tag_repere,lit_tag_repere))
+       CHANGEMENT(changement_repere_pts)
+       EVENEMENT("R3P")
+       CHAMP_REPERE_COMMUN
+       )
+
+
+
+#define CHAMPS_CALCULES				\
+       L_vecteur P_triplet Affiche			\
+       CHAMP(t.v1, LABEL("vx") DEFAUT("1 0 0"))	\
+       CHAMP(t.v2, LABEL("vy") DEFAUT("0 1 0"))	\
+       CHAMP(t.v3, LABEL("vz") DEFAUT("0 0 1"))	\
+       L_point P_triplet					\
+       CHAMP(px, LABEL("px"))			\
+       CHAMP(py, LABEL("py"))			\
+       CHAMP(pz, LABEL("pz"))			\
+       CHAMP_REPERE_COMMUN
+
+
+
+static void ecrit_pov_translation(Repere *o, const Champ *c,
+				  const char *v)
+{
+  if ( v[0]=='\0' ) return ;
+  fprintf( (FILE*)atoi(v),
+	   "translate <%g,%g,%g>\n",
+	   o->t.origine.x, o->t.origine.y, o->t.origine.z
+	   ) ;
+}
+
+
+CLASSE(translation, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       CHAMP(t.origine, LABEL("Origine") Extrait Edite Sauve L_vecteur P_triplet DEFAUT("0 0 0") Init3d)
+       CHAMPS_CALCULES
+       EVENEMENT("TR")
+       MENU("Attributs/Géométrique 3D/Translation")
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_translation))
+       )
+
+static void ecrit_pov_dilatation(Repere *o, const Champ *c,
+				 const char *v)
+{
+  if ( v[0]=='\0' ) return ;
+  fprintf( (FILE*)atoi(v),
+	   "scale <%g,%g,%g>\n",
+	   o->vecteur.x, o->vecteur.y, o->vecteur.z
+	   ) ;
+}
+
+static void changement_repere_dilatation(Repere *o)
+{
+  o->t.v1.x = o->vecteur.x ;
+  o->t.v2.y = o->vecteur.y ;
+  o->t.v3.z = o->vecteur.z ;
+  changement_repere(o) ;
+}
+
+CLASSE(dilatation, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       CHAMP(vecteur, LABEL("Vect. Dilatation") Extrait Edite Sauve L_vecteur P_triplet DEFAUT("1 1 1") Init3d)
+       CHAMP(t.origine, LABEL("Origine") Affiche L_point P_triplet)
+       CHAMPS_CALCULES
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_dilatation))
+       CHANGEMENT(changement_repere_dilatation)
+       EVENEMENT("DIL")
+       MENU("Attributs/Géométrique 3D/Dilatation")
+       )
+
+static void ecrit_pov_homothetie(Repere *o, const Champ *c,
+				 const char *v)
+{
+  if ( v[0]=='\0' ) return ;
+  fprintf( (FILE*)atoi(v),
+	   "scale <%g,%g,%g>\n",
+	   o->angle, o->angle, o->angle
+	   ) ;
+}
+
+static void changement_repere_homothetie(Repere*o)
+{
+  o->t.v1.x = o->angle ;
+  o->t.v2.y = o->angle ;
+  o->t.v3.z = o->angle ;
+  changement_repere(o) ;
+}
+
+CLASSE(homothetie, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       CHAMP(angle, LABEL("Coef. Homothétie")
+	     Extrait Edite Sauve L_nombre P_flottant DEFAUT("1") Init3d)
+       CHAMP(t.origine, LABEL("Origine") Affiche L_point P_triplet)
+       CHAMPS_CALCULES
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_homothetie))
+       CHANGEMENT(changement_repere_homothetie)
+       EVENEMENT("HO")
+       MENU("Attributs/Géométrique 3D/Homothétie")
+       )
+
+static void changement_repere_rotation(Repere*o)
+{
+  static const Triplet v[] = { {1,0,0}, {0,1,0}, {0,0,1} } ;
+
+  o->t.v1 = u_rotation_triplet(&v[0], &o->vecteur, o->angle) ;
+  o->t.v2 = u_rotation_triplet(&v[1], &o->vecteur, o->angle) ;
+  o->t.v3 = u_rotation_triplet(&v[2], &o->vecteur, o->angle) ;
+  changement_repere(o) ;
+}
+
+CLASSE(rotation, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       CHAMP(angle, LABEL("Angle rotation")
+	     BULLE_D_AIDE("Angle en RADIAN pour la rotation")
+	     Extrait Edite Sauve L_nombre E_angle P_flottant DEFAUT("0") Init3d)
+       CHAMP(vecteur, LABEL("Vect. rotation") Extrait Edite Sauve L_vecteur P_triplet DEFAUT("0 0 1") Init3d)
+       CHAMP(t.origine, LABEL("Origine") DEFAUT("0 0 0") Affiche L_point P_triplet)
+       CHAMPS_CALCULES
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_repere))
+       CHANGEMENT(changement_repere_rotation)
+       EVENEMENT("RO")
+       MENU("Attributs/Géométrique 3D/Rotation")
+       )
+
+/*
+ *
+ */
+
+static void affiche_transfo(Repere *o)
+{
+  glPushAttrib(GL_CURRENT_BIT|GL_LINE_BIT ) ;
+  u_empile_et_multiplie_line_width(2.) ;
+
+  glBegin(GL_LINES) ;
+  glColor3f(1.,0.,0.) ;
+  glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+  glVertex3f(o->t.origine.x+o->t.v1.x,
+	     o->t.origine.y+o->t.v1.y,
+	     o->t.origine.z+o->t.v1.z) ;
+  glColor3f(0.,1.,0.) ;
+  glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+  glVertex3f(o->t.origine.x+o->t.v2.x,
+	     o->t.origine.y+o->t.v2.y,
+	     o->t.origine.z+o->t.v2.z) ;
+  glColor3f(0.,0.,1.) ;
+  glVertex3f(o->t.origine.x , o->t.origine.y , o->t.origine.z) ;
+  glVertex3f(o->t.origine.x+o->t.v3.x,
+	     o->t.origine.y+o->t.v3.y,
+	     o->t.origine.z+o->t.v3.z) ;
+  glEnd();
+
+  glPopAttrib() ;
+}
+
+static void changement_produit_repere(Repere*o)
+{
+  Transfo tmp ;
+  const char *v ;
+
+  if ( !FILS_CHANGE(o) )
+    return ;
+
+  u_identite_transfo(&o->t) ;
+
+  POUR_LES_FILS(o, f,
+		{
+		  v = c_recupere_type_sans_copie(f, &infos_L_transfo) ;
+		  if ( v[0] )
+		    {
+		      codec_sauve_texte(codec_transfo, &tmp, v) ;
+		      o->t = u_produit_transfo(&o->t, &tmp) ;
+		    }
+		}
+		) ;
+}
+
+CLASSE(produit_de_repere, Repere,
+       CHAMP(t, L_transfo Obligatoire Affiche)
+       
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_repere))
+       CHAMP_VIRTUEL(L_affiche_gl(affiche_transfo)
+		     AFFICHAGE(Toujours_different))
+       CHAMP_VIRTUEL(L_applique_gl(applique_repere))
+       CHAMP_VIRTUEL(L_attribut_pov)
+
+       CHANGEMENT(changement_produit_repere)
+       EVENEMENT("R*")
+       PAQUET(NB_ACTIFS)
+       MENU("Attributs/Géométrique 3D/Produit")
+       )
+
+/*
+ *
+ *
+ *
+ */
+
+
+CLASSE(repere_pts2d, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       MENU("Attributs/Géométrique 2D/Repère points")
+       CHAMP(t.origine, LABEL("Origine") Extrait Edite Sauve L_point P_triplet DEFAUT("0 0 0") Init3d)
+       L_vecteur P_triplet Affiche
+       CHAMP(t.v1, LABEL("vx"))
+       CHAMP(t.v2, LABEL("vy"))
+       Extrait Edite Sauve
+       L_point P_triplet
+       CHAMP(px, LABEL("px") DEFAUT("1 0 0") Init3d)
+       CHAMP(py, LABEL("py") DEFAUT("0 1 0") Init3d)
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_repere))
+       CHAMP_VIRTUEL(L_tag(ecrit_tag_repere,lit_tag_repere))
+       CHANGEMENT(changement_repere_pts2d)
+       CHAMP_REPERE_COMMUN
+       EVENEMENT("R2P")
+       )
+
+CLASSE(repere_2d, Repere,
+       SUR_CLASSE("repere") HERITE_PAS_DES_CHAMPS
+       MENU("Attributs/Géométrique 2D/Repère vecteur")
+
+       Extrait Edite Sauve Init3d
+       CHAMP(t.origine, LABEL("Origine") L_point P_triplet DEFAUT("0 0 0"))
+       L_vecteur P_triplet
+       CHAMP(t.v1, LABEL("vx") DEFAUT("1 0 0"))
+       CHAMP(t.v2, LABEL("vy") DEFAUT("0 1 0"))
+       NonEdite NonSauve Affiche NonExtrait NonInit3d
+       L_point P_triplet
+       CHAMP(px, LABEL("px"))
+       CHAMP(py, LABEL("py"))
+       CHANGEMENT(changement_repere2d)
+       CHAMP_VIRTUEL(L_tag(ecrit_tag_repere,lit_tag_repere))
+       CHAMP_REPERE_COMMUN
+       EVENEMENT("R2V")
+       )

@@ -1,0 +1,291 @@
+/*
+ * TP1 : Vous devez modifier la fonction "affiche" de ce fichier
+ * TP2 : Modifier "chose_a_lire" et la commande shell lancee dans "changement"
+ * TP3 : Modifier la fonction affichage pour afficher les liens.
+ * TP4 : Modifier la fonction affichage pour deplacer les ordinateurs
+ *       a chaque affichage.
+ */
+#include "o_classe.h"		/* Definition des classe */
+#include "o_objet.h"		/* Definition des noeuds */
+#include "c_champ.h"		/* POUR POUVOIR AJOUTER DES CHAMPS */
+#include "u_triplet.h"		/* struct u_triplet, struct u_quadruplet */
+#include "t_base.h"		/* Valeur flottante */
+#include "t_geometrie.h"	/* Structure u_triplet */
+#include "t_chaine.h"		/* Fonction t_chaine */
+#include <GL/gl.h>		/* Pour OpenGL */
+#include "a_application.h"	/* Acces à certaines données X11 */
+#include "m_modele.h"		/* Acces aux fonctions de réaffichage */
+#include "l_liste.h"		/* Les operations sur les listes */
+#include <unistd.h>		/* Pour "read" */
+#include <signal.h>		/* Pour le signal du "kill" */
+#include <sys/wait.h>		/* Pour "waitpid" */
+/*
+ * Variable locale au fichier contenant la liste des objets ordinateurs
+ * qui sont dans le modele. Cette liste est utile pour tracer
+ * les liens entre les ordinateurs (pour le TP 3)
+ */
+
+static struct l_liste *liste_des_ordinateurs = NULL ;
+
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+
+struct moi			/* Le nom "moi" est obligatoire */
+{
+  struct objet objet ;		/* Obligatoire */
+  char *nom ;			/* Nom de l'ordinateur */
+  struct u_triplet p ;		/* Position dans R3 */
+  char *ip ;			/* Adresse IP */
+  float charge[3] ;		/* Charge 1, 5 et 15 minutes */
+  int nb_utilisateurs ;		/* Nombre d'utilisateurs */
+  int disque, disque_libre ;	/* place totale et libre pour '/' en Mo */
+  char *ips ;			/* Adresses IP des machines connectees */
+  int temps ;			/* Nombre de donnees recuperee */
+  int pid ;			/* Pour pouvoir tuer le processus */
+
+  /*
+   * Les champs suivant sont la afin de mettre en place
+   * une recuperation automatique des informations
+   * concernant la machine.
+   * N'essayez pas de comprendre leur fonctionnement
+   */
+
+  XtInputId      ii ;		/* Pour etre prévenu par x11 */
+  int            pipe[2] ;	/* Pour lire les informations */
+} ;
+
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+
+PREPARE_DEFINITION_CHAMPS	/* CETTE LIGNE EST OBLIGATOIRE */
+/*
+ * Ceci permet a l'editeur de connaitre le contenu de
+ * la structure C et ce qu'il doit en faire
+ */
+static struct champ champs[] =
+{
+  {"ord_nom"  ,P_Chaine ,L_Chaine ,Edite|Sauve  , CHAMP(nom)       ,"b710hpd"},
+  {"ord_pos"  ,P_Triplet,L_Point  ,Edite|Sauve  , CHAMP(p)       ,"0.1 0.1 0"},
+  {"ord_t"    ,P_Entier ,L_Nombre ,Affiche      , CHAMP(temps)           ,"0"},
+  /*
+   * Une fois TP1 termine, enlever "Edite|" des lignes suivantes
+   */
+  {"ord_ip"   ,P_Chaine ,L_Chaine ,Edite|Affiche, CHAMP(ip)      ,"127.0.0.1"},
+  {"ord_chrg" ,P_Triplet,L_Triplet,Edite|Affiche, CHAMP(charge)      ,"1 2 3"},
+  {"ord_nbu"  ,P_Entier ,L_Nombre ,Edite|Affiche, CHAMP(nb_utilisateurs), "3"},
+  {"ord_dsk"  ,P_Entier ,L_Nombre ,Edite|Affiche, CHAMP(disque)       ,"9999"},
+  {"ord_dsk_l",P_Entier ,L_Nombre ,Edite|Affiche, CHAMP(disque_libre)  ,"999"},
+  {"ord_ips"  ,P_Chaine ,L_Chaine ,Edite|Affiche, CHAMP(ips)           ,"..."},
+  {"ord_pid"  ,P_Entier ,L_Nombre ,      Affiche, CHAMP(pid)             , ""},
+  {NULL}
+} ;
+
+/*
+ ******************************************************************************
+ * Fonction qui lit les informations venant de la machine
+ ******************************************************************************
+ */
+static void chose_a_lire(XtPointer oo, int* f, XtInputId* id)
+{
+  struct objet *o = oo ;
+  static time_t dernier_affichage ;
+  time_t t ;
+  Buffer tmp ;
+  int nb_char_lu, i ;
+
+  /*
+   * Lecture des informations jusqu'a la lecture
+   * de la chaine de caracteres : derniere_information
+   */
+  nb_char_lu = 0 ;
+  do
+    {
+    i = read(MOI->pipe[0],
+             &tmp[nb_char_lu],
+             sizeof(tmp)-nb_char_lu-1 ) ; /* Lit les informations */
+    nb_char_lu += i ;
+    tmp[nb_char_lu] = '\0' ;
+    }
+  while ( strstr(tmp,"derniere_information") == NULL ) ;
+  /*
+   * Analyse de ce qui a été lu
+   */
+  sscanf(tmp, "%g%g%g", &MOI->charge[0], &MOI->charge[1], &MOI->charge[2]) ;
+  MOI->temps++ ;
+
+  /*
+   * NE FAITES PAS
+   *
+   *  sscanf(tmp, "%s", MOI->ip) ;
+   *
+   * Pour lire une chaine de caracteres : NanoEdit a reserve la place
+   * minimale pour la valeur initiale de MOI->ip (127.0.0.1)
+   * Vous deborderiez du tableau
+   *
+   * Vous devez donc lire dans un tableau intermédiaire (par exemple)
+   * puis changer la valeur de MOI->ip :
+   *
+   *    free(MOI->ip) ;
+   *    MOI->ip = strdup(tableau_temporaire) ;
+   */
+
+  CHANGEMENT_CHAMP(charge) ;	/* Le champ "charge" a ete modifie */
+  CHANGEMENT_CHAMP(temps) ;	/* Le champ "temps" a ete modifie */
+
+  /* ----------------------- */
+  /* Ne pas toucher la suite */
+  /* ----------------------- */
+
+  /*
+   * On ne reaffiche pas plusieur fois par seconde
+   * Ceci afin de ne pas trop charger la machine.
+   */
+  time(&t) ;
+  if ( t != dernier_affichage )
+    {
+      /*
+       * La suite remet tout a jour en fonction des modifications
+       */
+      dernier_affichage = t ;
+      m_previens_changements(MOI->objet.app) ; /* On diffuse les changements */
+      t_toutes_les_vues(MOI->objet.app) ; /* On réaffiche */
+    }
+}
+
+/*
+ *****************************************************************************
+ * Lors de la destruction du noeud, on arrete le processus.
+ ******************************************************************************
+ */
+
+static void destruction(struct objet *o)
+{
+  int status ;
+
+  l_enleve(&liste_des_ordinateurs, (void*)o) ; /* Enleve l'ordinateur */
+
+  if ( MOI->pid )
+    {
+      kill(MOI->pid,SIGTERM) ;	/* On tue le processus */
+      waitpid(MOI->pid,&status,0) ; /* On attend sa mort */
+      close(MOI->pipe[0]) ;
+      close(MOI->pipe[1]) ;
+      XtRemoveInput(MOI->ii) ;
+      MOI->pid = 0 ;
+    }
+}
+
+/*
+ ******************************************************************************
+ * Fonction lancant le processus de recuperation des informations
+ * Ne regardez pas le contenu de cette fonction.
+ * Sauf le lancement de la commande qui genere les informations (remsh)
+ ******************************************************************************
+ */
+static void changement(struct objet *o)
+{
+  if ( CHAMP_CHANGE(nom) )
+    destruction(o) ;
+
+  if ( MOI->pid )		/* Le processus est déjà lancé */
+    return ;
+
+  l_ajoute(&liste_des_ordinateurs, (void*)o) ; /* C'est une creation */
+
+  pipe(MOI->pipe) ;		/* Ouvre le fichier de communication */
+  MOI->pid = fork() ;		/* Création d'un nouveau processus */
+  if ( MOI->pid )
+    {
+      /*
+       * Pere :
+       * On dit aux Intrinsics de nous prévenir en cas
+       * d'arrivé de données dans le pipe.
+       */
+      MOI->ii = XtAppAddInput(o->app->app_context,
+			      MOI->pipe[0],
+			      (XtPointer)(XtInputReadMask),
+			      chose_a_lire,o) ;
+    }
+  else
+    {
+      /*
+       * Fils : on recupere regulierement les informations.
+       * N'oubliez pas de changer le nom du script shell
+       * pour mettre le votre.
+       */
+      dup2(MOI->pipe[1], 1) ;
+      execlp("/home/exco/NanoEdit/TP/C/RecupInfo","RecupInfo",MOI->nom, NULL) ;
+    }
+}
+
+
+/*
+ ******************************************************************************
+ * Affichage de l'ordinateur
+ ******************************************************************************
+ */
+
+static void affiche(struct objet *o)
+{
+  /*
+   * Exemple : affiche le point a la position de l'ordinateur
+   *            et affiche le nom de l'ordinateur au dessus.
+   */
+  glPushAttrib( GL_CURRENT_BIT ) ; /* Sauve la couleur courante */
+
+  glBegin(GL_POINTS) ;
+  glColor3f(1.,1.,0.) ;
+  glVertex3f(MOI->p.x, MOI->p.y, MOI->p.z) ;
+  glEnd() ;
+
+  glRasterPos3f(MOI->p.x, MOI->p.y, MOI->p.z+.1) ;
+  glColor3f(0.,1.,1.) ;
+  t_chaine( MOI->nom ) ;
+
+  glPopAttrib() ;		/* Restaure la couleur courante */
+
+  /*
+   * Si l'on a besoin de chercher une autre machine.
+   * Par exemple pour tracer un trait entre celle-ci et l'autre,
+   * on fera quelque chose du genre :
+   */
+  if ( TRACE(o) )		/* On execute que pour debugger (bouton T) */
+    {
+      eprintf("Voici les ordinateurs existants :\n") ;
+      POUR(struct moi*,		/* Type des elements de la liste */
+	   un_ordinateur,	/* L'indice parcourant la liste */
+	   liste_des_ordinateurs, /* La liste */
+	   {
+	     /*
+	      * Corps de la boucle
+	      */
+	     eprintf("Ordinateur : %s\n", un_ordinateur->nom) ;
+           }
+	   ) ;
+      eprintf("---------------------------\n") ;
+    }
+  /*
+   * Le printf suivant n'est fait que si vous avez appuye
+   * sur le bouton "T" (pour trace) dans la fenetre d'edition
+   * du noeud en train de s'afficher.
+   */
+  EPRINTF("L'affichage de (%g,%g,%g) termine\n",MOI->p.x, MOI->p.y, MOI->p.z) ;
+}
+
+/*
+ ******************************************************************************
+ *
+ ******************************************************************************
+ */
+
+void init_classe_ordinateur(struct classe *c)
+{
+  c->taille_structure= sizeof(struct moi); /* Indique la taille */
+  c->nom	     = "ordinateur" ;      /* Nom du noeud */
+  c->champs	     = champs ;            /* Indique les champs */
+  c->affichage       = affiche ;           /* Methode affichant ordinateur */
+  c->changement      = changement ;        /* Changement de valeur */
+  c->destruction     = destruction ;       /* Destruction noeud */
+}

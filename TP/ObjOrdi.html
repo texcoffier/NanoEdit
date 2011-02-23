@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HEAD>
+<TITLE>Objet Ordinateur</TITLE>
+</HEAD>
+<BODY>
+<H1>Objet Ordinateur</H1>
+
+
+On s'int&eacute;resse &agrave; la visualisation d'un ordinateur.
+Les donn&eacute;es associ&eacute;e &agrave; l'ordinateur seront :
+<UL>
+<LI> Le nom de la machine.
+<LI> Sa position dans R3
+<LI> La charge sur 1, 5 et 15 minutes (3 flottants)
+<LI> Le nombre d'utilisateurs (un entier)
+<LI> La taille du disque totale ainsi que la taille occup&eacute;e (2 entier)
+<LI> L'adresse IP de la machine (une chaine de caract&egrave;res)
+<LI> Une liste d'adresse IP de machine avec des connexions
+	en cours (une chaine de caracteres)
+</UL>
+
+Pour simplifier l'affichage graphique de la machine,
+on la tracera toujours dans le cube d'espace [0-1]x[0-1]x[0-1]
+(cube dont les coin sont les point (0,0,0) et (1,1,1))
+Ensuite on la positionnera &agrave; l'aide de transformation
+de rep&egrave;re.
+Si la repr&eacute;sentation d&eacute;borde en hauteur &agrave; cause
+d'une valeur trop grande, ce n'est pas grave,
+laissez la d&eacute;border.
+
+<P>
+
+On pourra prendre comme unit&eacute; en hauteur :
+<UL>
+<LI> Giga octet disque : 0.3
+<LI> Un utilisateur : 0.05
+<LI> Charge de 1 : 0.1
+</UL>
+
+Une repr&eacute;sentation possible serait :
+
+<P>
+<IMG ALIGN=TOP SRC="machine.gif" ALT="Representation d'une machine">
+
+<P>
+
+Le squelette (<a href="C/o_ordi.c">o_ordi.c</a>)
+contenant les fonctions &agrave; remplir
+pour ce TP et les suivants.
+Pour ce premier TP, vous ne modifiez que la fonction d'affichage.
+
+<P>
+Pour l'affichage, deux solutions sont possibles :
+<UL>
+<LI> Dessiner des facettes simples sans prendre en compte
+les sources lumineuses.
+Dans ce cas IL FAUT TRACER LES BORDS des facettes.
+<LI> Utiliser <TT>glEnable(GL_LIGHTING)</TT>
+
+pour prendre en compte les lampes.
+Dans ce cas, il faudra inclure une lampe dans
+la sc&egrave;ne contenant les ordinateurs et
+l'appliquer sur ceux-ci.
+
+</UL>
+
+<P>
+
+Lors de la cr&eacute;ation de l'ordinateur, n'oubliez
+pas d'indiquer le nom de la machine &agrave; espionner
+dans la fen&ecirc;tre message AVANT de cr&eacute;er le noeud ordinateur.
+
+<P>
+
+N'oubliez pas de tracer diff&eacute;remment un ordinateur ``actif''
+(c'est-&agrave;-dire que vous l'avez d&eacute;sign&eacute; et qu'il appara&icirc;t
+jaune dans la fen&ecirc;tre graphe)
+d'un inactif.
+Vous diff&eacute;rentiez les deux grace &agrave; la valeur de <TT>o->actif</TT>.
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Mon Sep 29 15:33:44 METDST 1997 -->
+<!-- hhmts start -->
+Last modified: Fri Dec  5 10:33:13 MET 1997
+<!-- hhmts end -->
+  </body>
+</html>

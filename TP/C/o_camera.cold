@@ -1,0 +1,96 @@
+#include <stdlib.h>		/* malloc/free */
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include "o_classe.h"		/* Car il faut pouvoir definir la classe */
+#include "c_champ.h"		/* Car il faut definir les champs */
+#include "o_interface.h"	/* Pour w_message */
+#include "a_application.h"	/* Pour trouve_fichier */
+#include "t_base.h"
+#include "t_image.h"
+#include "t_widget.h"
+#include "t_image.h"
+#include "u_transfo.h"
+#include "t_geometrie.h"
+#include "o_image.h"
+#include "t_virtuel.h"
+#include "t_void.h"
+#include <errno.h>		/* Pour IRIX */
+
+struct moi
+{
+  struct objet objet ;		/* Obligatoire pour tous les objets */
+  struct u_transfo t ;          /* position camera, focale, direction */
+  struct t_image image ;	/* Image a afficher */
+} ;
+
+
+static void affiche(struct objet *o)
+{
+  /*
+   * Affichage de l'image sur le carré unitaire du plan OXY.
+   * Il vous faudra l'afficher sur le plan de projection.
+   *
+   * Remarque : Les composante de l'image sont RVB.
+   * Voici l'accès au pixel (X,Y) :
+   *           float *pixel, rouge, vert, bleu ;
+   *           pixel = &MOI->image.image[ 3*(X + Y * MOI->image.largeur) ] ;
+   *           rouge = pixel[0] ;
+   *           vert = pixel[1] ;
+   *           bleu = pixel[2] ;
+   */
+  glTexImage2D(GL_TEXTURE_2D, 0, 3,
+	       MOI->image.largeur, MOI->image.hauteur,
+	       0 , GL_RGB, GL_FLOAT,
+	       MOI->image.image) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) ;
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) ;
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL) ;
+  glEnable(GL_TEXTURE_2D) ;
+
+  glBegin(GL_QUADS) ;
+  glTexCoord2f(0.,0.) ; glVertex2f(0.,0.) ;
+  glTexCoord2f(1.,0.) ; glVertex2f(1.,0.) ;
+  glTexCoord2f(1.,1.) ; glVertex2f(1.,1.) ;
+  glTexCoord2f(0.,1.) ; glVertex2f(0.,1.) ;
+  glEnd() ;
+
+  glDisable(GL_TEXTURE_2D) ;
+
+  /*
+   * Il faut ajouter l'affichage de la pyramide de vision
+   */
+
+  /*
+   * Il faut afficher les droites passant par l'oeil et les pixels
+   * détectés.
+   * Pour simplifier le programme, on considérera par exemple que
+   * les pixel ou R=V=B ne sont pas détectés.
+   */
+
+}
+
+
+PREPARE_DEFINITION_CHAMPS
+
+static struct champ champs[] =
+{
+  {"origine"	  ,P_Triplet,L_Point  ,Extrait,CHAMP(t.origine), "0 0 0", 0},
+  {"vdx"    	  ,P_Triplet,L_Vecteur,Extrait,CHAMP(t.v1)     , "1 0 0", 1},
+  {"vdy"    	  ,P_Triplet,L_Vecteur,Extrait,CHAMP(t.v2)     , "0 1 0", 2},
+  {"vdz"    	  ,P_Triplet,L_Vecteur,Extrait,CHAMP(t.v3)     , "0 0 1", 3},
+  {"nom_image"    ,P_Image  ,L_Void   ,Extrait,CHAMP(image),"doua.ppm",4},
+  {"largeur_image",P_Entier ,L_Nombre ,Affiche,CHAMP(image.largeur)  ,""},
+  {"hauteur_image",P_Entier ,L_Nombre ,Affiche,CHAMP(image.hauteur)  ,""},
+  {NULL}
+} ;
+
+void init_classe_camera(struct classe *c)
+{
+  c->nom              = "camera" ;
+  c->taille_structure = sizeof(struct moi) ;
+  c->champs           = champs ;
+  c->affichage        = affiche ;
+}
+
+

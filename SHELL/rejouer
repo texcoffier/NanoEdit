@@ -1,0 +1,182 @@
+#!/bin/sh
+# -*- ksh -*-
+
+# make compile_directory Nanoedit ; killall nanoedit ; SHELL/rejouer XXX -ecran 1 1
+
+if [ "" = "$POV_OPTIONS" ]
+then
+  POV_OPTIONS="+W512 +H354 +Q5 +FP -A"
+fi
+
+if [ "" = "$1" -o "" = "$2" ]
+then
+  echo "CE SCRIPT GENERE PLEIN DE FICHIERS DANS LE REPERTOIRE COURANT"
+  echo ""
+  echo "$0 nom {-pov|-vue|-ecran} [zoomin [zoomout [-comprime|-mpeg]]]"
+  echo "nom    : Le nom du repertoire contenant les '.ne' à rejouer"
+  echo "         ou nom du '.ne' à rejouer"
+  echo "-pov   : Indique que l'on doit générer les fichiers .pov"
+  echo "-vue   : Indique que l'on doit générer les fichiers .ppm des vues"
+  echo "-ecran : Rejoue le scénario sur l'écran"
+  echo "zoomin : Taille multiplicatif de la taille de la fenêtre vue"
+  echo "zoomout: Réduction de la taille de la fenêtre vue"
+  echo ""
+  echo "Si zoomin = zoomout la taille de l'image est celle de la fenêtre"
+  echo "avec une bien meilleur qualité avec comme valeur 2, 3, 4,..."
+  echo "Cela ne sert pas à grand chose d'avoir zoomout > 4"
+  echo ""
+  echo "Si la variable shell POV_OPTION ne contient rien"
+  echo "une valeur par défaut est utilisée"
+  echo "Actuellement POV_OPTIONS=$POV_OPTIONS"
+  exit 1
+fi >&2
+
+REP=$1
+QUOI=$2
+if [ "" = "$3" ]
+  then
+    ZOOMIN=1
+else
+  ZOOMIN="$3"
+fi
+if [ "" = "$4" ]
+  then
+    ZOOMOUT="$ZOOMIN"
+else
+  ZOOMOUT="$4"
+fi
+# ZOOMOUT=`echo "scale=10 ; 1/$ZOOMOUT" | bc`
+
+eval `make variables || /usr/local/bin/make variables`
+if [ "$MAKE" = "" ]
+	then	
+	echo "Il faut que le Makefile de NanoEdit soit dans ce répertoire"
+	exit 1
+	fi >&2
+
+. nanoutil
+
+if nano_fonctionne
+then
+  echo "Il faut quitter NanoEdit avant de lancer cette commande"
+  exit 1
+fi >&1
+
+
+#
+#
+#
+case $REP in
+/*) ;;
+*) REP=`pwd`/$REP ;;
+esac
+
+case $REP in
+*.ne) D=`dirname $I` ; FICHIER="$I" ;;
+*) D=$REP ; FICHIER=`ls $REP/*.ne | ( read A ; echo $A )` ;;
+esac
+export FICHIER=`echo $FICHIER | sed 's/\.ne//'`
+
+if [ $QUOI = -pov ]
+then
+  # $MAKE lance_sans_x11 </dev/null &
+  $MAKE lance_sans_fenetres </dev/null &
+  mkdir POV
+else
+  $MAKE lance_en_ecriture </dev/null &
+  # $MAKE Nanoedit valgrind </dev/null &
+  mkdir VUE
+fi
+
+attend_nanoedit
+
+
+
+J=0
+
+
+if [ -d "$REP" ]
+  then
+   ls $REP/*.ne
+else
+  echo $REP
+fi |
+while read I
+do
+  I=`echo $I | sed 's/\.ne$//'`
+  echo "$I avec $QUOI"
+  urlv /appel/modele 0 charge te_entree "$I"
+  case $QUOI in
+    -ecran)
+      ;;
+    -pov)
+      urlv /appel/pov -1 qualite c_sauve 0
+      for P in *.pov
+      do
+	if [ "$P" = "*.pov" ]
+	then
+	  echo "Pas de fichier POV généré"
+	  break ;
+	fi
+	mv $P POV/`basename $P .pov`.`printf "%05d" $J`.pov
+      done
+      ;;
+    -vue)
+#    if [ "$J" = 0 ]
+#	then
+#	    echo "Mettez maintenant vos fenêtres vues à la bonne taille"
+#	    echo "puis taper RETURN"
+#	    read REPONSE </dev/tty
+#	fi
+
+    echo "ZOOMIN=$ZOOMIN ZOOMOUT=$ZOOMOUT"
+      urlv /appel/vue -1 dump_image c_sauve "$ZOOMIN $ZOOMOUT"
+      for P in *.ppm
+      do
+	if [ "$P" = "*.ppm" ]
+	then
+	  echo "Pas de vue PPM généré"
+	  break ;
+	fi
+	PP=`basename "$P" .ppm`
+	N="VUE/${PP}.`printf '%05d' $J`.ppm"
+	mv "$P" "$N"
+	if [ "-comprime" = "$5" ]
+	then
+	    gzip "$N"
+	    fi
+      done
+      ;;
+  esac
+  J=`expr $J + 1`
+done
+
+termine_nanoedit
+
+if [ "-mpeg" = "$5" ]
+then
+    case $QUOI in
+      -pov) cd POV
+	    for I in *.pov
+	    do
+	      povray +I$I +O`basename $I .pov` $POV_OPTIONS
+	    done
+
+	    ;;
+      -vue) cd VUE ;;
+    esac
+
+    J="0"
+    for I in *.[0-9][0-9][0-9][0-9][0-9].ppm
+      do
+	convert $I jpg:00m00s$(printf '%03d' $J)
+	J=$(expr $J + 1)
+    done
+
+    fait_mpeg2
+
+fi
+
+
+
+

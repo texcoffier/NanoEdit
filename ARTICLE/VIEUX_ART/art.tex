@@ -1,0 +1,281 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{french}
+\usepackage{graphics}
+
+\title{Un éditeur interactif de formules comme intégrateur de modeleurs}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\maketitle
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Un modeleur est un logiciel complexe,
+qui est très lié au type de modélisation qu'il traite.
+Que cela soit pour l'enseignement ou la recherche,
+il est intéressant de pouvoir modifier un modeleur existant
+qui soit suffisamment puissant et générique.
+
+Malheureusement les systèmes existants ({\sc Cascade} de Matra par exemple)
+sont très lourds à utiliser.
+Nous avons donc créé un éditeur regroupant les fonctionnalités
+de base de tout modeleur (qu'il soit géométrique ou non)
+et permettant par ajout d'objets de créer le modeleur désiré.
+Il permet d'intégrer des modeleurs différents dans un même environnement.
+
+Cet éditeur de formule est un programme de
+3000 lignes en langage C qui gère la lecture et la sauvegarde
+des modèles, le {\em undo}/{\em redo},
+la création/destruction/édition des objets,
+la diffusion des contraintes, l'aide en ligne, ...
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Le graphe de dépendances}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\fbox{\resizebox{8cm}{!}{\includegraphics{formule2.ps}}}
+\parbox[b]{9cm}{
+L'éditeur manipule des objets paramétrés par d'autres objets.
+Il travaille sur un graphe orienté sans circuit.
+Pour évaluer le graphe, on met à jour tous les objets
+des feuilles aux racines.
+
+Cette évaluation de formule est déjà présente
+dans les langages de modélisation \cite{conf:achoui91}\cite{revn:excoffier:90:a}.}
+
+\bigskip
+
+En détaillant le contenu des objets, on obtient~:
+
+\fbox{\resizebox{16cm}{!}{\includegraphics{segment.ps}}}
+
+Les flèches en pointillés représentent des contraintes
+d'égalité entre les champs d'objets différents.
+
+L'éditeur propage les modifications sur une valeur
+dans tout le graphe de façon à ce que les contraintes
+d'égalité soient respectées et que les objets
+devant modifier leur état interne soit «prévenus».
+
+Dans cet exemple si une des cases grisées est modifiées,
+toutes les autres sont affectées avec la même valeur,
+de plus le segment sera prévenu que ses paramètres
+on changé et qu'il doit devra mettre à jour le vecteur.
+
+Les contraintes d'égalité ne sont pas obligatoires,
+on peut par exemple, détruire le nombre flottant
+qui paramètre le rayon de la sphère.
+La valeur courante du rayon restera stockée dans la sphère.
+
+Nous appelons {\em champ} les différentes valeurs «stockées»
+dans les objets.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Les champs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Il y a plusieurs grandes catégories de champs.
+\begin{itemize}
+\item 
+  Des champs de {\em stockage} qui mémorisent des valeurs.
+  Dans l'exemple ce sont les rectangles en trait épais.
+  L'objet flottant possède un champ de stockage pour stocker sa valeur,
+  le segment de droite en possède un pour stocker
+  le résultat du calcul du vecteur.
+\item
+  Des champs {\em extraits} qui indiquent que la valeur du champ
+  est extraite d'un des champ de l'un des arguments.
+  Si le paramètre est absent, le champs est traité comme
+  un champ de stockage.
+  L'objet point possède trois champs extraits ($x$, $y$, $z$)
+  qui sont l'extraction du champ ``nombre'' de chacun des trois paramètres.
+  Le champ centre de la sphère ainsi que le point de départ
+  et d'arrivée du segment sont l'extraction d'un champs
+  de type point de leurs paramètres.
+\item
+  Des champs {\em virtuels} auxquels ne correspondent pas de zone
+  de stockage mais auxquels sont associées une fonction
+  pour l'accès à la valeur du champ et une autre pour modifier sa valeur.
+  Le champ distance du segment déclenchera le calcul de la distance
+  des deux points s'il est accédé en lecture
+  ou pourra modifier les deux points de façons à respecter
+  une contrainte de distance s'il est accédé en écriture.
+\end{itemize}
+
+Les champs possèdent de nombreux attributs~:
+un nom, une valeur par défaut,
+s'il est affichable, éditable, ...
+
+Les attributs les plus importants sont liés
+au format de stockage du champs
+(triplet, quadruplet, entier, flottant, ...),
+mais aussi un type logique
+(point, vecteur, couleur, nombre, surface, volume, ...),
+
+Cette richesse de la notion de champs existe
+dans peu de langage, on peut citer {\sc Dylan}\cite{revue:strassmann}
+et {\sc Scheme}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{La création d'un objet}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Pour créer un objet, il faut déterminer la classe dont il est l'instance.
+On indique donc la liste de ses paramètres et une indication
+sur le type de l'objet (par exemple on appuie sur 's' pour créer
+un segment, qu'il soit paramétré par point/point ou point/vecteur).
+L'éditeur détermine alors la «meilleur» classe possible (si elle existe).
+
+{\em Le choix de la classe de l'objet à créer n'est pas fait
+en fonction de la classe des paramètres mais
+de la validité des champs extraits}.
+Dans l'exemple le segment à été créé car la sphère
+contient bien un champ de type point.
+La «meilleure» classe possible est celle pour laquelle
+on peut extraire le plus champs possible des arguments.
+L'utilisation des champs comme «vérificateurs de cohérence» de la formule
+permet une plus grande souplesse et évolutivité que l'utilisation
+des classes des paramètres.
+
+Lors de la création interactive de l'objet,
+certains types logiques de champs sont initialisés
+avec une valeur dépendant de la position du curseur.
+Ce sont les nombres, le point et le vecteur.
+On peut donc directement créer un point sans avoir à le contraindre
+par trois coordonnées.
+
+Lors du déplacement de l'objet, on utilise ces mêmes champs
+avec de plus un numéro d'ordre.
+On pourra déplacer
+le premier ou deuxième point du segment de droite,
+ce qui dans les deux cas changera les coordonnées
+du centre de la sphère.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{La classe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La classe définit les informations communes à ses instances les objets.
+
+Parmi ses informations,
+il y a obligatoirement le nom de la classe et la liste des champs que
+contiendront les instance.
+Mais on peut aussi indiquer une surclasse, des fonctions
+d'affichage, de changement d'état courant (pour les transformations affines
+ou les attributs graphiques par exemple),
+de recalcul en cas de modification de l'objet,
+de destruction de l'objet.
+Pour la création de l'objet, on peut indiquer l'évènement
+extérieur permettant sa création (généralement une touche clavier)
+ou bien le chemin
+menant à lui dans le menu (par exemple~: «Figure/1d/Segment/Segment(point,point)»).
+
+L'éditeur, à partir des informations contenues dans la classe,
+va gérer lecture et écriture des instances dans un fichier,
+l'ouverture de fenêtres permettant leur édition,
+la mise à jour des menus et événements de création, ...
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Objets Variable et Opérateur}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le modeleur n'offre pas de {\em macros} mais permet
+de définir des fonctions de modélisation de manière
+interactive.
+Les fonctions ont pour paramètres des objets et retournent
+des objets.
+Chaque fonction est stockée dans un fichier,
+le modèle de la fonction utilise
+un objet ``variable'' qui possède un nom (numéro) et une ``valeur''
+(un objet) par défaut.
+Pour appeler une fonction, on utilise
+un objet opérateur qui connaît le nom du fichier
+contenant le modèle de la fonction.
+Les paramètres de l'objet opérateur
+sont affectés aux différentes variables contenues
+dans la fonction.
+
+On peut par exemple faire un opérateur ``cubeur''
+qui fait huit copies de son paramètre en positionnant
+chaque copie sur un des sommets du cube unité.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Interaction avec l'éditeur}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'éditeur de formule intègre une interface graphique
+pour la saisie 3D des objets.
+L'interface peut être complétée par simple ajout
+d'objet.
+
+Le principal moyen de dialogue est la formule affichée
+sous la forme d'un graphe.
+Les fenêtres d'édition d'objet permettent de modifier
+tous les champs éditables des objets même non visualisable
+(un nombre flottant par exemple).
+
+L'aide est visualisée à l'aide d'un navigateur {\em World Wide Web},
+on peut demander l'aide sur toute zone affichée.
+Voici une copie totale d'écran~:\\
+\centerline{\resizebox{12cm}{!}{\rotatebox{-90}{\includegraphics{interface.ps}}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Ajout d'une nouvelle classe}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'ajout d'une nouvelle classe ne peut être plus simple~:
+on stocke la description de la classe (en langage C)
+dans un seul et unique fichier.
+Il suffit ensuite de regénérer l'exécutable
+pour que la nouvelle classe soit intégrée à l'éditeur.
+
+De plus {\em la définition de la classe n'utilise aucune fonction
+du modeleur}, elle se contente d'offrir des informations.
+Le modeleur utilisera ces informations pour intégrer le nouvel
+objet au même rang que les autres.
+Ceci est intéressant car il n'est pas nécessaire
+de connaître de nombreuses fonctions avant de pouvoir
+intégrer une nouvelle classe dans l'éditeur.
+
+
+\section{Conclusion}
+
+Pour l'enseignement, cet éditeur est agréable car il permet
+très facilement aux étudiants d'intégrer leurs objets
+dans un environnement puissant qui les met en valeur.
+
+Pour la recherche, l'indépendance entre objets et modeleur
+permet d'intégrer des objets développés par différentes
+personnes dans un même environnement et de faire
+{\em communiquer} ces objets entre eux.
+
+\bibliography{exco}
+\bibliographystyle{alpha}
+
+\end{document}

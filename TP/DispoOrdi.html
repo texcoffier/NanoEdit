@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Disposition automatique des ordinateurs</title>
+  </head>
+
+  <body>
+    <h1>Disposition automatique des ordinateurs</h1>
+
+    Dans la fonction changement, UNE fois par seconde
+    vous allez d&eacute;placer TOUS les ordinateurs
+    de la fa&ccedil;on suivante~:
+
+    <UL>
+      <LI> Pour tous les ordinateurs A : VECTEUR(A) = (0,0,0)
+      <LI> Pour toutes les paires de machines (A,B) :<BR>
+	 d = distance(A,B)<BR>
+	 distance_repos = 10/(1+nb_connexion_tcp)<BR>
+	 deplacement = (d - distance_repos)/10<BR>
+	 if ( deplacement&lt;0 || (deplacement&gt;0 &amp;&amp; nb_connexion_tcp&gt;0 )<BR>
+         &nbsp;&nbsp;&nbsp;&nbsp;VECTEUR(A) += vecteur(A,B)/d * deplacement ;<BR>
+      <LI> Pour tous les ordinateurs A : ajoutez VECTEUR(A)
+	&agrave; leur position.
+    </UL>
+    
+Les d&eacute;placement peuvent tr&egrave;s bien s'&eacute;quilibrer
+et les machines ne plus se d&eacute;placer.
+
+
+    <hr>
+    <address><a href="mailto:exco@b710hpd.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Thu Nov 27 15:16:13 MET 1997 -->
+<!-- hhmts start -->
+Last modified: Mon Dec  1 13:24:29 MET 1997
+<!-- hhmts end -->
+  </body>
+</html>

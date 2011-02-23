@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Affichage Polynome de Points</title>
+  </head>
+
+  <body>
+    <h1>Affichage Polynome de Points</h1>
+
+
+    Reprenez le TP sur le polyn&ocirc;me de points calcul&eacute; par Horner.
+    et copiez-le dans votre repertoire  <TT>NanoEdit</TT>.
+    Si vous ne l'avez pas termin&eacute;, prenez celui d'une autre personne.
+
+    <P>
+
+      Prenez le squelette de <a href="C/o_poly_pt.c">o_poly_pt.c</a>
+      et dans la fonction d'affichage
+      tracez (avec GL) la ligne bris&eacute;e repr&eacute;sentant
+      le polyn&ocirc;me dont les param&egrave;tres sont dans la structure C.
+
+    <P>
+
+      Essayez votre nouveau noeud :
+
+    <ul>
+      <li> Sans param&egrave;tre : il faudra &eacute;diter les coordonn&eacute;es
+	des points &agrave; la main.
+      <li> Vous pouvez par contre modifier le <TT>pas</TT> interactivement.
+	Il suffit d'activer le polynome puis d'essayez de le d&eacute;placer
+	suivant l'axe des X.
+      <li> Avec une table de points en param&egrave;tre,
+	on pourra alors d&eacute;placer les points int&eacute;ractivement
+	avec la souris.
+	<li> V&eacute;rifiez que l'on peut colorier le ``polynome''
+    </ul>
+
+    Vous avez remarqu&eacute; que lorsque l'on active le polynome,
+    il ne s'affiche pas en plus &eacute;pais...
+    Am&eacute;liorez ceci en vous inspirant de la fonction <TT>affiche</TT>
+    dans <a href="../OBJETS/o_segment.c">o_segment.c</a>
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Thu Oct  2 09:57:54 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Fri Oct 17 15:28:02 METDST 1997
+<!-- hhmts end -->
+  </body>
+</html>

@@ -1,0 +1,224 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{french}
+\usepackage{graphics}
+
+\title{Un Nano-éditeur}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+
+\section{Introduction}
+
+L'enseignement des techniques graphique et de la modélisation
+nous a poussé à créer notre propre modeleur.
+En effet, le temps accordé au travaux pratique n'est pas assez long
+pour que les étudiants puissent développer leur propre
+modeleur, ils perdent en effet beaucoup de temps
+à développer l'interface, des fonctions d'entrées/sorties, ...
+
+Nous leur offrons donc un modeleur minimal (3000 lignes en langage C)
+dans lequel ils ont toutes libertés pour ajouter
+leur propres objets et qui est nous l'espérons
+un bon exemple de programmation.
+
+Les fonctionnalités les plus importantes sont les suivantes~:
+\begin{itemize}
+\item Documentation en ligne.
+\item {\em Undo}/{\em Redo}.
+\item Lecture/Écriture dans des fichiers ``lisibles'' et simples
+  avec une compatibilité de format ascendante et descendante.
+\item Un modèle géométrique composé d'objets (au sens méthodologie objet).
+\item Les objets sont paramétrables par d'autres objets.
+  (Le modèle est donc un graphe sans cycle d'objets, qui est d'ailleur affiché)
+\item Constructions par contrainte.
+\item Menus et intéractions contextuels.
+\item Fenêtres d'éditions textuelles des objets.
+\item Définition intéractive de fonctions.
+\item Extrême facilité d'ajout d'objet~:
+  il suffit d'ajouter un fichier et l'objet s'intègre complètement
+  dans le modeleur.
+\item Les données du modèle ont 2 types : un type de stockage et un type
+  logique. Par exemple Triplet/Point ou Triplet/Vecteur
+\item Il peut travailler sur des objets non visualisables
+\end{itemize}
+
+\section{L'interface utilisateur}
+
+Il se compose des fenêtres suivantes~:
+\begin{itemize}
+\item 4 Vues graphiques 3D
+\item La visualisation du graphe du modèle
+\item Etat courant de l'éditeur
+\item Un navigateur WWW pour afficher l'aide
+\item Des fenêtres d'édition d'objet
+\end{itemize}
+
+Le fonctionnement normale consiste à activer des objets
+puis créer un objet qui aura comme paramètres l'ensemble
+des objets actifs.
+
+La création peux évidemment ce faire au clavier ou en choisissant
+dans un menu. Dans les deux cas elle est contextuelle,
+la touche 's' permet de créer un segment défini par point/point
+ou point/vecteur suivant les paramètres
+(ou bien faire une erreur si les paramètres sont incorrectes).
+
+
+
+\section{Les champs}
+
+Le champ est l'unité de stockage dans le modeleur.
+Les objets du modeleur contiennent des champs.
+Contrairement au langages objets classiques ou l'exécution
+est guidée par le type des objets,
+dans ce modeleur elle est guidée par le contenu des objets,
+ceci permet une extrême souplesse du modeleur.
+
+Par exemple un segment définie par deux points est
+en fait défini par deux objets contenant un champ nommé point.
+
+Le champs possède de nombreux attributs~:
+\begin{itemize}
+\item Le nom,
+\item type logique : point, vecteur, valeur, ...
+\item type de stockage : triplet, entier, flottant, ...
+\item s'il est {\em extrait} d'un champs de paramètre
+  (dans ce cas, le type du champ du paramètre),
+\item sa valeur par défaut,
+\item s'il est éditable, à sauvegarder, à afficher, ...
+\item ...
+\end{itemize}
+
+
+\section{Les objets}
+
+Ils peuvent fournir les renseignements suivants~:
+\begin{itemize}
+\item La liste des champs (enregistrements) que contiennent les instances
+  de la classe.
+
+\item Un liste d'information et méthodes sur la classe~:\\
+  La surclasse, le nom, affichage, préviens changement
+  de paramètre ou de champs, 
+  changement d'état courant, destruction, si elle prend des paramètres,
+  l'événement de création, le chemin dans le menu, ...
+
+\end{itemize}
+
+L'aide est stockée dans un fichier au format HTML
+qui porte le nom de la classe.
+
+
+\section{Les paramètres}
+
+Ce sont eux qui permettent de faire des contraintes,
+en effet un objet peut être paramètre de plusieurs autres objets.
+
+Si un objet est détruit, les objets dont il est paramètre
+gardent la dernière valeur prise.
+On perd donc une contrainte.
+
+Si un champ {\em extrait} d'un paramètre est modifié alors la modification
+va des ``descendre'' dans le paramètre (récursivement)
+et ``remonter'' dans les autres objets afin
+de mettre à jour tous les objets. 
+
+
+
+\section{La création de fonctions}
+
+Elle est complètement intéractive.
+Les fonctions ont pour paramètre des objets et retournent
+des objets.
+
+Elle nécessite deux objets particuliers, la {\tt variable}
+et l'{\tt opérateur}.
+
+La {\tt variable} possède un nom (numéro) et une ``valeur''
+(un objet) par défaut.
+
+L'{\tt opérateur} contient un nom de fichier et ses paramètres
+sont affectés aux différentes {\tt variables} contenues
+dans le fichier.
+
+
+\section{Un exemple d'objet.}
+
+\begin{verbatim}
+<<<des includes>>>
+
+struct moi
+{
+  struct objet   objet ;        /* Champs commun à tous les objets */
+  struct u_triplet intersection ; /* Point d'intersection */
+  struct u_droite a, b ;        /* Les deux droites à intersecter */
+} ;
+
+static void changement(struct objet *o)
+{
+  /* Ici on calcul l'intersection entre les droites ``a'' et ``b'' */
+}
+
+static const struct champ champs_intersection[] =
+{
+  {
+     "point_intersection" , /* Nom du champ */
+     Triplet|Point|         /* C'est un triplet qui représente un point */
+     Affiche,               /* Le champ est affiché mais non modifiable */
+     CHAMP(intersection)    /* L'endroit où le stocker dans la structure C */
+  },
+  {
+     "droite1",             /* Nom de la premiere droite */
+      Sextuplet|Droite|     /* C'est un sextuplet représentant une droite */
+      Extrait|              /* Il est extrait d'un argument de l'objet */
+      Obligatoire,          /* Ce paramètre est obligatoire */
+      CHAMP(a),             /* On stocke sa valeur dans le ``a'' de ``moi'' */
+      "0 0 0  1 0 0",       /* Valeur par défaut de la définition */
+      0,                    /* Ce champ est extrait du premier paramètre */
+      Droite                /* Type du champ dans le premier paramètre */
+   },
+  {"droite2",sextuplet|Extrait|Obligatoire|Droite, CHAMP(b),
+   "0 0 0  0 1 0", 1, Droite},
+  {NULL}                    /* Pas d'autres champs */
+} ;
+
+void init_classe_intersection_droite_droite(struct classe *c)
+{
+  u_ressemble_a("point") ; /* Indique la surclasse (pour l'affichage) */
+  c->nom              = "intersection_droite_droite" ; /* Nom de la classe   */
+  c->taille_structure = sizeof(struct moi) ;           /* Taille de l'objet  */
+  c->champs           = champs_intersection ;          /* Champs de l'objet  */
+  c->changement       = changement ;                   /* Prevenir si change */
+  c->evenement        = "~c ~m ~s <Key>i" ;            /* On crée avec 'i'   */
+  c->menu             = "Figure/0d/Point/Point" ;      /* Nom menu           */
+}
+\end{verbatim}
+
+Une fois l'objet intersection créé avec deux objets contenant
+un champ ``droite'', il est possible de détruire des paramètres.
+il conserveront la dernière valeur qu'ils avaient.
+
+Le nom du menu sera complété par les types des paramètres.
+
+La définition de l'objet n'appel aucune fonction du modeleur,
+il indique simplement son contenu et se qu'il sait faire.
+
+\section{Une vue de l'interface}
+
+\resizebox{16cm}{!}{\includegraphics{interface.ps}}
+
+\section{Conclusion}
+
+Pour l'enseignement cet éditeur est agréable car il permet
+très facilement aux étudiants d'intégrer leurs objets
+dans un environnement puissant qui les met en valeur.
+
+\end{document}

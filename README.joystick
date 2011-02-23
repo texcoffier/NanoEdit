@@ -1,0 +1,14 @@
+
+Ajouter paquet :
+
+	xserver-xorg-input-joystick
+
+Redémarer le server
+
+Enlever l'usage normal du Joystick :
+
+	xsetpointer -c 'Logitech Logitech(R) Precision(TM) Gamepad'
+
+Indiquer qu'il est ABSOLUE et non RELATIF (Marche pas) :
+
+	xinput set-mode 'Logitech Logitech(R) Precision(TM) Gamepad' ABSOLUTE

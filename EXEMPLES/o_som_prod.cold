@@ -1,0 +1,116 @@
+#include <math.h>		/* Pour "atof()" */
+#include "o_objet.h"
+
+struct sp
+{
+  char *operation ;
+  Flottant resultat ;
+} ;
+/*
+ * Dans cette fonction, si l'on avait pas voulu vérifier la validité
+ * des champs, on aurait pu remplacer :
+ *    c_trouve_type(&un_fils, &c, _Nombre) ;
+ *    c_recupere_ca(un_fils, c) ;
+ * Par :
+ *    c_recupere_type(un_fils, _Nombre) ;
+ */
+static void changement_sp(struct sp *o)
+{
+  const Champ *c ;		/* champs du fils contenant le flottant */
+  Booleen premier ;		/* Vrai si l'on est dans le premier fils */
+  float tmp, ancienne ;
+
+  switch( o->operation[0] )
+    {
+    case '+' :
+    case '*' :
+      ancienne = o->resultat ;
+      if ( o->operation[0]=='+' )
+	o->resultat = 0 ;
+      else
+	o->resultat = 1 ;
+      premier = Vrai ;
+      POUR_LES_FILS(o,		/* Objet dont on parcour les paramètres */
+		    un_fils,	/* Nom de l'indice de parcour */
+		    {
+		      /*
+		       * Malheureusement, le premier fils de l'objet
+		       * est l'opération (elle est extraite)
+		       * il faut donc la sauter.
+		       */
+		      if ( premier )
+			{
+			  premier = Faux ;
+			  continue ;
+			}
+		      /*
+		       * La fonction c_trouve_type peut modifier
+		       * "un_fils" et "c" (à cause des objets variables)
+		       */
+		      if ( c_trouve_type(&un_fils, &c, _Nombre) )
+			{
+			  /*
+			   * Si l'objet contient un nombre
+			   * alors on vérifie sa validité
+			   */
+			  if ( CHAMP_INVALIDE_(OBJET(un_fils), c) )
+			    NOTE_CHAMP_INVALIDE(o, resultat) ;
+			  else
+			    /*
+			     * On fait le calcul
+			     */
+			    {
+			      tmp = atof(c_recupere_ca(un_fils, c)) ;
+			      if ( o->operation[0]=='+' )
+				o->resultat += tmp ;
+			      else
+				o->resultat *= tmp ;
+			    }
+			}
+		      else
+			/*
+			 * Le fils ne contient pas de nombre
+			 */
+			NOTE_CHAMP_INVALIDE(o, resultat) ;
+		    }
+		      ) ;
+      NOTE_UN_CHAMP_CHANGE(o) ;
+      break ;
+    default :
+      NOTE_CHAMP_INVALIDE(o, operation) ;
+      NOTE_CHAMP_INVALIDE(o, resultat) ;
+    }
+}
+
+CLASSE(som_prod, struct sp,
+       /*
+	* Le resultat est le premier champs afin que cela soit lui
+	* qui soit récupéré pour d'autre calculs en amont.
+	*/
+       CHAMP(resultat ,L_Flottant Affiche)
+       /*
+	* Le type de l'opération ('+' ou '*') est indiqué par le premier
+	* paramètre de l'objet et ce paramètre est obligatoire.
+	* Dans la réalité ce n'est pas pratique car en fait,
+	* le type de l'opération a effectuer n'est pas variable...
+	* On utiliserait plutôt : Edite|Sauve
+	*/
+       CHAMP(operation, L_Chaine Extrait Obligatoire)
+       /*
+	* Ce champ sans existance réelle est là pour que le deuxième paramètre
+	* de l'objet soit un nombre.
+	* On peut donc forcer l'existance de paramètres.
+	*/
+       CHAMP(operation, L_Nombre Obligatoire)
+       /*
+	* IMPORTANT :
+	* Il faut indiquer que lors de la création
+	* tous les objets actif deviennent fils du nouveau.
+	*/
+       PAQUET(NB_ACTIFS)
+       /*
+	*
+	*/
+       CHANGEMENT(changement_sp)
+       MENU("Exemple/Somme ou Produit des fils")
+       )

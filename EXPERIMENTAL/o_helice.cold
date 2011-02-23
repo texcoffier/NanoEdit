@@ -1,0 +1,84 @@
+/* LIB: -lm */
+#include <math.h>
+#include <GL/gl.h>		/* Car il affiche du GL */
+#include <stdlib.h>		/* Pour atoi */
+#include "o_objet.h"		/* Car il faut definir un objet */
+#include "s_string.h"		/* Utilitaires chaines de caractères */
+
+
+typedef struct
+{
+  int nb_tours ;
+} Helice ;
+
+/*
+ */
+
+
+static void affiche_helice(Helice *o, const Champ *c, const char*urgent)
+{
+  float t ;
+  int i ;
+  const int nb = 20 ;
+
+  if ( TRACE(o) )
+    eprintf("Affiche helice\n") ;
+
+  t = 1./(nb-1) ;
+
+  if ( urgent[0] )
+    {
+      if ( ACTIF(o) )
+	{
+	  glPushAttrib(GL_LINE_BIT) ;
+	  glLineWidth(2.) ;
+	}
+
+      glBegin(GL_LINES) ;
+      for(i=0;i<nb;i++)
+	{
+	  glVertex3f( 0., 0. ,i*t) ;
+	  glVertex3f( cos(i*t*2*M_PI), sin(i*t*2*M_PI), i*t) ;
+	  
+	  if ( i>0 )
+	    {
+	      glVertex3f( cos(i*t*2*M_PI), sin(i*t*2*M_PI), i*t) ;
+	      glVertex3f( cos((i-1)*t*2*M_PI), sin((i-1)*t*2*M_PI), (i-1)*t) ;
+	    }
+	}
+      glEnd() ;
+
+      if ( ACTIF(o) )
+	{
+	  glPopAttrib() ;
+	}
+    }
+  else
+    {
+      glEnable(GL_LIGHTING) ;
+      glBegin(GL_QUADS) ;
+      for(i=1;i<nb;i++)
+	{
+	  glNormal3f( sin((i-1)*t*2*M_PI), -cos((i-1)*t*2*M_PI), 0.) ;
+	  glVertex3f( 0., 0. ,(i-1)*t) ;
+
+	  glNormal3f( -sin((i-1)*t*2*M_PI), cos((i-1)*t*2*M_PI), 2*M_PI) ;
+	  glVertex3f( cos((i-1)*t*2*M_PI), sin((i-1)*t*2*M_PI), (i-1)*t) ;
+
+	  glNormal3f( -sin((i)*t*2*M_PI), cos((i)*t*2*M_PI), 2*M_PI) ;
+	  glVertex3f( cos(i*t*2*M_PI), sin(i*t*2*M_PI), i*t) ;
+
+	  glNormal3f( sin((i)*t*2*M_PI), -cos((i)*t*2*M_PI), 0.) ;
+	  glVertex3f( 0., 0. ,i*t) ;
+	}
+      glEnd() ;
+      glDisable(GL_LIGHTING) ;
+    }
+}
+
+
+CLASSE(helice, Helice,
+       EVENEMENT("2h2e")
+       CHAMP(nb_tours, L_Entier DEFAUT("1") Edite Extrait Sauve)
+       CHAMP(nb_tours, L_Affiche_GL(affiche_helice))
+       )

@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <title>Nano&Eacute;dit versus Maya</title>
+  </head>
+
+  <body>
+    <h1>Nano&Eacute;dit versus Maya</h1>
+
+    J'ai seulement assist&eacute; &agrave; un expos&eacute;/d&eacute;monstration sur Maya et
+    je n'en connais pas plus, s'il y a des erreurs
+    pr&eacute;venez-moi.
+    Cette page recense les diff&eacute;rences
+    entre les deux syst&egrave;mes les points communs sont nombreux.
+
+    <table bgcolor="#EEEEEE">
+      <tr>
+	<th>
+	  Nano&Eacute;dit
+	</th>
+	<th>
+	  Maya
+	</th>
+      </tr>
+      <tr>
+	<td>
+	  Graphe de sc&egrave;ne
+	</td>
+	<td>
+	  Idem, mais au lieu d'avoir un graphe unique
+	  il y en a plusieurs (pour les textures, pour l'extrusion, ...)
+	  avec des &eacute;diteurs de graphe diff&eacute;rents cela complexifie
+	  grandement l'interface.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Pas de langage de macros (pas n&eacute;cessaire).
+	  Il est tr&egrave;s facile de commander Nano&Eacute;dit &agrave; partir
+	  de n'importe quel application externe dans n'importe
+	  quel langage (car c'est un serveur Web).
+	</td>
+	<td>
+	  Un langage de macros sp&eacute;cifique.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Les ``plugins'' sont tr&egrave;s courts (2 lignes minimum)
+	</td>
+	<td>
+	  Les ``plugins'' n&eacute;cessitent de sp&eacute;cifier beaucoup
+	  de choses (plusieurs dizaines de lignes il me semble
+	  au minimum)
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Les ``plugins'' peuvent &ecirc;tre en C ou C++ ou autre
+	</td>
+	<td>
+	  Les ``plugins'' sont en C++
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Il devine tout seul ce qu'il doit faire pour
+	  l'&eacute;valuation minimum
+	  sans se tromper (au d&eacute;triment de la vitesse)
+	</td>
+	<td>
+	  On sp&eacute;cifie le graphe de d&eacute;pendance, ceci
+	  alourdi les ``plugins'' facilite l'introduction de bugs
+	  mais permet un gain de vitesse d'&eacute;valuation.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  &Eacute;valuation compl&egrave;te du graphe sc&egrave;ne.
+	  (L'&eacute;valuation incr&eacute;mentale va &ecirc;tre faite
+	  dans une futur version)
+	</td>
+	<td>
+	  &Eacute;valuation incr&eacute;mentale du graphe de sc&egrave;ne.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Ce sont les m&ecirc;me ``plugins'' qui permettent de mod&eacute;liser
+	  l'interface utilisateur (vues 3d, ...) que
+	  les primitives.
+	</td>
+	<td>
+	  L'interface utilisateur ne fait pas partie du graphe de sc&egrave;ne,
+	  il n'est pas d&eacute;fini par des ``plugins'' mais par le langage
+	  de macro.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Contraintes explicites calcul&eacute;es.
+	  Par exemple un objet se positionnant entre deux objets.
+	</td>
+	<td>
+	  Je ne sais pas, je pense que l'on doit passer
+	  par le langage de macros pour le faire.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Interface utilisateur tr&egrave;s simple et uniforme
+	  car tout est ``plugins''.
+	</td>
+	<td>
+	  Interface tr&egrave;s lourd car non modulaire bien qu'ils aient
+	  &eacute;t&eacute; oblig&eacute; de cr&eacute;er plusieurs fen&ecirc;tres.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  L'affichage est fait en OpenGL par les ``plugins''.
+	  La libert&eacute; est totale.
+	  Pour simplifi&eacute; la programmation,
+	  un fonctionnement analogue &agrave; celui de Maya sera possible
+	  en plus de l'affichage OpenGL.
+	</td>
+	<td>
+	  Les ``plugins'' ne d&eacute;pendent pas d'OpenGL, ils retournent
+	  un poly&egrave;dre qui sera manipul&eacute; et affich&eacute; par le moteur graphique.
+	  Le syst&egrave;me semble ferm&eacute;.
+	  L'avantage est que l'exportation du mod&egrave;le vers
+	  autre chose (VRML, STL, Lanc&eacute; de rayon) est
+	  facilit&eacute;.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Pas de ``Shader'' mais c'est tr&egrave;s facile &agrave; impl&eacute;menter.
+	  Une fois que la notion de poly&egrave;dre existe.
+	</td>
+	<td>
+	  Le ``Shader'' permet de choisir comment vont &ecirc;tre
+	  affich&eacute;s les poly&egrave;dres.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  Le format neutre est la cha&icirc;ne de caract&egrave;re (lent)
+	</td>
+	<td>
+	  Tout les traducteurs (casts) doivent &ecirc;tre &eacute;crits (lourd
+	  en programmation mais rapide &agrave; l'ex&eacute;cution)
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  S&eacute;paration du type de stockage et du type logique (s&eacute;mantique)
+	</td>
+	<td>
+	  Comme dans tous les langages classiques : un seul type par donn&eacute;e.
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  C'est un modeleur alg&eacute;brique, la g&eacute;om&eacute;trie et l'affichage
+	  sont des fonctionnalit&eacute;s apport&eacute;es par des ``plugins''
+	</td>
+	<td>
+	  La g&eacute;om&eacute;trie et l'affichage sont inclus dans
+	  le moteur de Maya.
+	</td>
+      </tr>
+
+    </table>
+
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Thu Dec 21 11:02:34 CET 2000 -->
+    <!-- hhmts start -->
+Last modified: Thu Dec 21 15:07:10 CET 2000
+<!-- hhmts end -->
+  </body>
+</html>

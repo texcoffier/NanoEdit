@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Octree</title>
+  </head>
+
+  <body>
+    <h1>Octree</h1>
+
+    Un octree est un arbre ou 8 branches partent de chaque noeuds.
+    On se limitera &agrave; une repr&eacute;sentation ou les feuilles
+    ne peuvent ne prendre que 2 valeurs : 0 ou 1.
+    Dans un tel arbre on remplace syst&eacute;matiquement tous les noeuds contenant
+    8 feuilles avec une valeur identique par une feuille de cette valeur.
+    <P>
+    Une repr&eacute;sentation graphique possible de l'octree est la suivante&nbsp;:
+    <ul>
+      <li> Une feuille 0 ne s'affiche pas.</li>
+      <li> Une feuille 1 affiche un cube unitaire (0,0,0) a (1,1,1)</li>
+      <li> Un noeud affiche ses 8 branches en changeant le rep&egrave;re courant.
+	Si <i>n</i> est le num&eacute;ro de la branche entre 0 et 7 inclus,
+	le rep&egrave;re subit une homoth&eacute;tie de 0.5 et est translat&eacute; en&nbsp;:<BR>
+	<i>( n&amp;1,  (n&amp;2)/2, (n&amp;4)/4 ) / 2</i>
+	(le symbole '&amp;' est l'op&eacute;rateur ET bit &agrave; bit du langage C).
+    </ul>
+    Une repr&eacute;sentation textuelle de l'octree peut &ecirc;tre&nbsp;:
+    <ul>
+      <li> '0' feuille 0 (vide)
+      <LI> '1' feuille 1 (plein)
+      <li> '(' noeud
+      <li> ')' commentaire inutile
+    </ul>
+    <A HREF="octree.eps">Repr&eacute;sentation graphique</A> de <TT>(100(01100000)(10000000)000)</TT>
+    <P>
+      R&eacute;alisez :
+    <UL>
+      <LI> L'affichage graphique de l'octree &agrave;
+	partir de sa d&eacute;finition
+	textuelle. On affichera les faces des cubes.
+	(Squelette : <a href="C/o_affiche_octree.c">o_affiche_octree.c</a>)
+      <LI> L'intersection de deux octrees.
+	N'oubliez pas de remplacer les noeuds par des feuilles
+	si n&eacute;cessaire.
+	(Squelette : <a href="C/o_inter_octree.c">o_inter_octree.c</a>)
+    </UL>
+    Pour ne pas perdre de temps en d&eacute;buggage, faite des fonctions
+    r&eacute;sistante aux erreurs de codage&nbsp;: mauvais nombre
+    de feuilles pour un noeud, fin de cha&icirc;ne de caract&egrave;re
+    inopin&eacute;e ou caract&egrave;res inattendus.
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Mon Nov 24 10:20:04 MET 1997 -->
+<!-- hhmts start -->
+Last modified: Wed Nov 17 11:48:50 CET 1999
+<!-- hhmts end -->
+  </body>
+</html>

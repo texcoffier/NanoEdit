@@ -1,0 +1,26 @@
+% Remember to use the lgrind style
+
+\File{}{0000}{N/A}{00}{00:00}{0}
+\L{\LB{\K{\#include}_\S{}\3o\_objet.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3t\_geometrie.h\3\SE{}}}
+\L{\LB{\K{struct}_\V{segment}_\{_\V{Triplet}_\V{depart},_\V{arrivee}_;_\}_;}}
+\L{\LB{}}
+\L{\LB{\Proc{echange}\K{static}_\V{Booleen}_\V{echange}(\V{const}_\V{Interface\_widget}_\*\V{iw})}}
+\L{\LB{\{}}
+\L{\LB{__\V{Triplet}_\V{tmp}_;}}
+\L{\LB{__\K{struct}_\V{segment}_\*\V{s}_;}}
+\L{\LB{}}
+\L{\LB{__\V{s}_=_\V{iw}\-\!\>\V{objet}_;}}
+\L{\LB{__\V{tmp}_=_\V{s}\-\!\>\V{depart}_;}}
+\L{\LB{__\V{s}\-\!\>\V{depart}_=_\V{s}\-\!\>\V{arrivee}_;}}
+\L{\LB{__\V{s}\-\!\>\V{arrivee}_=_\V{tmp}_;}}
+\L{\LB{}}
+\L{\LB{__\K{return}(\V{Faux})_;_\C{}\1\*_Ceci_indique_que_l\4on_veut_réévaluer_le_modèle_\*\1\CE{}}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\Proc{CLASSE}\V{CLASSE}(\V{segment13},}}
+\L{\LB{_______\K{struct}_\V{segment},}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{depart}_,_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{arrivee},_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP\_VIRTUEL}_______\V{CHAMP\_VIRTUEL}(\V{LABEL}(\S{}\3Echange_D_\&_A\3\SE{})_\V{L\_bouton}(\V{echange}))}}
+\L{\LB{______)}}

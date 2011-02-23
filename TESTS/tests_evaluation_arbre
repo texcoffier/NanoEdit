@@ -1,0 +1,38 @@
+#!/bin/sh
+
+echo "Test de l'évaluation d'arbre"
+
+X=1000
+
+t "Charge g_t_p_f"  /appel/modele    	   0 charge  te_entree g_t_p_f
+t "Change flottant" /appel/flottant  	   3 valeur  c_sauve   2222
+t "Change flottant" /appel/flottant  	   4 valeur  c_sauve   3333
+t "Change point"    /appel/point3    	   0 triplet c_sauve   "111 222 333"
+t "Change table"    /appel/table_point3    0 t       c_sauve   "9 8 7"
+t "Change table nc" /appel/table_nc_point3 0 t       c_sauve   "100 200 300"
+t "Change table"    /appel/table_point3    0 t       c_sauve   "91 81 71"
+t "Change grille"   /appel/grille_point3   0 t       c_sauve   "[(0)(0)]"
+t "Change grille"   /appel/grille_point3   0 t       c_sauve   "[(10000
+10001
+10002)(10003)]"
+t "Change ptgrille" /appel/iso_grille    0 t       c_sauve   "1 2 3
+4 5 6
+7 8 9
+
+10 11 12
+13 14 15
+16 17 18
+19 20 21"
+
+
+t "Charge tst_gf_repere"  /appel/modele    0 charge  te_entree tst_gf_repere
+t "Change grille" /appel/iso_grille_flottant 0 t       c_sauve   "[(1 2 3)
+(4 5 6)
+(7 8 9)
+(10 11 12)]"
+t "Change origine" /appel/repere 0 t_origine       c_sauve   "100 110 120"
+t "Change vx" /appel/repere 0 t_v1       c_sauve   "10 20 30"
+t "Change vz" /appel/repere 0 t_v3       c_sauve   "70 80 90"
+
+
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "Test de paquet et décalage"
+
+X=1300
+
+t "Charge invalide1"    /appel/modele   0 charge     te_entree  invalide1
+t "Change point x<0"    /appel/point3  	0 triplet    c_sauve   ".1 .2 -.3"
+t "Change couleur x>0"  /appel/couleur 	0 point      c_sauve   ".1 .2 .5"
+t "Change point x>0"    /appel/point3  	0 triplet    c_sauve   ".1 .2 .4"
+t "Change couleur x<0"  /appel/couleur 	0 point      c_sauve   ".1 .2 -.6"
+t "Change couleur x>0"  /appel/couleur 	0 point      c_sauve   ".1 .2 .7"
+
+

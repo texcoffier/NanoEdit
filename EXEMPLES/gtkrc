@@ -1,0 +1,17 @@
+#
+# o_minimal.c
+#
+style "grosse-fonte" {
+font = "-*-*-bold-r-*-*-*-180-*-*-m-*-iso8859-1"
+}
+style "fond-rouge" {
+bg[NORMAL] = {1.0,0,0}
+}
+style "gros-bord" {
+# border_width = 5
+}
+
+
+widget "segment1*label_classe" style "grosse-fonte"
+widget "segment1*trace" style "fond-rouge"
+widget "segment1*actif" style "gros-bord"

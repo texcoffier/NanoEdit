@@ -1,0 +1,31 @@
+Voici comment générer des films avec NanoEdit
+---------------------------------------------------
+
+Faites un modèle contenant l'ensemble du film.
+Paramétrer toute l'animation par un seul objet seconde.
+L'incrément peut être :
+	- 0.04 : 25 images secondes
+	- 0.008 : Anti-aliasing temporel 5 images / image
+	- 0.004 : Anti-aliasing temporel 10 images / image
+Quand vous voulez générer un morceau du film :
+	- Choisisser la qualité dans la vue
+	- Faites un Dump pour choisir le zoom in/out
+	- Paramétrez l'objet 'seconde'
+	- Enlevez les fenêtres qui cachent la vue.
+	- Cliquez sur 'Anime' dans la fenêtre modèle.
+	- Faites démarrer l'objet 'seconde'
+
+Les images sont générées dans le répertoire 'ANIMATION'
+Elle sont nommées en fonction de la valeur du temps.
+
+Pour faire l'antialisiasing temporel, lancez la commande :
+	SHELL/alias_temporel
+Qui prend TOUTES les image de ANIMATION et calcule ANIM
+
+Pour générer le film MPEG, faites :
+	- cd ANIM    (ou ANIMATION)
+        - ../SHELL/fait_mpeg2
+Le film se nomme 'yyy.mpg'
+
+
+

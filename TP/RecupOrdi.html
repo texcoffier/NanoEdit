@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>R&eacute;cup&eacute;ration des informations ordinateur</title>
+  </head>
+
+  <body>
+    <h1>R&eacute;cup&eacute;ration des informations ordinateur</h1>
+
+Dans le squelette il n'y avait que la recup&eacute;ration de la charge.
+Vous devez ajouter la r&eacute;cup&eacute;ration d'autres informations.
+De m&ecirc;me pour le script shell, vous devez en faire
+un qui r&eacute;cup&egrave;re toutes les informations.
+<P>
+<EM>N'oubliez pas de v&eacute;rifier que votre compte
+est correctement configur&eacute; pour r&eacute;cup&eacute;rer les informations.
+La commande <TT>remsh b710hpc ls</TT> doit afficher
+le contenu de la racine de votre compte.
+Si cela n'est pas le cas, v&eacute;rifiez que le fichier
+<TT>$HOME/.rhosts</TT> est bien accessible en lecture pour TOUT
+le monde (et evidemment votre r&eacute;pertoire de connexion
+doit au moins avoir le mode <TT>rwx--x--x</TT>)</EM>
+<P>
+<STRONG>N'espionnez pas la machine <TT>miage</TT> cela &eacute;croulerai
+le r&eacute;seau. Choisissez des machines parmi <TT>b710sia[a-z]</TT> ou
+<TT>b710hp[a-g]</TT>
+par exemple</STRONG>
+<P>
+Vous devez donc r&eacute;cuperer :
+<UL>
+<LI> Le nombre d'utilisateurs avec :<BR>
+	<TT>who | cut -d" " -f1 | sort -u | wc -l</TT>
+	<P>
+<LI> La taille du disque ``/'' et son occupation avec :<BR>
+	<TT>df -t /</TT><BR>
+	Attention la pr&eacute;sentation est diff&eacute;rente sur HP et Silicon.
+	<P>
+<LI> L'adresse IP de la machine avec :<BR>
+	<PRE>nslookup `hostname`</PRE>
+	Attention la pr&eacute;sentation est diff&eacute;rente sur HP et Silicon.<BR>
+	On gardera l'adresse IP dans la variable shell IP.
+	<P>
+<LI> La liste des connexions TCPIP avec :<BR>
+	<PRE>netstat -n |
+fgrep ESTABLISHED |
+sed -e "s/ 127.0.0.1/ $IP/g" \
+    -e "s/ *[^ ]* *$//" \
+    -e "s/\.[0-9]*$/+&/" \
+    -e "s/+\./ /" \
+    -e "s/[^ ]* *[^ ]* *[^ ]* *$IP.//" | fgrep -v $IP
+</PRE>
+	La commande pr&eacute;c&eacute;dente affiche une connexion par ligne,
+	pour chaque ligne, il y a le num&eacute;ro de port client,
+	l'adresse IP du serveur, le num&eacute;ro de port serveur.
+	Attention, la commande pr&eacute;c&eacute;dente suppose
+	que la variable IP soit &agrave; la bonne valeur.
+	Attention, la commande pr&eacute;c&eacute;dente enl&egrave;ve les
+	connexions de la machine sur elle m&ecirc;me,
+	je vous dispense des les tracer.
+</UL>
+
+<STRONG>
+    Concernant les cha&icirc;nes de caract&egrave;res dont vous voulez modifier
+    la valeur, la d&eacute;marche normale est de faire&nbsp;:
+    <PRE>
+free(MOI-&gt;chaine) ;
+MOI-&gt;chaine = strdup(nouvelle_valeur) ;
+</PRE>
+</STRONG>
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Tue Oct 21 15:30:16 METDST 1997 -->
+<!-- hhmts start -->
+Last modified: Fri Dec  5 10:33:11 MET 1997
+<!-- hhmts end -->
+  </body>
+</html>

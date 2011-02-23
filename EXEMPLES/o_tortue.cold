@@ -1,0 +1,107 @@
+#include "o_classe.h"
+#include "c_champ.h"
+#include "o_objet.h"
+#include "t_base.h"		/* Pour P_Entier, L_Nombre, L_Nombre_Positif */
+#include "t_geometrie.h"	/* Pour P_Triplet, L_Point */
+#include <GL/gl.h>
+#include <math.h>
+
+/*
+ * Les fonction affiche_rec et affiche sont une maniere de faire
+ * le programme parmi de nombreuses.
+ * Je pense que c'est la plus simple.
+ *
+ * Des solutions plus courtes existent mais elles s'executent
+ * plus lentement. Les voici :
+ *     - Enlever TOUS les glColor3f et en mettre un avant glVertex3f
+ *     - Deplacer le PushAttrib/PopAttrib dans la fonction recursive
+ *       et par consequent enlever la ligne contenant en commentaire :
+ *                   Ne pas oublier cette ligne ...
+ */
+
+
+/*
+ * Carre
+ * {.TA.TA.TA.TA.}
+ * Croix
+ * {.A(A.})(T{b.A.})t{r.A.}
+ *
+ * Flocon (programme shell generant le programme tortue
+
+f() { sed -e "s/^/pp/" -e "s/A\./A.TA.tA.tA.A.TA.TA.tA./g" ; }
+echo "{.A.}" | f | f | f
+
+ */
+struct moi
+{
+  struct objet objet ;		/* Obligatoire pour tous les objets */
+  char *programme ;		/* Programme de la tortue */
+} ;
+
+PREPARE_DEFINITION_CHAMPS
+
+static struct champ champs[] =
+{
+  /* Le champs suivant est forcément extrait d'un paramètre car Obligatoire */
+  {"programme", P_Chaine , L_Chaine, Extrait, CHAMP(programme), "{.t.}", 0},
+  {NULL}
+} ;
+
+
+static char * affiche_rec(char *p,
+			  float x, float y,
+			  float vx, float vy,
+			  float r, float v, float b)
+{
+  float tmp ;
+
+  while(*p)
+    {
+      switch(*p)
+	{
+	case '[' : glBegin(GL_POLYGON)    ; break ;
+	case '{' : glBegin(GL_LINE_STRIP) ; break ;
+	case ']' :
+	case '}' : glEnd() ; break ;
+	case '.' : glVertex2f(x,y) ; break ;
+	case 'T' : tmp = vx ; vx = -vy ; vy =  tmp ; break ;
+	case 't' : tmp = vx ; vx =  vy ; vy = -tmp ; break ;
+	case 'A' :  x += vx ; y  += vy ; break ;
+	case 'a' :  x -= vx ; y  -= vy ; break ;
+	case 'P' : vx *= 2  ; vy *= 2  ; break ;
+	case 'p' : vx /= 2  ; vy /= 2  ; break ;
+	case 'R' : r += 0.5 ; glColor3f(r,v,b) ; break ;
+	case 'V' : v += 0.5 ; glColor3f(r,v,b) ; break ;
+	case 'B' : b += 0.5 ; glColor3f(r,v,b) ; break ;
+	case 'r' : r -= 0.5 ; glColor3f(r,v,b) ; break ;
+	case 'v' : v -= 0.5 ; glColor3f(r,v,b) ; break ;
+	case 'b' : b -= 0.5 ; glColor3f(r,v,b) ; break ;
+	case '(' :
+	  p = affiche_rec(p+1, x,y,vx,vy,r,v,b);
+	  glColor3f(r,v,b) ; /* Ne pas oublier cette ligne ... */
+	  break ;
+	case ')' : return(p) ;
+	default : eprintf("Caractère '%c'(%d) pas dans le langage tortue\n",
+			  *p, *p);
+	}
+      p++ ;
+    }
+  return(p) ;
+}
+
+
+void static affiche(struct objet *o)
+{
+  glPushAttrib(GL_CURRENT_BIT) ;
+  affiche_rec(MOI->programme, 0,0, 1,0, 1,1,1) ;
+  glPopAttrib() ;
+}
+
+
+void init_classe_tortue(struct classe *c)
+{
+  c->nom              = "tortue" ;
+  c->taille_structure = sizeof(struct moi) ;
+  c->champs           = champs ;
+  c->affichage        = affiche ;
+}

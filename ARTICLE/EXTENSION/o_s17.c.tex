@@ -1,0 +1,20 @@
+% Remember to use the lgrind style
+
+\File{}{0000}{N/A}{00}{00:00}{0}
+\L{\LB{\K{\#include}_\S{}\3o\_objet.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3t\_geometrie.h\3\SE{}}}
+\L{\LB{\K{struct}_\V{segment}_\{__\V{Triplet}_\V{depart},_\V{arrivee}_;_\}_;}\Tab{48}{___}}
+\L{\LB{}}
+\L{\LB{\Proc{segment\_pov}\K{static}_\K{void}_\V{segment\_pov}(\K{struct}_\V{segment}_\*\V{s},_\V{const}_\V{Champ}_\*\V{c},_\V{const}_\K{char}_\*\V{v})}}
+\L{\LB{\{}}
+\L{\LB{__\V{fprintf}(_(\V{FILE}\*)\V{atoi}(\V{v}),}}
+\L{\LB{}\Tab{8}{___\S{}\3cylinder_\{_\<\%g,\%g,\%g\>,_\<\%g,\%g,\%g\>,_0.01_\}\2n\3\SE{},}}
+\L{\LB{}\Tab{8}{___\V{s}\-\!\>_\V{depart}.\V{x},_\V{s}\-\!\>_\V{depart}.\V{y},_\V{s}\-\!\>_\V{depart}.\V{z},}}
+\L{\LB{}\Tab{8}{___\V{s}\-\!\>\V{arrivee}.\V{x},_\V{s}\-\!\>\V{arrivee}.\V{y},_\V{s}\-\!\>\V{arrivee}.\V{z})_;}}
+\L{\LB{\}}}
+\L{\LB{\Proc{CLASSE}\V{CLASSE}(\V{segment17},}}
+\L{\LB{_______\K{struct}_\V{segment},}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{depart}_,_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{arrivee},_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP\_VIRTUEL}_______\V{CHAMP\_VIRTUEL}(\V{L\_affiche\_pov}(\V{segment\_pov}))__________\C{}\1\*\*\1\CE{}}}
+\L{\LB{______)}}

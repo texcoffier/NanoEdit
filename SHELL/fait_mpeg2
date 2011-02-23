@@ -1,0 +1,17 @@
+#!/bin/sh
+
+rm xxx*
+
+J=0
+for I in ??m??s???*
+do
+  ln -s $I xxx.$J.jpg
+  J=`expr $J + 1`
+done
+
+
+ffmpeg -f image2 -vcodec mjpeg -i xxx.%d.jpg -target dvd yyy.mpg
+# ffmpeg -f image2 -vcodec mjpeg -i xxx.%d.jpg -target dvd yyy.mpg
+# ffmpeg -f image2 -vcodec mjpeg -i xxx.%d -target dvd yyy.avi
+
+rm xxx*

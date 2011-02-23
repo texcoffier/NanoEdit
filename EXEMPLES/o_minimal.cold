@@ -1,0 +1,18 @@
+#include "o_objet.h"		/* Car il faut définir un objet */
+
+struct ma_structure /* Vide dans cet exemple */
+{
+  int inutile ; /* Ce champ est là pour éviter un Warning du compilateur */
+} ;
+
+CLASSE(minimal,			/* Nom de la classe */
+       struct ma_structure,	/* La structure de donnée liée à l'objet */
+       /*
+	* ATTENTION : La suite ne contient pas de séparateur , ou ;
+	*/
+       EVENEMENT("0m0i")	/* Facultatif : raccourci clavier */
+       MENU("Exemple/Minimal")	/* Facultatif : chemin dans le menu */
+       BULLE_D_AIDE		/* Facultatif */
+       ("Plus petit objet que l'on peut faire\n"
+	"avec NanoÉdit\n")
+      )

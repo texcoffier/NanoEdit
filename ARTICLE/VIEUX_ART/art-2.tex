@@ -1,0 +1,294 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{french}
+\usepackage{graphics}
+
+\title{Un Nano-éditeur}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\maketitle
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'enseignement des techniques graphiques et de la modélisation
+nous a poussé à créer notre propre modeleur.
+En effet, le temps accordé aux travaux pratiques n'est pas assez long
+pour que les étudiants puissent développer leur propre
+modeleur, ils perdent en effet beaucoup de temps
+à développer l'interface, des fonctions d'entrées/sorties, ...
+
+Nous leur offrons donc un modeleur minimal
+(seulement 3000 lignes en langage C pour le {\em moteur})
+dans lequel ils ont toute liberté pour ajouter
+leur propres objets et qui est nous l'espérons
+un bon exemple de programmation.
+
+C'est aussi un excellent outil pour la recherche
+car il permet de tester facilement des algorithmes
+et permet d'intégrer automatiquement des objets
+créés par des personnes différentes.
+
+Le fait que ce modeleur soit géométrique est un effet
+de bord du aux objet qui lui sont ajouté.
+C'est en fait un modeleur algébrique intéractif.
+
+Ce modeleur étant original à plusieurs points de vue,
+il est intéressant de détailler les concepts
+qu'il introduit, son utilisation
+ainsi que sa programmation.
+Nous détaillons d'abord ses possibilités puis
+montrons ensuite les concepts sous-jacent
+qui ont permis de les réaliser simplement.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Utilisation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le modeleur est complètement interactif et permet
+de travailler dans $\R^3$.
+Les moyens de dialogue sont multiples~:
+menus contextuels, accélérateurs claviers, fenêtre d'édition d'objet,
+désignation, ...
+L'aide est évidemment disponible par simple désignation des composants
+de l'interface, elle est affichée dans un navigateur {\em World Wide Web}.
+
+Le dialogue se déroule généralement en deux étapes~:
+création d'une liste d'objets {\em actifs} suivie d'un choix d'action.
+Les actions possibles dépendent des objets actifs.
+Si l'on appuie sur 's' pour créer un {\tt segment} de droite,
+suivant les objets actifs un {\tt segment} passant par deux
+{\tt point} ou un {\tt segment} défini par un {\tt point} et un {\tt vecteur}
+sera créé. Si les arguments ne permettent
+pas de faire un {\tt segment}, alors il y aura une erreur.
+
+Les objets actifs qui ont servi à la création
+sont les {\em paramètres} du nouvel objet.
+Le modèle mémorise des pointeurs sur les paramètres
+et non leur valeur, le modèle construit est donc
+une expression algébrique.
+
+Comme un même objet peut être paramètre de plusieurs
+objets, le modèle est donc un graphe orienté sans cycle.
+Le graphe est d'ailleurs affiché et l'utilisateur peut
+l'utiliser durant les interactions.
+Si un objet est modifié, le modeleur met à jour (si nécessaire)
+tous les objets qui sont liés directement ou indirectement
+à des objets modifiés.
+Tous les objets modifiés sont prévenus qu'il y a eu un changement
+dans leurs paramètres afin qu'il puissent mettre à jour
+des valeurs calculées.
+Par exemple le {\tt segment} défini par deux points
+recalculera le vecteur liant les deux points.
+Le modeleur supporte donc les contraintes solvable de manière {\em explicites}.
+
+Lors de la destruction d'un objet, les contraintes
+qu'il imposait disparaissent
+et les objets qui l'utilisait gardent (s'ils le désirent)
+une copie des valeurs les intéressant dans l'objet détruit.
+Par exemple, pour le {\tt segment}, si le {\tt point} de départ
+est détruit, les coordonnées du point restent dans l'objet {\tt segment}.
+
+
+
+Le modeleur ne possède pas que des objets géométriques,
+il y a notemment le nombre {\tt flottant} et la {\tt chaîne} de caractère.
+Descendre à ce niveau de finesse est important si l'on veut
+faire des objets paramétrés.
+Tous les objets sont {\em éditable} textuellement
+à l'aide d'une fenêtre regroupant les champs de l'objet
+qui sont affichables ou éditables.
+
+Les fonctions {\em undo} et {\em redo} sont obligatoire
+dans un éditeur.
+Elle sont réalisées ici en sauvegardant le modèle après
+chaque action.
+Le format des fichiers modèles est fait de manière
+à être lisible par un être humain, facilement générable
+par un programme et à avoir une compatibilité ascendante et descendante.
+
+Le modeleur n'offre pas de {\em macros} mais permet
+de définir des fonctions de modélisation de manière
+interactive.
+Les fonctions ont pour paramètres des objets et retournent
+des objets.
+Chaque fonction est stockée dans un fichier,
+le modèle de la fonction utilise
+un objet {\tt variable} qui possède un nom (numéro) et une ``valeur''
+(un objet) par défaut.
+Pour appeler une fonction, on utilise
+un objet {\tt opérateur} qui contient le nom de fichier
+contenant le modèle de la fonction.
+Les paramètres de l'objet {\tt opérateur}
+sont affectés aux différentes {\tt variables} contenues
+dans la fonction.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Concepts}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le modeleur a été conçu pour être très flexible
+et pour que l'ajout de nouveaux objets soit très simple.
+Ceci nous a amené a faire ressortir un concept utile
+en modélisation qui est généralement absent des langages objets classiques.
+
+Dans la programmation objet classique,
+l'exécution est guidée par le type des objets.
+Dans le cas du {\tt segment}, on permet sa création
+par {\tt point/point} ou {\tt point/vecteur},
+Si on ajoute l'objet {\tt sphère} on ne pourra pas simplement
+utiliser le centre de la {\tt sphère} comme point du {\tt segment}.
+En utilisant la méthodologie objet, on aboutit à des programmes lourds
+et peu esthétiques.
+
+L'idée importante est que ce qui est utile n'est pas le type
+de l'objet mais les informations qu'il peut fournir.
+Ainsi le {\tt segment} a besoin d'une information {\sc Point} pour
+son point de départ, que celle-ci vienne d'un objet
+{\tt point}, {\tt sphère}, {\tt intersection\_droite},
+... n'a pas d'importance.
+Les informations contenues dans les objets sont appelé {\em champs}.
+
+Une autre idée importante est que les champs ont deux types~:
+un type de stockage ({\sc triplet}, {\sc quadruplet}, {\sc entier}, {\sc flottant}, ...)
+et un type logique ({\sc Point}, {\sc Vecteur}, {\sc Couleur}, {\sc Valeur}, ...).
+Ceci permet notamment de faire des objets faisant des calculs sur des types
+de stockages indépendamment du type logique.
+
+Lors de la création d'objet, le curseur possède des coordonnées 3D.
+Ces coordonnées sont affectées aux champs {\sc Point} ou {\sc Vecteur}
+de l'objet créé si ceux-ci existent.
+Il en est de même pour le déplacement, excepté que pour un objet
+{\tt repère} défini par quatre points, on peut vouloir
+déplacer un quelconque de ses points.
+C'est pourquoi un numéro d'ordre figure en plus des deux types du champs
+pour que le champ soit modifiable interactivement.
+
+Outre ces informations, les champs en possèdent de nombreuses autres,
+ils sont nommés, ont une valeur par défaut
+ainsi que de nombreux attributs pour indiquer s'ils sont
+éditable, affichable, à sauvegarder dans le fichier, ...
+On indique aussi si le champs est extrait d'un paramètre de l'objet,
+par exemple le champ point de départ du {\tt segment}
+extrait le champ {\sc Point} du premier paramètre du {\tt segment}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Programmation : ajout d'objet}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'ajout d'objet est le plus simple possible~:
+on stocke la description de l'objet dans un seul et unique fichier
+sans avoir a modifier quoi que cela soit d'autre
+ni à lancer des commandes de configuration.
+
+De plus {\em la définition de l'objet n'utilise aucune fonction
+du modeleur}, elle se contente de donner des informations sur l'objet.
+Le modeleur utilisera ces informations pour intégrer le nouvel
+objet au même rang que les autres.
+
+Les informations offertent peuvent être nombreuses.
+Il y a obligatoirement le nom de la classe et la liste des champs de l'objet.
+Mais on peut aussi indiquer une surclasse, des fonctions
+d'affichage, de changement d'état courant,
+de recalcul en cas de modification de l'objet,
+de destruction de l'objet.
+Pour la création de l'objet, on peut indiquer l'évenement
+extérieur permettant sa création ou bien le chemin
+menant à lui dans le menu.
+
+Voici un exemple d'objet.
+
+
+\begin{verbatim}
+<<<des includes>>>
+
+struct moi
+{
+  struct objet   objet ;        /* Champs commun à tous les objets */
+  struct u_triplet intersection ; /* Point d'intersection */
+  struct u_droite a, b ;        /* Les deux droites à intersecter */
+} ;
+
+static void changement(struct objet *o)
+{
+  /* Ici on calcul l'intersection entre les droites ``a'' et ``b'' */
+}
+
+static const struct champ champs_intersection[] =
+{
+  {
+     "point_intersection" , /* Nom du champ */
+     Triplet|Point|         /* C'est un triplet qui représente un point */
+     Affiche,               /* Le champ est affiché mais non modifiable */
+     CHAMP(intersection)    /* L'endroit où le stocker dans la structure C */
+  },
+  {
+     "droite1",             /* Nom de la premiere droite */
+      Sextuplet|Droite|     /* C'est un sextuplet représentant une droite */
+      Extrait|              /* Il est extrait d'un argument de l'objet */
+      Obligatoire,          /* Ce paramètre est obligatoire */
+      CHAMP(a),             /* On stocke sa valeur dans le ``a'' de ``moi'' */
+      "0 0 0  1 0 0",       /* Valeur par défaut de la définition */
+      0,                    /* Ce champ est extrait du premier paramètre */
+      Droite                /* Type du champ dans le premier paramètre */
+   },
+  {"droite2",sextuplet|Extrait|Obligatoire|Droite, CHAMP(b),
+   "0 0 0  0 1 0", 1, Droite},
+  {NULL}                    /* Pas d'autres champs */
+} ;
+
+void init_classe_intersection_droite_droite(struct classe *c)
+{
+  u_ressemble_a("point") ; /* Indique la surclasse (pour l'affichage) */
+  c->nom              = "intersection_droite_droite" ; /* Nom de la classe   */
+  c->taille_structure = sizeof(struct moi) ;           /* Taille de l'objet  */
+  c->champs           = champs_intersection ;          /* Champs de l'objet  */
+  c->changement       = changement ;                   /* Prevenir si change */
+  c->evenement        = "~c ~m ~s <Key>i" ;            /* On crée avec 'i'   */
+  c->menu             = "Figure/0d/Point/Point" ;      /* Nom menu           */
+}
+\end{verbatim}
+
+Une fois l'objet intersection créé avec deux objets contenant
+un champ {\sc Droite}, il est possible de détruire des paramètres.
+il conserveront la dernière valeur qu'ils avaient.
+
+Le nom du menu sera complété par les types des paramètres.
+
+\section{Une vue de l'interface}
+
+\resizebox{16cm}{!}{\rotatebox{-90}{\includegraphics{interface.ps}}}
+
+\section{Conclusion}
+
+Pour l'enseignement cet éditeur est agréable car il permet
+très facilement aux étudiants d'intégrer leurs objets
+dans un environnement puissant qui les met en valeur.
+
+Pour la recherche l'indépendance entre objets et modeleur
+permet d'intégrer des objets développés par différentes
+personnes dans un même environnement et de faire
+{\em communiquer} ces objets entre eux.
+
+\end{document}

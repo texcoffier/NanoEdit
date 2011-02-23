@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+  <HEAD>
+    <TITLE>Simulation</TITLE>
+  </HEAD>
+  <BODY>
+    <H1>Pr&eacute;ambule</H1>
+
+      Ce sujet est donn&eacute; pour la premi&egrave;re fois,
+      il va certainement &ecirc;tre modifi&eacute; au cours
+      m&ecirc;me du TP, je vous d&eacute;conseille donc
+      de l'imprimer.
+      Les squelettes seront aussi am&eacute;lior&eacute;s au cours
+      des TP, il ne faut donc
+      pas que vous recopiez les squelettes &agrave; l'avance.
+
+    <H1>Simulation</H1>
+
+      Vous allez devoir faire l'affichage d'un certain
+      nombre d'objets de base permettant
+      de visualiser une cha&icirc;ne de production.
+      C'est &agrave; vous de d&eacute;cider la mani&egrave;re dont vous
+      allez visualiser les objets.
+      Le TP consiste principalement &agrave; faire de
+      la programmation C avec Open GL
+      mais vous devrez faire des mod&egrave;les afin
+      de v&eacute;rifier le fonctionnement de vos affichages.
+
+      <h2>Pi&egrave;ce</h2>
+
+      Cet objet est une pi&egrave;ce en cours de fabrication ou
+      bien de la mati&egrave;re premi&egrave;re.
+      <p>
+	Le type de la pi&egrave;ce est cod&eacute; par un entier,
+	Par exemple&nbsp;:</p>
+      <ol>
+	<li>Un carr&eacute;</li>
+	<li>Un cercle</li>
+	<li>Un croix</li>
+	<li>Un cube</li>
+	<li>Une pyramide</li>
+	<li>...</li>
+      </ol>
+	
+      <p>
+      la visualisation sera faite en fonction de cet entier.
+      La pi&egrave;ce sera dessin&eacute;e dans le cube unitaire
+      d&eacute;fini par 0&lt;x&lt;1, 0&lt;y&lt;1, 0&lt;z&lt;1, 
+    <P>
+	Le squelette :
+<pre>
+cp <A HREF="C/o_gpao_piece.c">/home/exco/NanoEdit/TP/C/o_gpao_piece.c</A> $HOME/NanoEdit
+</pre>
+      <p>
+	Le mod&egrave;le <TT>Charge/TP/GPAO/pieces</TT> contient
+	un assortiment de pi&egrave;ce d&eacute;j&agrave; dispos&eacute;s
+	dans l'espace.
+
+
+      <h2>R&eacute;serve</h2>
+
+      Cet objet contient un certain nombre de pi&egrave;ces en d&eacute;p&ocirc;t.
+      C'est un tampon entre un dispositif producteur
+      et un dispositif consommateur.
+      <p>
+	L'objet contient les informations suivantes&nbsp;:
+	le nombre de pi&egrave;ces maximale stockable,
+	le nombre de pi&egrave;ces en r&eacute;serve.
+      <p>
+	Le param&egrave;tre obligatoire de la r&eacute;serve est
+	le type de <B>pi&egrave;ce</b> que celle-ci contient.
+      <p>
+	Le squelette :
+<pre>
+cp <A HREF="C/o_gpao_reserve.c">/home/exco/NanoEdit/TP/C/o_gpao_reserve.c</A> $HOME/NanoEdit
+</pre>
+      <p>
+	Le mod&egrave;le <TT>Charge/TP/GPAO/reserves</TT> contient
+	un assortiment de r&eacute;serves plus ou moins pleines d&eacute;j&agrave; dispos&eacute;es
+	dans l'espace.
+
+      <h2>Transporteur</h2>
+
+      Il transporte des pi&egrave;ces d'un endroit &agrave; l'autre.
+      Il peut transporter plus d'une pi&egrave;ce &agrave; la fois.
+      S'il ne peut pas poser une pi&egrave;ce, il s'arr&ecirc;te,
+      il reprendra lorsqu'il pourra poser la pi&egrave;ce.
+      <p>
+	Un transporteur a 3 param&egrave;tres obligatoires,
+	la r&eacute;serve de d&eacute;part, d'arriv&eacute;e ainsi
+	qu'un objet ``seconde'' qui d&eacute;clenchera
+	la mise &agrave; jour du transporteur toutes
+	les secondes.
+      <p>
+	Le contenu du transporteur est stock&eacute;
+	dans une chaine de caract&egrave;res.
+<pre>
+cp <A HREF="C/o_gpao_transporteur.c">/home/exco/NanoEdit/TP/C/o_gpao_transporteur.c</A> $HOME/NanoEdit
+</pre>
+
+      <p>
+	Le mod&egrave;le <TT>Charge/TP/GPAO/transporteurs</TT> contient
+	un assortiment de transporteurs reliant des r&eacute;serves.
+      <p>
+      Un objet ``seconde'' s&eacute;quence la simulation,
+      <em>pour que tout soit r&eacute;&eacute;valu&eacute; chaque seconde,
+      il faut que l'objet ``seconde'' soit <b>actif</b></em>.
+
+      <h2>Machine</h2>
+
+      Elle prend des pi&egrave;ces dans une ou des r&eacute;serves
+      et cr&eacute;e de nouvelles pi&egrave;ces.
+
+
+
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Mon Sep 29 14:01:49 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Wed Jan 20 11:45:11 CET 1999
+<!-- hhmts end -->
+  </BODY>
+</HTML>

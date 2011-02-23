@@ -1,0 +1,160 @@
+#!/bin/sh
+
+
+if [ "" = "$BASE" ]
+  then
+    echo "'test' doit être lancé en tapant en utilisant le 'make'." >&2
+    exit 1
+fi
+
+. nanoutil
+
+killall nanoedit >/dev/null 2>&1 # Sinon les tests ne peuvent fonctionner
+
+TF=/tmp/ne_tests_dump
+TF2=/tmp/ne_tests
+ERREUR=0
+#
+# Lance NanoÉdit
+#
+# Remplacer par la ligne en commentaire pour voir la fenêtre
+# du modèle NanoÉdit pendant les tests.
+# $MAKE Nanoedit demo </dev/null >/dev/null 2>xxx.trace &
+$MAKE Nanoedit lance_sans_x11 </dev/null >/dev/null 2>xxx.trace &
+#
+# Indique les différences dont il ne faut pas tenir compte
+# quand on fait la comparaison.
+# Mettre 'cat' dans le cas ou l'on veux tenir compte de tout.
+# Normalement on n'a pas à filtrer (sauf si les tests n'ont pas été
+# lancé depuis longtemps.
+NE_PAS_TESTER="grep -v -e ^double_buffer=1 -e ^b_persp=1 -e ^cache_tag_echange"
+NE_PAS_TESTER="cat"
+#
+# Chargement et comparaison de l'URL "/dump" avec un fichier correcte
+# En paramètre, c'est le nom du fichier à comparer
+#
+dump() {
+  url /dump \
+    | $SED -e "s,$BASE,,g" \
+           -e 's/^trace=1$/trace=0/' \
+           -e 's/^trace2=1$/trace2=0/' \
+           -e 's/^edite=.*$/edite=0/' \
+           -e '/^oper_liste=.*$/d' \
+           -e '/^geometry=.*$/d' \
+           -e 's/titre=NanoÉdit '$VERSION_NANOEDIT'/titre=NanoÉdit/' \
+    | awk '/^graphe=/ { gsub("[0-9]+","0") ; } { print $0 ; }' \
+    | $NE_PAS_TESTER >$TF
+  if [ ! -f DUMPS/$1.gz ]
+  then
+    if [ "" != "$DERNIER" ]
+    then
+      cp DUMPS/$DERNIER DUMPS/$1.gz
+    else
+      echo | $Gzip >DUMPS/$1.gz
+    fi
+  fi
+
+  $ZCAT DUMPS/$1.gz | $NE_PAS_TESTER >$1.tmp
+
+  if $DIFF $1.tmp $TF
+  then
+    echo "OK   : $1	$C"
+  else
+    if tty >/dev/null 2>&1
+    then
+      cat $TF2
+      if [ "O" != "$R" ]
+      then
+	echo
+	echo "Voulez-vous remplacer le fichier DUMPS/$1 ?"
+	echo "o: oui y : oui O : oui pour celui-ci et les suivants"
+	read R
+      fi
+      case "$R" in
+	[oO]|[oO][uU][iI]|[yY]|[yY][eE][Ss])
+	  $Gzip -9 <$TF >DUMPS/$1.gz
+	  ;;
+      esac
+    else
+      echo "BAD  : $1	$C"
+      ERREUR=1
+    fi
+  fi
+  rm $1.tmp
+  DERNIER=$1.gz
+}
+#
+# Chargement d'une URL puis comparaison du DUMP avec
+# une fichier dans le nom s'incrémente (le numéro est dans la variable X)
+#
+t() {
+  T=`printf "%04d" $X`
+  X=`expr $X + 1`
+  C=$1
+  shift
+  url "$*" >$TF2 2>&1
+  dump $T $C
+}
+#
+attend_nanoedit
+#
+# Garde-fou en cas de bouclage ou plantage de ce script
+#
+touch .dort_mon_petit
+(
+    I=0
+    while [ -f .dort_mon_petit ]
+       do
+       sleep 10
+       I=`expr $I + 1`
+       if [ $I = 100 ]
+	    then
+	    kill -1 $$
+	    fi
+       done
+    rm -f ????.tmp 2>/dev/null >&2
+    termine_nanoedit
+)  &
+
+trap 'rm .dort_mon_petit' 0
+#
+# Liste des testes à effectuer.
+#
+TESTS="
+. tests_interaction
+. tests_paquet
+. tests_evaluation_arbre
+. tests_evaluation_reseau
+. tests_operateur
+. tests_invalide
+. tests_extrait
+. tests_poids
+. tests_pov
+"
+
+if false
+    then
+TESTS="
+. tests_poids
+"
+    fi
+
+# Exécution des tests
+
+if tty >/dev/null 2>&1
+then
+  eval "$TESTS"
+else
+  eval "$TESTS" >/tmp/tests.log
+  if [ "0" = "$ERREUR" ]
+  then
+    exit 0
+  else
+    cat /tmp/tests.log
+    exit 1
+  fi
+fi
+
+# Cas particulier qui nécesste de lancer NanoEdit autrement
+
+tests_anime

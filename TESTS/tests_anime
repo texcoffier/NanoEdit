@@ -1,0 +1,163 @@
+#!/bin/sh
+# -*- ksh -*-
+
+echo "Test la génération d'animation (long....)"
+
+if [ "$DISPLAY" = "" ]
+    then
+    echo "Ce test ne fonctionne qu'avec un affichage X11" >&2
+    exit 0
+    fi
+
+killall nanoedit
+
+eval `make variables`
+if [ "$MAKE" = "" ]
+	then	
+	echo "Il faut que le Makefile de NanoEdit soit dans ce répertoire"
+	exit 1
+	fi >&2
+
+. nanoutil >xxx.trace 2>&1
+
+$MAKE lance_en_ecriture </dev/null >>xxx.trace 2>&1 &
+
+attend_nanoedit >>xxx.trace 2>&1
+
+TMPD=$(dirname /tmp/nanoedit-$LOGNAME-*/nom_modele)
+
+urlv /appel/modele 0 charge    te_entree  tst_anime
+urlv /appel/modele 0 animation te_entree  truc
+
+# L'animation commence avec deux images identiques : trouver bug
+sleep 2
+if [ -f "$TMPD/00002.ne" -o ! -f "$TMPD/nom_modele" -o ! -f "$TMPD/00001.ne" ]
+    then
+    echo "Test 1"
+    ls -ls "$TMPD"
+    exit 1
+    fi >&2
+
+urlv /appel/translation  0 t_origine c_sauve   "1"
+if [ -f "$TMPD/00003.ne" -o ! -f "$TMPD/00002.ne" ]
+    then
+    echo "Test 2"
+    ls -ls "$TMPD"
+    exit 1
+    fi >&2
+
+urlv /appel/translation  0 t_origine c_sauve   "2"
+if [ -f "$TMPD/00004.ne" -o ! -f "$TMPD/00003.ne" ]
+    then
+    echo "Test 3"
+    ls -ls "$TMPD"
+    exit 1
+    fi >&2
+
+urlv /appel/seconde 0 virtuel_seconde_2  te_entree   "1"
+while [ ! -f "$TMPD/00006.ne" ]
+do
+    sleep 1
+done
+sleep 1
+if [ -f  "$TMPD/00007.ne" ]
+then
+  echo "Test : une image de trop"
+  ls -ls "$TMPD"
+  exit 1
+fi
+
+
+FILTRE="^(nom|edite|fils) "
+
+zdiff() {
+  zcat $1 | egrep -v "$FILTRE" >xxx.1 ;
+  egrep -v "$FILTRE" <$2 | diff xxx.1 - ;
+}
+          
+
+for I in 0 1 2 3 4 5 6
+do
+  if zdiff "DUMPS/TST_ANIME/0000$I.ne.gz" "$TMPD/0000$I.ne"
+  then
+    :
+  else
+    echo "Fichier NE différents : $TMPD/0000$I.ne !" >&2
+   echo "Je remplace (o/n) ?"
+   read R
+   if [ "o" = "$R" ]
+	then
+	gzip -9 <$TMPD/0000$I.ne >DUMPS/TST_ANIME/0000$I.ne.gz
+	fi
+  fi
+done
+
+killall nanoedit >/dev/null 2>&1
+
+echo "Test la génération d'une suite de vue"
+
+cp -Rap $TMPD XXX
+
+../SHELL/rejouer XXX -vue 2 2 >xxx.rejouer 2>&1
+
+for I in 0 1 2 3 4 5 6
+do
+  if zdiff "DUMPS/TST_ANIME/Vue_Perspective.0000$I.ppm.gz" "VUE/Vue_Perspective.0000$I.ppm"
+  then
+    :
+  else
+    echo "Fichier PPM différents : VUE/0000$I.ppm !" >&2
+    exit 1
+  fi
+done
+
+rm -r VUE
+
+
+echo "Test la génération d'une suite de fichier POV et PPM (TRES LENT)"
+
+export POV_OPTIONS="+W64 +H64 +Q5 +FP -A"
+../SHELL/rejouer XXX -pov 2 2 -mpeg >xxx.rejouer 2>&1
+
+
+for I in 0 1 2 3 4 5 6
+do
+  zcat "DUMPS/TST_ANIME/pas_de_nom.0000$I.pov.gz" | grep -v '^//' >xxx.1
+  cat "POV/pas_de_nom.0000$I.pov" | grep -v '^//' >xxx.2
+  if diff xxx.1 xxx.2
+  then
+    :
+  else
+    echo "Fichier POV différents : POV/0000$I.pov !" >&2
+   echo "Je remplace (o/n) ?"
+   read R
+   if [ "o" = "$R" ]
+	then
+	gzip -9 <POV/pas_de_nom.0000$I.pov >DUMPS/TST_ANIME/pas_de_nom.0000$I.pov.gz
+	fi
+  fi
+done
+
+for I in 0 1 2 3 4 5 6
+do
+  if zdiff "DUMPS/TST_ANIME/pas_de_nom.0000$I.ppm.gz" "POV/pas_de_nom.0000$I.ppm"
+  then
+    :
+  else
+    echo "Fichier PPM généré par POV différents : POV/pas_de_nom.0000$I.ppm !" >&2
+    exit 1
+  fi
+done
+
+xine POV/yyy.mpg &
+
+sleep 10
+rm -r POV
+rm -r XXX
+
+
+
+
+
+
+

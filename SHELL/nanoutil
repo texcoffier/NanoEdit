@@ -1,0 +1,77 @@
+#!/bin/sh
+
+#
+# Variables
+#
+export HN=`hostname`
+
+for I in SED ZCAT Gzip DIFF
+do
+   II=`echo $I | tr '[A-Z]' '[a-z]'`
+   eval export $I=/usr/local/bin/$II
+   if [ ! -x `eval echo '$'"$I"` ]
+    then
+      export $I=$II
+   fi
+   # echo $I=`eval echo '$'"$I"`
+done
+
+$DIFF -u /dev/null /dev/null && export DIFF="$DIFF -u"
+
+eval `$MAKE variables`
+
+#
+# Chargement d'une URL
+#
+url() { client $HN $MON_UID 'GET /'$SECRET`echo "$*" | tr "[\012]" "[·]" | $SED -e 's/ /%20/g' -e 's/\.$//' -e 's/·/%0A/g'`' HTTP/1.0
+
+' ;
+}
+#
+# Chargement d'une URL en jetant le résultat
+#
+urlv() {
+  url $* >/dev/null 2>/dev/null
+}
+#
+# Test si NanoEdit tourne
+#
+nano_fonctionne() {
+  $MAKE client
+  MON_UID=`id -u`
+  OK=""
+  for I in 1 2 3 4 5 6 7
+    do
+      if urlv /dump
+      then
+	OK="oui"
+	echo "NanoÉdit répond sur le port $MON_UID"
+	read SECRET <.secret
+	break
+      else
+	MON_UID=`expr $MON_UID + 1`
+      fi
+  done
+  [ "$OK" = "oui" ]
+}
+#
+# Attente du démarrage de NanoÉdit en testant plusieur PORT
+#
+attend_nanoedit() {
+  while true
+  do
+    echo "Attend démarrage NanoÉdit"
+    sleep 1
+    if nano_fonctionne
+    then
+      break
+    fi
+  done
+}
+#
+# Termine
+#
+
+termine_nanoedit() {
+  urlv /exit
+}

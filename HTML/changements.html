@@ -1,0 +1,508 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <title>Nano&Eacute;dit : historique des changements</title>
+  </head>
+
+  <body>
+    <h1>Nano&Eacute;dit : historique des changements</h1>
+    <P>
+    Nouveaut&eacute;s 1.4 --&gt; 1.5
+    <UL>
+      <LI> Faces cach&eacute;es avec Mesa (bug de Motif)
+      <LI> Proc&eacute;dures de tests automatiques en fonctionnement.
+      <LI> Recompilations totale toutes les nuits sur Linux/HPUX/Irix
+      <LI> La communication avec Netscape se fait mieux.
+      <LI> Bien que cela ne soit pas joli, le type physique P_pointeur_extrait.
+      <LI> Une documentation qui s'&eacute;toffe.
+      <LI> o_sphere.c -&gt; o_solide.c avec un mod&egrave;le CSG en prime.
+      <LI> Le type image est maintenant beaucoup plus propre.
+      <LI> Le typage logique par pr&eacute;dicat fonctionne beaucoup mieux.
+      <LI> Une nouvelle m&eacute;thode plus fiable d'&eacute;valuation du r&eacute;seau.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.5 --&gt; 1.6
+    <UL>
+      <LI> codec_l3_l3_double, t_observateur, P_observateur, L_observateur<BR>
+	Une vue peut &ecirc;tre param&eacute;tr&eacute;e par une autre vue, elles auront
+	le m&ecirc;me observateur (Int&eacute;ressant si l'affichage est trop lent
+	sur une grande vue, on peut en faire une petite).
+      <LI> t_boite_min_max, P_boite_min_max, L_boite_min_max, et
+	plein d'utilitaires pour ce type dans <A HREF="UTILITAIRES/u_geometrie.h">UTILITAIRES/u_geometrie.h</A>
+      <LI> L'objet nuage de point peut-&ecirc;tre param&eacute;tr&eacute; par une vue,
+	celle-ci verra sont observateur modifi&eacute; pour voir le nuage
+	de points en entier apr&egrave;s sont chargement.
+      <LI> L'objet "vue" support maintenant l'option st&eacute;r&eacute;o qui
+	permet de voir le relief en louchant.
+      <LI> Meilleur pr&eacute;sentation des raccourcis clavier dans les menus.
+      <LI> Proc&eacute;dures de tests automatiques passent sur Linux/HPUX/Irix
+      <LI> Dans le graphe, les objets actifs sont en couleur.
+      <LI> Les menus sont d&eacute;tachables, ils sont maintenant dynamiquement
+	contextuel. La version "Lestif" ne supporte pas tr&egrave;s bien,
+	&ccedil;a plante de temps en temps.
+      <LI> Probl&egrave;me des raccourcis clavier dans la fen&ecirc;tre graphe ``r&eacute;solu''
+      <LI> Le choix ``quitte mod&egrave;le'' a disparu du menu, il est
+	fait automatiquement.
+      <LI> E_ascenseur permet de modifier une valeur born&eacute;e avec la souris.
+      <LI> L_flottant_borne a comme type physique un triplet et
+	utilise E_ascenseur.
+	Un objet "valeur_bornee" l'utilisant a &eacute;t&eacute; ajout&eacute;.
+      <LI> L'&eacute;dition d'un objet avec un champ affichable de type E_void
+	ne fait plus planter.
+      <LI> Quand on modifie interactivement une valeur dans une fen&ecirc;tre
+	et que l'on a le temps d'en afficher une (ou plusieurs) autres,
+	c'&eacute;tait toujours la m&ecirc;me qui &eacute;tait affich&eacute;e.
+	Plus maintenant, donc, au bout d'un certain temps,
+	toutes les fen&ecirc;tres ont &eacute;t&eacute; mise &agrave; jour.
+      <LI> Beaucoup de "L_flottant" sont devenus "L_nombre P_flottant"
+	afin de leur permettre d'extraire autre chose qu'un flottant.
+      <LI> Pour des raisons de s&eacute;curit&eacute;, Nano&Eacute;dit est serveur HTTP
+	en lecture seulement sauf avec l'option "-http_ecrit".
+	De plus, il faut pr&eacute;fixer les URLs par un code choisi
+	al&eacute;atoirement &agrave; chaque session.
+      <LI> La page d'accueil du programme contient des v&eacute;rifications
+	d'unicit&eacute; des noms de champs &agrave; l'int&eacute;rieur d'une classe.
+	Les objets existants ont &eacute;t&eacute;
+	mis a jour pour corriger les bugs et les noms des champs
+	virtuels contiennent maintenant le nom de la classe
+	pour &eacute;viter les homonymes.
+      <LI> On peut saisir et d&eacute;placer des objets dans la fen&ecirc;tre
+	perspective.
+      <LI> Il y a maintenant un but "demo" au "makefile",
+	on fait tourner la d&eacute;mo en commandant Nano&Eacute;dit via Netscape.
+      <LI> Les champs et objets ``invalides'' fonctionnent &agrave; nouveau,
+	(L'objet ``couleur'' veut 3 nombres positifs, si ce n'est
+	pas le cas, il devient invalide)
+	Les objets invalide sont affich&eacute; en rouge dans le graphe,
+	et les champs aussi dans les fen&ecirc;tres d'&eacute;dition.
+      <LI> Les traductions HLS RVB sont maintenant correcte,
+	dans l'objet «couleur», on peut choisir des couleurs en glissant
+	les curseurs de la palette.
+      <LI> Ajout de «L_table_nombre» entre «L_table» et «L_table_flottant»,
+	en effet «L_table_flottant» poss&egrave;de un pr&eacute;dicat.
+	M&ecirc;me chose pour «L_grille_nombre».
+      <LI> Ajout de l'objet «iso_grille_flottant» pour afficher
+	des matrices d'altitude.
+      <LI> «P_transfo» est maintenant une grille de flottant.
+      <LI> Dans le menu «Attributs/G&eacute;om&eacute;trique» il y 
+	a maintenant «Transformation 2D», «3D» et «ND»
+	au lieu de simplement «Transformation».
+      <LI> Ajout de l'objet produit de transfomation.
+      <LI> Ajout de fonction d'affichage de tag «rotation» et «dilatation»
+	afin que ces tags apparaissent identiques quelque soit l'objet.
+      <LI> Ajout de tags «rotation» et «dilatation» sur les axes
+	des objets rep&egrave;res.
+      <LI> Il y a maintenant des warning &agrave; la compilation, pour
+	des erreurs du genre&nbsp;: `DEFAUT(10)' au lieu
+	de `DEFAUT("10")'.
+      <LI> Il y a un r&eacute;pertoire «ERIC» (Tosan) et «SYLVAIN3» (Poquet)
+	pour la g&eacute;n&eacute;ration de fractales, ce sont des premi&egrave;re versions.
+      <LI> Ajout des objets «produit vectoriel» et «normalisation vecteur».
+      <LI> Le texte est maintenant affich&eacute; en lanc&eacute; de rayons.
+      <LI> Fonctionne avec clavier AZERTY (&agrave; cause des chiffres)
+      <LI> L'objet POV prend une vue en argument pour avoir
+	le m&ecirc;me poitn de vue.
+      <LI> La sortie NanoEdit sous POV a &eacute;t&eacute; corrig&eacute;.
+	Le applique de applique ... ne fonctionnait pas.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.6 --&gt; 1.7 (les corrections de bugs vont dans la 1.6)
+    <UL>
+      <LI> "t_widget.c" : Fuite m&eacute;moire en moins (n'utilise plus XmStringCompare)
+      <LI> "o_xt_interface.c" : Le d&eacute;placement/agrandissement des fen&ecirc;tres
+	ce fait sans faire de applique.
+      <LI> Cr&eacute;ation des types logiques L_void_void et L_metamorphe
+	pour une meilleur gestion de CLASSE_PARAMETRE et d'operateur.
+      <LI> La coordonn&eacute;es dans la fen&ecirc;tre 2D ont la bonne profondeur.
+      <LI> Les vue sont r&eacute;affich&eacute;es quand on d&eacute;truit les objets.
+      <LI> &Eacute;diter une fen&ecirc;tre d&eacute;j&agrave; &eacute;dit&eacute;e la fait passer devant les autres.
+      <LI> La focale est int&eacute;gr&eacute;e dans l'observateur (vue, pov, nuage). Un objet ``observateur'' a &eacute;t&eacute; cr&eacute;&eacute;. L'objet `vue' peut &ecirc;tre param&eacute;tr&eacute;e par cet observateur.
+	L'objet ``lampe'' a chang&eacute; pour utiliser lui aussi cet objet,
+	la direction d'&eacute;clairage a &eacute;t&eacute; transform&eacute;e en point &eacute;clair&eacute;.
+      <LI> Dans le champ L_geometrie, si la largeur ou la hauteur est
+	nulle on en tient pas compte. La fen&ecirc;tre `Mod&egrave;le' apparait
+	maintenant syst&eacute;matiquement &agrave; gauche.
+      <LI> Dans l'objet POV on fait une sortie POV avec moins d'erreur,
+	en rempla&ccedil;ant les `union' par `object'.
+	Des fonctionnalit&eacute;s ont &eacute;t&eacute; ajout&eacute;es pour arr&ecirc;ter le calcul
+	ou d&eacute;cider quand il commence.
+      <LI> Le type `L_prevenir_si_changement_modele' a &eacute;t&eacute; introduit
+	pour qu'un objet puisse d&eacute;cider contextuellement
+	s'il d&eacute;sire recevoir
+	les changements de mod&egrave;le global.
+      <LI> On enl&egrave;ve les boutons `annule' et `annule_ferme' qui
+	ne sont pas utilis&eacute;s.
+      <LI> Quand un TAG &eacute;tait modifi&eacute;, on oubliait de faire des &eacute;valuations,
+	solution dans u_champ.c(4/2/2000)
+      <LI> Quand on fait un "r&eacute;initialise" la commande "make default"
+	est automatiquement lanc&eacute;e pour compiler
+	le contenu du r&eacute;pertoire.
+      <LI> Dans le menu ``observateur'' de la ``vue'' il y a maintenant
+	des options pour se repositionner en des vues standards.
+      <LI> Vous pouvez faire "make lance_toutes_les_nuits" pour
+	que le r&eacute;pertoire courant soit recompil&eacute; proprement toutes
+	les nuit sur toutes les architectures de machine.
+	Le matin, vous avez un mail avec tous les messages interessants.
+      <LI> Lors vous red&eacute;marrez apr&egrave;s plantage, le nom du fichier
+	indiqu&eacute; est celui que vous &eacute;tiez en train d'&eacute;diter
+	avant le plantage.
+      <LI> D&eacute;sormais, chaque vue a un menu pour choisir la qualit&eacute;
+	d'affichage. Quand on d&eacute;place l'observateur, la qualit&eacute;
+	d'affichage reste inchang&eacute;e.
+	Pour les objets sph&egrave;re, cylindre, cone, ... on ne demande
+	plus de nombre de facettes.
+      <LI> Ajout de l'objet valeur Bool&eacute;enne.
+      <LI> Ajout de l'objet plan avec ombres port&eacute;es et projection orthogonale et du mod&egrave;le "3plans" et de "4vues+plans" pour avoir les ombres port&eacute;es.
+      <LI> L'objet "image" supporte maintenant l'&eacute;clairage ou
+	non de l'image. Il supporte les images avec des r&eacute;solutions
+	qui ne sont pas des multiples de 2 et si les images ne sont
+	pas carr&eacute;es il les &eacute;tire pour respecter le ratio.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.7 --&gt; 1.8 (les corrections de bugs vont dans la 1.7)
+    <UL>
+      <LI> Nouvelle gestion des sauvegardes variables dans l'op&eacute;rateur.
+	("t_variable.[ch]")
+      <LI> Fonctions d'affichage du mod&egrave;le complet en GL ("u_vue.c")
+	en POV ("u_applique.c"). Pour l'affichage GL, on &eacute;teind
+	bien toutes les lampes avant d'afficher.
+      <LI> Ajoute l'option 1/4 de plan pour acc&eacute;l&eacute;rer l'affichage
+	du mod&egrave;le "3plans".
+	L'objet plan affiche mieux les ombres (plus de probl&egrave;me d'impr&eacute;cision
+	de profondeur).
+      <LI> On peut compiler les objets Nano&Eacute;dit en C++,
+	il suffit que le suffixe soit ".cpp" et qu'il y est
+	un <TT>extern "C" {</TT> autour du <TT>#include o_objet.h</TT>.
+	Voir le r&eacute;pertoire BLOB pour avoir un exemple.
+      <LI> L'objet "pov" indique la ligne de commande pour faire
+	l'image ainsi que le nom du mod&egrave;le Nano&Eacute;dit
+	dans le fichier POV.
+      <LI> Nouveaux Codec : codec_l_hh et codec_H_L_pp permettant
+	de fusionner deux matrices rectangulaires afin d'obtenir
+	une matrice rectangulaire de paires de types.
+	Par exemple prendre une matrice de points avec poids
+	et stocker le r&eacute;sultat dans une matrice de points
+	et une matrice de poids en indiquant la largeur de la
+	matrice qu'une seule fois.
+	A ne pas confondre avec codec_pp_H_L (non implement&eacute;)
+	qui serait physiquement stock&eacute; de la m&ecirc;me fa&ccedil;on mais qui
+	serait affich&eacute;e comme 2 matrices successives.
+      <LI> Nouvel objet "table" permettant de cr&eacute;er une table de point4
+	&agrave; partir d'une table de poin3 et d'une table de nombres.
+	Idem pour "grille"
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.8 --&gt; 1.9 (les corrections de bugs vont dans la 1.7)
+    <UL>
+      <LI> R&eacute;&eacute;criture un peu plus propre d'une bonne partie
+	de "u_table.c" et "o_table.c". Il y a plus de types diff&eacute;rents
+	et deux nouvelles fonctions utilitaire "t_table" et "t_grille"
+	pour afficher toutes les tables et grilles avec plein d'option
+	d'affichage. Il y a aussi plein d'exemples de mod&egrave;le de grille.
+	On peut modifier les poids des points et des flottants.
+      <LI> La d&eacute;finition de classe sort maintenant plus de warning
+	sur le type des pointeurs sur fonctions. Les warnings ont
+	&eacute;t&eacute;s corrig&eacute; dans Nano&Eacute;dit.
+      <LI> La r&eacute;initialisation g&eacute;n&egrave;re une bonne disposition des fen&ecirc;tres
+	des objets quand celles-ci ont des champs en plus ou en moins.
+      <LI> Un scheduleur a &eacute;t&eacute; impl&eacute;ment&eacute;
+	(<A HREF="UTILITAIRES/u_repartiteur.c">u_repartiteur.c</A>) :
+	<UL>
+	    <LI> pour g&eacute;rer les affichages (urgent ou non).
+	    <LI> pour les sauvegardes du undo/redo
+	    <LI> pour les fonctions en arri&egrave;re plan
+	    (voir "o_table.c" et "o_particule.c")&nbsp;:
+<PRE>
+#include "u_repartiteur.h"
+
+static Booleen arriere_plan(void *objet)
+{
+   struct toto *o = objet ;
+   return(Vrai) ; /* Vrai=Continuer, Faux=Arreter */
+}
+...
+u_ajoute_action(PRIORITE_ARRIERE_PLAN, arriere_plan, objet) ;
+...
+u_enleve_action(arriere_plan, objet) ;
+</PRE>
+	</UL>
+      <LI> Les objets fractales (r&eacute;pertoire SYLVAIN3) tiennent
+	compte de la qualit&eacute; d'affichage.
+      <LI> La disposition des Widget dans les fen&ecirc;tres est faite
+	via DEBUT_BOITE/FIN_BOITE, on n'utilise plus ce qu'il
+	y a dans les fichier ressources X11.
+      <LI> On calcule l'aide dynamiquement via des fonctions
+	utilitaires d&eacute;finies dans "u_aide.c".
+	De plus l'aide sur un champ indique pourquoi
+	le champ est invalide.
+      <LI> Un bon nombre de "const" ont &eacute;t&eacute; ajout&eacute;,
+	il peut y avoir de nouveaux warning dans vos sources.
+      <LI> Ajout de "codec" non-initialis&eacute; (ni) qui permettent
+	de stocker dans les structures utilisateur sans effacer
+	le contenu pr&eacute;c&eacute;dent si le nouveau contenu n'est pas
+	d&eacute;fini. Par exemple pour que le poids d'un quadruplet
+	soit inchang&eacute; quand on stocke un triplet dedans.
+      <LI> Ajout de "particule", "delaunay", "plan_de_decoupe"
+	comme objets de base.
+      <LI> L'objet POV permet de g&eacute;n&eacute;rer un fichier POV pour
+	&agrave; chacune des modifications du mod&egrave;le.
+	De m&ecirc;me, l'objet ``modele'' peut faire une sauvegarde
+	&agrave; chaque modification du mod&egrave;le.
+	Le r&eacute;pertoire "/tmp/nanoedit-..." peut &ecirc;tre copi&eacute; ailleur
+	et rejou&eacute; sous X11 ou bien g&eacute;n&eacute;rer les fichiers POV
+	avec la commande ``rejouer''.
+      <LI> La documentation (extension.tex) a &eacute;t&eacute; mise &agrave; jour.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.9 --&gt; 1.10 (les corrections de bugs vont dans la 1.9)
+    <UL>
+      <LI> Allocation du Stencil buffer dans les vues GL
+      <LI> R&eacute;&eacute;criture propre de "o_plan.c" pour supporter
+	le miroir.
+      <LI> Dans la page d'accueil Web de l'ex&eacute;cution, on indique
+	les conflits de raccourcis clavier.
+      <LI> R&eacute;&eacute;criture d'une bonne partie de "o_table.c" et "u_table.c",
+	il y a beaucoup de fonctions utilitaires r&eacute;utilisables.
+	Pour le moment, c'est compatible avec l'existant &agrave; part
+	les raccourcis clavier qui ont chang&eacute;s pour bien diff&eacute;rencier
+	les tables/grille contraintes et non-contraintes.
+	Dans le futur, on unifiera les differents affichages
+	de grille dans un m&ecirc;me objet param&eacute;tr&eacute; par Ponctuel/Filaire/Facette (ou bien par &eacute;tat courant).
+      <LI> Ajout du type image en niveaux de gris (PGM)
+	et de l'objet correspondant.
+      <LI> Le menu «Charge» fonctionne maintenant correctement m&ecirc;me
+	apr&egrave;s une sauvegarde.
+      <LI> En plus du menu cr&eacute;ation, le menu des 20 cr&eacute;ations
+	les plus plausibles a &eacute;t&eacute; ajout&eacute; au mod&egrave;le.
+      <LI> Le titre de la fen&ecirc;tre mod&egrave;le est le nom du mod&egrave;le.
+      <LI> On utilise le ``r&eacute;partiteur''  pour l'ouverture, la fermeture,
+	les sauvegardes, la destruction des objets. Ceci modifie
+	consid&eacute;rablement le code.
+      <LI> Nano&Eacute;dit fonctionne m&ecirc;me si le mod&egrave;le est vide.
+      <LI> D&eacute;sormais, on peut directmement &eacute;diter le mod&egrave;le
+	contenu dans les ``op&eacute;rateurs'' sans avoir &agrave; quitter
+	le mod&egrave;le courant.
+      <LI> La position ou l'on indique la SUR_CLASSE dans une classe
+	indique l'emplacement ou les champs de celle-ci seront ins&eacute;r&eacute;.
+      <LI> Dans la fen&ecirc;tre WWW, la hi&eacute;rarchie des classes indique
+	le raccourci clavier et le chemin dans le menu.
+      <LI> La raccourcis clavier remarchent tous.
+      <LI> On peut stocke dans une image PPM les vues GL,
+	l'utilitaire "rejouer" permet de faire la convertion ".ne" en ".ppm".
+	Il faut faire "eval `make variables`" pour qu'il fonctionne.
+      <LI> Dans le menu observateur de la vue, il y a maintenant
+	un "dump" qui fait de l'antialiasing et qui peut faire de grandes
+	images. Le script "rejouer" permet aussi de g&eacute;n&eacute;rer automatiquement
+	des dumps de s&eacute;quence de ".ne". Le nom du fichier est
+	le nom de la vue.
+      <LI> Le fichier "u_table.c" fournie les utilitaires pour afficher
+	des tables en ponctuel, filaire, facette, liss&eacute; et on peut
+	lui indiquer les d&eacute;g&eacute;n&eacute;r&eacute;cences ou les
+	facettes &agrave; ajouter ou les raccords.
+      <LI> "o_solide.c" pour utiliser les fonctionnalit&eacute;s de "u_table.c",
+	ajout du "tore".
+      <LI> L'&eacute;tat courant de GL est maintenant partag&eacute; entre toutes
+	les fen&ecirc;tres, "t_gl.c" est beaucoup plus simple.
+	Les listes ne sont donc cr&eacute;&eacute;es qu'une seule fois
+	par fen&ecirc;tre.
+      <LI> L'"observateur", la "vue" et l'objet "pov" contiennent maintenant
+	le ratio de la fen&ecirc;tre &agrave; afficher.
+      <LI> Quand on commence un raccourci clavier, les suites
+	possibles sont affich&eacute;es.
+      <LI> Raccourcis clavier ajout&eacute;s dans le menu «Action»
+      <LI> La variable globale "globale_traduction" est un pointeur
+	sur structure au lieu de la structure elle-m&ecirc;me.
+	Les fonctions de manipulation de CODEC sont ``r&eacute;entrante''.
+      <LI> "putstr" et est beaucoup plus rapide que "PUTSTR"
+	pour de grandes chaine de caract&egrave;res (plus lent pour les petites).
+      <LI> Les codec de forme table/matrice/grille supportent maintenant
+	les op&eacute;rations d'acc&egrave;s &agrave; leurs &eacute;l&eacute;ments. Cela permet de simplifier
+	et de g&eacute;n&eacute;raliser "o_table.c" et "u_table.c" au d&eacute;triment
+	d'une perte de vitesse d'affichage...
+      <LI> Le changement d'&eacute;paisseur de trait, de point et le passage
+	avec ou sans lissage lorsque l'objet est actif est maintenant
+	fait par l'objet "vue" ainsi que la cr&eacute;ation/destruction
+	des listes GL. En plus de simplifier les programmes,
+	cela apporte de nouvelles fonctionnalit&eacute;s&nbsp;:
+	<UL>
+	  <LI> Si l'on rend actif un applique qui contient des sph&egrave;res,
+	    les sph&egrave;res deviennent facettis&eacute;e.
+	    En plus la facettisation n'est pas la m&ecirc;me que si l'on
+	    active directement la sph&egrave;re.
+	  <LI> On peut diff&eacute;rencier
+	    le nombre de niveaux d'activit&eacute;s.
+	    L'&eacute;paisseur des traits augmente en fonction du nombre d'actifs
+	    qu'il y a au dessus de lui.
+	  <LI> On peut diff&eacute;rencier le cube actif de l'inactif
+	    grace &agrave; l'utilisation (transparente) de glShadeModel.
+	</UL>
+	La fonction que l'on doit obligatoirement
+	appeler pour afficher un objet est "u_affiche_objet" qui
+	est d&eacute;clar&eacute;e dans "u_vue.h".
+      <LI> On peut maintenant d&eacute;placer les "tag" d'objet transform&eacute;s. Le curseur se positionne au bon endroit.
+      <LI> Les vues X, Y et Z (projection orthogonale) ne sont plus
+	g&eacute;r&eacute;es de la m&ecirc;me fa&ccedil;on pour la projection.
+	La distance de l'observateur ne modifie plus la taille de
+	ce qui est vu. Avantage&nbsp;: cela fait disparaitre le
+	probl&egrave;me du clipping des objets proches.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.10 --&gt; 1.11
+    <UL>
+      <LI> Plus rapide, moins de bugs
+      <LI> Aucune nouveaut&eacute; soulevant des incompatibilit&eacute;s :-)
+      <LI> On ne change plus la page de Netscape automatiquement,
+	il faut aller dans le menu «fichier».
+      <LI> On utilise GTK au lieu de Motif sur les machines le permettant.
+      <LI> Correction de nombreux warning/erreurs du "cc" d'IRIX
+      <LI> Lorsque l'observateur avance/recule cela ne change pas le point vu.
+      <LI> L'objet "applique" permet de toujours
+	visualiser les transformations.
+      <LI> Nouvel objet modifiant l'&eacute;tat courant : affichage des
+	lignes de rappel (liant un point &agrave; l'origine)
+      <LI> Nouvel objet modifiant l'&eacute;tat courant : d&eacute;signabilit&eacute;
+	permettant d'emp&ecirc;cher de s&eacute;lectionner des objets graphiques.
+      <LI> Le objets modifiant l'&eacute;tat courant de GL peuvent indiquer
+	les attributs qu'ils modifient afin que le noeud "applique"
+	n'ai pas &agrave; tout sauvegarder &agrave; chaque fois : acc&eacute;l&eacute;ration
+	tr&egrave;s importante de l'affichage.
+      <LI> Ajout de la couleur de fond &agrave; «vue».
+      <LI> Ajout du rep&egrave;re 2D et de la possibilit&eacute; de mettre
+	des fl&egrave;ches au rep&egrave;res.
+      <LI> L'option ``Virtuel'' veut maintenant plut&ocirc;t dire ``Immutable''
+	c'est-&agrave;-dire sans bit de changement.
+	Les L_tag devraient donc devenir NonVirtuel afin d'avoir le bit
+	changement, mais je n'arrive pas &agrave; trouver un cas dans lequel
+	c'est utile bien que j'ai modifier u_champ.c le 4/2/2000
+	pour prendre en compte ce cas...
+	Je suppose que cela a donc cass&eacute; quelque chose, mais quoi ?
+	La r&eacute;paration sera simple : ajouter NonVirtuel pour le Tag
+	consid&eacute;r&eacute;.
+      <LI> L'affichage des Tags et rep&egrave;re tient compte de l'&eacute;paisseur
+	courante, mais cela ne marche pas tr&egrave;s bien car il n'y a pas
+	d'instruction OpenGL pour multiplier l'&eacute;paisseur courante
+	par une valeur. On fait donc un "GetFloatv" mais celui-ci
+	ne va pas dans la liste GL....
+      <LI> Nouvelle objet : "commande" permettant de changer
+	la valeur d'un champ lorsqu'il est cliqu&eacute;.
+      <LI> Correction bug : Nano&Eacute;dit GTK &eacute;tait de plus en plus lent
+	quand on l'utilisait.
+      <LI> On restreint l'utilisation des pr&eacute;dicats au feuilles
+	de la hi&eacute;rarchie des types logiques car cela permet
+	d'acc&eacute;l&eacute;rer simplement le typage dynamique.
+      <LI> L'objet couleur peut afficher des palettes de couleurs
+	dans la fen&ecirc;tre graphique.
+      <LI> J'enl&egrave;ve le warning GTK qui s'affichait tout le temps.
+      <LI> Le d&eacute;placement en agrippant un tag de point avec poids
+	n'annule plus le poids.
+      <LI> Les tags poids et destruction aparaissent maintenant
+	tout le temps (probl&egrave;me de clipping par le plan proche).
+      <LI> Utilitaire "u_fork()" pour simplifier les fork.
+      <LI> Correction du bug interdisant les op&eacute;rateur d'op&eacute;rateur avec
+	des variables communes.
+      <LI> Ajout de l'objet «vue incluse» permettant par exemple
+	d'afficher une vue 2D fixe et transparente dans
+	une vue 3d
+      <LI> Ajout de la m&eacute;thode g&eacute;n&eacute;ration de STL et de l'objet
+	permettant d'afficher le STL.
+      <LI> Le poids des points n'est plus mis &agrave; 0 mais &agrave; 1 quand
+	on stocke un triplet de valeurs dedans.
+	Idem pour les tables de points avec poids.
+    </UL>
+    <P>
+    Nouveaut&eacute;s 1.11 --&gt; 1.12
+    <UL>
+      <LI> Changement des couleurs des tags d&eacute;placement/rotation pour plus
+	de lisibilit&eacute;.
+      <LI> Dans le widget GL, les d&eacute;placements sans appui
+	du bouton de la souris appellent la fonction ``mouvement''.
+      <LI> Ajout de l'objet «bulle d'aide» et modification
+	de «vue» en cons&eacute;quence.
+      <LI> La sauvegarde du mod&egrave;le fait sauvegarder un icone.
+	Les menus «charge» sont avec ces icones.
+      <LI> Ajoute objet «image 2d» qui s'affiche sans transformation
+	dans les fen&ecirc;tres GL (pour l'exposition Pagode).
+      <LI> Les sauvegardes pour le UNDO n'ont lieu qui si l'utilisateur
+	ne fait rien pendant une seconde.
+      <LI> Ajout de l'objet super sph&egrave;re
+      <LI> Prise en compte de la molette de la souris pour
+	les flottants, point et points avec poids
+      <LI> Ajout des objets «vrai si actif» et «prog if»
+      <LI> Quand il remap des fen&ecirc;tres il essaye d'en prendre
+	de la m&ecirc;me taille (pour la vitesse)
+	ou sinon la plus grande possible
+	(pour la m&eacute;moire).
+	En effet, les fen&ecirc;tres non-mapp&eacute;es prennent de la place
+	dans la NVIDEA et font planter le programme
+	quand il n'y a plus de m&eacute;moire.
+      <LI> Le module SYLVAIN a &eacute;t&eacute; reprogramm&eacute; compl&egrave;tement, il supporte
+	plus de choses et notamment les listes de transformations.
+      <LI> Extraction de "pov.c" et "stl.c" de "u_graphique.c"
+      <LI> La fonction d'affichage GL de grille accepte maintenant
+	le lissage m&ecirc;me si on ne lui passe pas le tableau des normales.
+      <LI> Le premier champ initialisable d'un objet est maintenant
+	directement &eacute;ditable dans le graphe du mod&egrave;le.
+      <LI> Acc&eacute;l&eacute;ration de la visualisation du menu «charge»,
+	changement incompatible de fonctionnalit&eacute;s que personne
+	n'a jamais utilis&eacute;.
+      <LI> Lorsque l'on d&eacute;place un point 3D dans la fen&ecirc;tre
+	avec perspective, le point reste &agrave; distance constante de l'oeil
+	et non plus dans le plan passant par le point regard&eacute;.
+      <LI> Ajoute le type "E_angle" pour pour taper les angles en Degr&eacute;.
+	On l'utilise dans l'objet rep&egrave;re rotation.
+      <LI> <TT>u_trouve_fichier</TT> ne fait pas plus d'un <EM>find</EM>
+	  par seconde.
+      <LI> Ajoute l'objet &eacute;quation plan
+      <LI> Ajoute l'objet cube g&eacute;n&eacute;ral et cube g&eacute;n&eacute;ral contraint.
+      <LI> La d&eacute;signation 3D ne d&eacute;signe que les objets les plus proches de l'observateur. (o_vue.c)
+      <LI> On peut mettre un commentaire dans l'objet applique.
+      <LI> Cr&eacute;ation de tout ce qu'il faut pour avoir les tenseurs MxNxO
+      <LI> Bascule visibilit&eacute; pour que son p&egrave;re nous affiche.
+      <LI> Menu Undo graphique
+    </UL>
+
+    <P>
+    Nouveaut&eacute;s 1.12 --&gt; 1.13
+    <UL>
+      <LI> Sortie STL en couleur (non test&eacute;e).
+      <LI> Am&eacute;liorations objet ifs pour Pagode.
+      <LI> Ajout objet interpolation par morceaux sur une table
+	de quadruplet et sur grille de quadruplet.
+      <LI> Ajout de l'objet longueur de table de point
+	qui retourne les distances entre les points successifs.
+	Ceci sert &agrave; faire une animation &agrave; vitesse constante
+	selon une ligne bris&eacute;e.
+      <LI> Am&eacute;liorations de l'objet seconde.
+      <LI> ATTENTION : si vous faites un fork, il faut fermer
+	les fildes inutilis&eacute;s.
+      <LI> Ajoute option pour lancer Nano sans aucune fen&ecirc;tres
+	mais en ouvrant quand m&ecirc;me X11.
+      <LI> Ajout de l'objet "switch" sur flottant.
+      <LI> Amélioration du : "prog_if" et de "L_prog" afin
+	de pouvoir faire un bon "switch".
+      <LI> Ajoute dans "o_modele" la duplication des actifs.
+      <LI> La réinitialisation doit maintenant fonctionner
+	plus souvent....
+      <LI> L'inversion des actifs marche dans les opérateurs
+      <LI> L'opérateur retourne le premier objet qui respecte
+	ce qu'on lui demande. Ceci veut dire que s'il est utilisé
+	par "point_triplet" ou "ligne_brisee" la valeur extraite
+	de l'opérateur pourra ne pas être la même.
+      <LI> Ajout du menu contextuel sur la fenetre graphe.
+      <LI> Ajout des objets "audio" et "generation_son".
+      <LI> Réécriture de "o_repere.c", ajout du repère
+	défini par deux points pour créer un observateur.
+      <LI> Débuggage de vue incluse
+      <LI> Ajoute "viewport" pour pouvoir faire des loupes sémantiques.
+      <LI> Ajoute "L_accelerateur" pour que les objets puisse
+	prendre le clavier de la vue avant celle-ci.
+      <LI> Ajoute "L_table_transfo", "table_transfo"
+    </UL>
+    <hr> <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry
+	EXCOFFIER</a></address>
+<!-- Created: Thu Jul  3 13:02:48 MDT 1997 -->
+<!-- hhmts start -->
+Last modified: Wed Apr  9 13:42:38 CEST 2003
+<!-- hhmts end -->
+  </body>
+</html>

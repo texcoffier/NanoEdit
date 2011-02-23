@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+  <head>
+    <title>Nano&Eacute;dit : que faut-il ajouter ?</title>
+  </head>
+
+  <body>
+    <h1 align=center>Nano&Eacute;dit : que faut-il ajouter ?</h1>
+
+    <h2 align=center>Urgent ++++</h2>
+    <P>
+      Les fenetres qui se baladent seules.
+    <P>
+      Dans extension.tex ajouter o_creation.c et o_raccourci.c
+    <P>
+      Si l'on affiche un plan après un objet il le cache
+      même s'il est derrière.
+
+    <P>
+      POV : auto si vue change ne marche pas (csg)
+    <P>
+      Le tar est trops gros
+    <P>
+      Super quadrique : tester la sortie POV et la normale &agrave; la super sph&egrave;re.
+      
+
+    <h2 align=center>Classes</h2>
+
+    <ul>
+      <li>
+	Modificateur de couleur (ou am&eacute;lior&eacute; le couleur existant)
+	incrementale (Mode : remplacement, addition, multiplication)
+	Par exemple "Couleur .1 0 0 Mode +" rougirait la couleur
+	courante &agrave; chaque application.
+	Ceci est possible avec la prochaine extension d'OpenGL.
+      <li>
+	Ajouter la qualit&eacute; d'affichage dans l'&eacute;tat courant
+	et ne plus le mettre dans le param&egrave;tre de sauvegarde (const char*v)
+      <li>
+	Choix hauteur courante de texte. enlever la hauteur
+	de l'objet texte lui-m&ecirc;me.
+      <li>
+	Plan (infini) d&eacute;finie par son rep&egrave;re et pouvant donner son &eacute;quation.
+      <li>
+	Droite (infini) itou
+      <li>
+	Message. La fen&ecirc;tre d'&eacute;dition  affiche le message et avec OK l'objet
+	s'auto-d&eacute;truit.
+      <li>
+	Dans la classe texte, faire appara&icirc;tre la boite
+	englobante du texte.
+    </ul>
+
+    <h2 align=center>Codec</h2>
+
+    <ul>
+      <li> <b>codec_linefeed</b> marche on ne sait comment...
+      <li>
+	<b>codec_9uplet</b> et <b>codec_12uplet</b>
+	pour les triangles sans et avec normale.
+	Les tables de ces types.
+      <li>
+	<b>codec_fichier_image</b> :
+	Lecture d'image GIF JPG ou comprim&eacute;s.
+      <li>
+	Ajouter volume/surface poly&eacute;drique, simplifier ou
+	&eacute;limer les tables et grilles.
+    </ul>
+
+    <h2 align=center>Types logique</h2>
+
+    <ul>
+      <li>
+	Triangle avec et sans normal, table de triangles avec et sans normale.
+	Polygone et table de polygones.
+      <li>
+	&Eacute;quation de droite
+      <li>
+	M&eacute;thode retournant la boite englobante.
+      <li>
+	M&eacute;thode retournant un poly&egrave;dre.
+      <li>
+	Angle
+    </ul>
+
+    <h2 align=center>Widgets</h2>
+
+    <ul>
+      <li> <B>Widget HTML pour l'aide</B>
+      <li> <B>Ajouter Option cochable dans menu</B>
+      <li> Ajouter le ``notebook''
+    </ul>
+
+
+
+
+    <h2 align=center>Interface utilisateur</h2>
+
+    Dans les vues 3D :
+    <ul>
+      <li>
+	Selection des objets dans une zone ecran ?
+    </ul>
+
+    Dans le mod&egrave;le :
+    <ul>
+      <li>
+	L'ordre dans les menus de cr&eacute;ation : mettre un poids ?
+      <li>
+	Op&eacute;ration dans la liste des actifs ?
+      <li>
+	Interdire d'enlever les fils obligatoires ?
+      <li>
+	Menu Cr&eacute;ation : s&eacute;parer Figure, Figure Calcul&eacute;es, Figure affich&eacute;e ?
+      <li>
+	Si on detruit le dernier fils, on enleve le NULL, option d'objet ?
+	NB_ACTIFS?
+      <li>
+	Quand on cr&eacute;e un objet param&eacute;tr&eacute;s, pouvoir dire de laisser
+	les param&egrave;tres au niveau sup&eacute;rieur.
+    </ul>
+    
+
+    <h2 align=center>Noyau</h2>
+
+    <ul>
+      <li>
+	<B>Changer <TT>configuration</TT>,  <TT>/usr/local/bin/make</TT>.
+	Il faut simplifier, rendre portable.</B>
+      <li>
+	Indiquer le nom du fichier/num&eacute;ro de ligne dans le codec / TL / TE
+      <li>
+	Faire une &eacute;vluation parral&egrave;le bas&eacute;e sur l'envoi
+	de message permettant
+	une &eacute;valuation incr&eacute;mentale et permettant aussi d'enlever
+	une la m&eacute;thode actuelle pere/fils qui marche mal pour
+	l'objet "operateur" car non sym&eacute;trique.
+      <li>
+	Lors de la compilation d'un r&eacute;pertoire faire un fichier
+	table des symboles pour un lancement plus rapide ?
+	Cela permet aussi que les fichiers sources ne soient
+	pas accessibles en lecture.
+      <li>
+	Chargement incr&eacute;mentale de NanoEdit ?
+	On charge les classes quand n&eacute;cessaire.
+      <li>
+	Faut-il diff&eacute;rencier te-&gt;trace et te-&gt;expose ?
+	Ou plut&ocirc;t, comment faire ses propres widgets proprement.
+      <li>
+	Interface widget : inverser les Y de la position de la souris
+	cela simplifie
+	consid&eacute;rablement tous les programmes qui ont besoin
+	de cette position pour GL.
+	Ou alors stocker les 2 valeurs de y.
+      <li>
+	Afficher un warning si sous-classage de type logique avec
+	pr&eacute;dicat.
+      <li>
+	V&eacute;rifier que tout appel &agrave; <TT>u_initialiser_iw</TT>
+	est fait avec un champ valide (voir commentaire de
+	<A HREF="../TYPES/t_widget.c">TYPES/t_widget.c</A>).
+      <li>
+	Ajouter GL dans les test automatiques en batch avec "Xvfb" et "xwd"
+	pour comparer les images.
+    </ul>
+
+    <h2 align=center>Dysfonctionnement</h2>
+
+    <ul>
+      <li>
+	<B>Evaluateur</B> :
+	Si on demande un champs L_nombre_positif et que le nombre
+	devient n&eacute;gatif, c'est le champ suivant qui est pris.
+	Cela doit rester le m&ecirc;me.
+      <li>
+	<B>Objet vue3d</B> :
+	La saisie de valeurs flottantes dans la fen&ecirc;tre X est impossible.
+      <li>
+	<B>Objet vue3d</B> :
+	Le d&eacute;placement de plusieurs tags &agrave; la fois est probl&eacute;matique
+	si on a des num&eacute;ros de tags diff&eacute;rents dans le m&ecirc;me objet.
+	Par exemple pour le segment, le bout du segment et le
+	tag d'&eacute;tirement de segment.
+      <li>
+	<B>Evaluateur</B> :
+	Entier(Flottant) le flottant peut prendre des valeurs non-enti&egrave;res.
+      <li>
+	<B>Objet plan miroir</B> :
+	La lampe n'est pas &agrave; la bonne
+	position dans le miroir.
+      <li>
+	<B>Objet mod&egrave;le ?</B> :
+	Le '.' ne fonctionne pas sur menu.
+      <li>
+	<B>Objet xt_interface ?</B> :
+	R&eacute;initialise ne ferme la fen&ecirc;tre d'aide
+      <li>
+	<B>Objet xt_interface, w_recupere ?</B> :
+	Couleur du background des Widgets : une couleur par champ.
+	comme cela on n'a pas de probl&egrave;me pour les passer en rouge
+	et revenir &agrave; la couleur normale.
+      <li>
+	<B>Objet POV ?</B> :
+	L'image peut d&eacute;passer la taille max !
+      <li>
+	<B>Motif</B> :
+	Contrairement &agrave; GTK, il faut cliquer sur Applique
+	apr&egrave;s avoir d&eacute;plac&eacute; une vue et pour les menus option on a pas
+	besoin de cliquer sur applique.
+      <li>
+	<B>Motif</B> :
+	Quand on d&eacute;place un tag, le d&eacute;placement continue un peu apr&egrave;s que
+	l'on relache le bouton. (c'est decode &eacute;v&eacute;nement qui est faux,
+	c'est corrig&eacute; pour GTK).
+      <li>
+	<B>Motif/GTK</B> :
+	&Agrave; chaque sauvegarde la fen&ecirc;tre se d&eacute;place en bas &agrave; droite....
+      <li>
+	<B>u_table</B> :
+	L'affichage de polygone non convexe ne marche pas (TessPoly).
+      <li>
+	<B>GTK</B> :
+	Un objet invalide non-actif dans l'arbre reste rouge 
+	apr&egrave;s &ecirc;tre	redevenu valide
+      <li>
+	<B>Menu</B> :
+	Les widgets menu ne sont lib&eacute;r&eacute;s que quand aucun menu
+	n'est visible.
+    </ul>
+
+
+
+
+    
+    <h2 align=center>Discussions</h2>
+
+    <h3>Mise en liste GL automatiquement</h3>
+
+    C'est le fonctionnement actuel.
+    <p>
+      La mise en liste automatique GL est probl&eacute;matique quand on ne
+      sait pas quand invalider la liste.  Par exemple, l'objet couleur
+      doit &ecirc;tre invalid&eacute; si son affichage est une palette graphique et
+      que l'on change la taille du d&eacute;coupage de la palette.  En fait,
+      il faut parcourir l'arbre pour invalider ce qui peut &ecirc;tre
+      toucher.  On ne peut pas continuer comme le type d'affichage
+      (fil/fac) &agrave; cr&eacute;er autant de listes que de cas possibles.  Autre
+      chose &agrave; prendre en compte, le m&ecirc;me objet peut appara&icirc;tre 2 fois
+      avec des attributs diff&eacute;rents.
+
+      <h3>Lanc&eacute; de rayon</h3>
+
+    Est-ce vraiment n&eacute;cessaire de se tortiller pour que
+    cela marche avec POV&nbsp;?
+    <p>
+      Les attributs graphiques Diffuse/Couleur/Speculaire/...  ne sont
+      pas coh&eacute;rents. Il faut faire exactement ce que POV fait.  Ceci
+      n&eacute;cessite de faire plein d'ordres GL pour simuler POV.  Un
+      changement de couleur implique une mise &agrave; jour de l'ambiante de
+      POV. Mais pourquoi ce focaliser sur ce point si l'on
+      ne va plus utiliser POV.
+
+
+      <h3>Affichage du mod&egrave;le</h3>
+
+    Affichage du modele : de qui parle-t-on ?
+    De la racine, racine/operateur, racine/vue ?
+    Question complexe.
+    <P>
+      La question se pose quand un objet doit r&eacute;afficher
+      la sc&egrave;ne tel qu'il l'entend. Cela &agrave; l'air de fonctionner
+      actuellement, il faut formaliser la m&eacute;thode.
+     
+      <h4>Problème de l'affichage des fils</h4>
+    <P>
+      Si pour les noeuds l'objet vue affiche systématiquement leur fils
+      (sauf s'il demandent explicitement) le temps d'affichage
+      peut devenir exponentiel.
+      <P>
+      
+    
+    
+
+
+
+    <h2 align=center>&Agrave; ne pas faire</h2>
+
+
+    <ul>
+      <li>
+	Distance au lieu axe des X pour la rentree de valeurs flottantes :
+	  NON car pas de n&eacute;gative
+      <li>
+	Le point actif trace le retour dans le rep&egrave;re courant au lieu
+	  du rep&egrave;re de la scene.... &Eacute;ric Tosan dit que c'est tant pis.
+      <li>
+	Sauvegarde de tout l'&eacute;tat courant avant affichage objet ?
+	  NON : il est vraiment trop gros.
+      <li>
+	POV : Afficher le % deja calcule.
+	  NON : il suffit de cliquer sur l'image pour voir ou &ccedil;a en est.
+      <li>
+	Probl&egrave;me du d&eacute;placement int&eacute;ractif de vecteur
+	IRESOLUBLE : car choix de l'application
+	Ou alors elle donne le point de base du vecteur.
+    </ul>
+
+
+    <h2 align=center>En cas de r&eacute;&eacute;criture totale</h2>
+
+    <ul>
+      <li>
+	Prendre la convention de notation GTK pour les noms.
+      <li>
+	Supprimer les Flottant/Triplet/... qui sont sources d'erreur.
+	Float/Float3/Float4 Double/Double3/Double4
+	ou bien utiliser les noms de type du codec.
+      <li>
+	Remplacer :<br>
+		AFFICHAGE(Different_suivant_type_affichage)<br>
+	Par :<br>
+	AFFICHAGE(Identique_quelquesoit_type_affichage)<br>
+	Idem pour les autres diff&eacute;rents.
+	Comme cela, par d&eacute;faut cela fonctionne dans tous les cas.
+      <li>
+	Refaire "u_table.c"/"u_graphique.c" proprement afin de ne plus avoir
+	de copi&eacute;/coll&eacute;. Appliquer ceci afin que les affichages
+	soient ind&eacute;pendants du support&nbsp;: GL, PERFORMER, POV, STL, PostScript
+      <li>
+	Refaire la macro POUR comme suit :
+	<pre>
+for(LES_CLASSE(c))
+	{
+	}
+for(ELEMENT_LISTE(l,i))
+	{
+	}
+</pre>
+	L'utilisateur devra d&eacute;clarer la variable d'indice.
+    </ul>
+
+
+
+
+    <h2 align=center>Question diverses</h2>
+
+    <h3>Question GTK</h3>
+
+    Pourquoi la fonction :  gtk_menu_detach (GtkMenu *menu)
+    <p>
+      Fait disparaitre le menu :
+    <p>
+      if (GTK_WIDGET_REALIZED (menu))
+      gtk_widget_unrealize (GTK_WIDGET (menu));
+
+
+  </body>
+</html>
+
+

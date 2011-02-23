@@ -1,0 +1,27 @@
+#include "o_objet.h"
+#include "t_geometrie.h"	/* Pour L_Point */
+struct essai_extrait
+{
+  int oblige ;			/* Un entier obligatoirement extrait */
+  Triplet pt ;			/* Un point extrait */
+  Flottant v1 ;			/* Un flottant forcément positif */
+} ;
+CLASSE(extrait, struct essai_extrait,
+       Edite
+       /*
+	* Le champ est forcément extrait du fils 0 car Obligatoire
+	*/
+       CHAMP(oblige, L_Entier Extrait Obligatoire)
+       /*
+	* On doit extraire un nombre positif du fils 1.
+	* Comme il y a sauve, le champ est sauvegardé S'IL N'EST PAS EXTRAIT
+	*/
+       CHAMP(v1, L_Nombre_Positif P_Flottant Sauve Extrait DEFAUT("1"))
+       /*
+	* On doit extraire un triplet (et non un L_Point3) du fils 2.
+	* Ce champ est éditable, les changements seront reportés
+	* dans l'objet d'où l'on extrait la valeur.
+	*/
+       CHAMP(pt, L_Point3 TYPE_DANS_FILS(_Triplet) DEFAUT("1 2 3"))
+       MENU("Exemple/Extrait")
+       )

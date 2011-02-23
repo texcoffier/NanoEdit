@@ -1,0 +1,77 @@
+io.o: io.c io.h matrice.h liste.h transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h
+liste.o: liste.c liste.h transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h
+matrice.o: matrice.c matrice.h liste.h transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h
+o_fractale.o: o_fractale.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h matrice.h liste.h \
+ transfo.h io.h t_ifs.h /home/houssam/SVN/prog/NE/OBJETS/u_vue.h \
+ /home/houssam/SVN/prog/NE/OBJETS/u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/pov.h
+o_lrifs.o: o_lrifs.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h matrice.h liste.h \
+ transfo.h io.h t_ifs.h /home/houssam/SVN/prog/NE/OBJETS/u_vue.h \
+ /home/houssam/SVN/prog/NE/OBJETS/u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/pov.h
+t_ifs.o: t_ifs.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h t_ifs.h
+transfo.o: transfo.c transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h
+transfo_4x4.o: transfo_4x4.c transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h
+transfo_n_4_4.o: transfo_n_4_4.c transfo.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h

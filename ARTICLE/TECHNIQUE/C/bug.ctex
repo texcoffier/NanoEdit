@@ -1,0 +1,11 @@
+\rule{0mm}{0mm}\#define\ DEBUG\ \\
+\rule{0mm}{0mm}\ \\
+\rule{0mm}{0mm}\#ifdef\ DEBUG\ \\
+\rule{0mm}{0mm}\#define\ TRACE\ fprintf(stderr,"\%s:\%d\ ",\ \_\_FILE\_\_,\ \_\_LINE\_\_)\ \\
+\rule{0mm}{0mm}\#else\ \\
+\rule{0mm}{0mm}\#define\ TRACE\ 0\ \\
+\rule{0mm}{0mm}\#endif\ \\
+\rule{0mm}{0mm}\ \\
+\rule{0mm}{0mm}if\ (\ TRACE\ )\ \\
+\rule{0mm}{0mm}\ \ \ fprintf(stderr,\ "Valeur\ =\ ...$\backslash$n")\ ;\ \\
+\ 

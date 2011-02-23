@@ -1,0 +1,190 @@
+\documentclass[portrait,semrot]{seminar}
+
+\usepackage{graphics}
+\usepackage{colordvi}
+\usepackage{french}
+\input{sem-a4.sty}
+
+\title{NanoEdit : Un intégrateur de modeleur}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\begin{slide}
+  \maketitle
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+{
+\scriptsize
+\parskip -0.51mm
+\tableofcontents
+}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Introduction}
+  
+  Initialement NanoEdit a été créé afin de rendre les TP
+  de techniques graphiques du DESS plus intéressants.
+  
+  Jusqu'à présent les étudiants développaient une application complète,
+  ceci leur prenaient énormément de temps et ils passaient peu de temps
+  à étudier le vif du sujet.
+
+  Désormais, ils étendront une application existante qui leur offrira
+  un environnement conviviale pour tester leurs TP.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{NanoEdit : un éditeur de formules}
+
+  NanoEdit est un éditeur d'expressions.
+  Il offre~:
+  \begin{itemize}
+  \item Lecture/Écriture des formules,
+  \item Undo/Redo,
+  \item Menus déroulants, accélérateurs clavier.
+  \item Aide hypertexte interactive.
+  \item Édition ``textuelle'' des objets composant la formule.
+  \item Gestion des contraintes d'égalités, validité de valeurs.
+  \item ...
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les formules manipulées}
+
+  \resizebox{11cm}{!}{\includegraphics{segment.ps}}
+  
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide} 
+  \section{Objets manipulés}
+
+  \begin{itemize}
+  \item Les noeuds de formules sont des objets.
+  \item Les objets sont composés de champs.
+  \item Il y a des contraintes entre champs.
+  \end{itemize}
+  
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les noeuds}
+
+  Instance de classe définissant~:
+  \begin{itemize}
+  \item Nom. Accélérateurs clavier. Nom de menu.
+  \item Une liste de champs.
+  \item Des méthodes~: affichage, changement, destruction.
+  \item ...
+  \end{itemize}
+
+  Les objets sont externes à NanoEdit, par exemple~:
+  \begin{itemize}
+  \item L'interface utilisateur 3D.
+  \item Les objets variable/opérateur permettant de définir des fonctions.
+  \item Le changement d'état courant.
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les champs}
+
+  Ils sont définis par~:
+  \begin{itemize}
+  \item Un nom.
+  \item Un type physique (int, float, float[3], ...).
+  \item Un type logique (point, vecteur, couleur, nombre, ...).
+  \item Des options~: éditable, affichable, sauvable, obligatoire, ...
+  \item Une contrainte d'égalité.
+  \item ...
+  \end{itemize}
+
+  Les types physiques/logiques sont externes à NanoEdit.
+  Les types logiques sont définissables par calcul (R+)
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection{Les contraintes}
+
+  Ce n'est pas le type des arguments d'un opérateur qui compte,
+  mais le type de ce qu'il contient.
+  \begin{itemize}
+  \item Évite l'héritage multiple.
+  \item Très souple.
+  \item Simplifie l'interface utilisateur.
+  \end{itemize}
+
+  Actuellement, NanoEdit gère les contraintes en les faisant
+  descendre et remonter. Il peut être nécessaire de recommencer
+  (comme pour un tableur).
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Interface utilisateur}
+  
+  \begin{itemize}
+  \item Interface Sujet/Verbe.
+  \item Menus et accélérateurs claviers contextuels.
+  \item Aide en HTML.
+  \item Fenêtre visualisant le graphe.
+  \item On peut ajouter des interfaces utilisateur.
+    \item Mise en évidence des objets/champs invalides.
+  \end{itemize}
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section{Programmation}
+
+  \begin{itemize}
+  \item Le noyau de NanoEdit est très petit~: facilement évolutif.
+  \item L'ajout de classes (objet ou champs) est facile.
+  \item L'extension de NanoEdit se fait sans appeler ses fonctions.
+  \item NanoEdit utilise un ensemble de techniques de programmation
+    que les étudiants ont rarement le temps de voir.
+  \item L'ajout d'objets est prévu pour le travail en groupe.
+    Les champs permettent d'échanger des données.
+  \end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}
+  \section{Démonstration !}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+

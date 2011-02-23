@@ -1,0 +1,45 @@
+#!/bin/sh
+
+echo "Test de l'évaluation de reseau"
+
+X=1100
+
+t "Charge reseau1"  /appel/modele    	   0 charge  te_entree reseau1
+t "Change flottant" /appel/flottant  	   1 valeur  c_sauve   2222
+t "Change flottant" /appel/flottant  	   2 valeur  c_sauve   3333.0
+t "Change point"    /appel/point3  	   0 triplet c_sauve   "11 22 33"
+t "Change point"    /appel/point3  	   1 triplet c_sauve   "110 220 330"
+
+t "Charge reseau2"  /appel/modele    	   0 charge  te_entree reseau2
+t "Change flottant" /appel/flottant  	   1 valeur  c_sauve   2222
+t "Change point"    /appel/point3  	   0 triplet c_sauve   "11 22 33"
+t "Change point"    /appel/point3  	   1 triplet c_sauve   "11 22 33"
+t "Change segment"  /appel/segment_pt_pt   0 depart  c_sauve   "1111 2222 3333"
+
+t "Charge reseau3"  /appel/modele    	   0 charge  te_entree reseau3
+t "Change flottant" /appel/flottant  	   0 valeur  c_sauve   1111
+t "Change flottant" /appel/flottant  	   1 valeur  c_sauve   2222
+t "Change flottant" /appel/flottant  	   2 valeur  c_sauve   3333
+t "Change point"    /appel/point3  	   0 triplet c_sauve   "1 2 3"
+
+t "Charge reseau4"  /appel/modele    	   0 charge  te_entree reseau4
+t "Change milieu"   /appel/segment_pt_pt   0 milieu  c_sauve   "2.5 2.5"
+
+t "Charge reseau5"  /appel/modele    	   0 charge  te_entree reseau5
+t "Change longueur" /appel/longueur_bipoint 0 s  c_sauve   "1 2 3
+2 3 4"
+t "Change longueur" /appel/longueur_vecteur_lie 0 s  c_sauve   "4 4 4
+5 5 5"
+t "Change point"    /appel/point3  	   0 triplet c_sauve   "5 5 5"
+t "Change bipoint"  /appel/segment_pt_pt   0 virtuel_segment_pt_pt_3 c_sauve   "5 5 5
+4 4 4"
+t "Change vec.lie." /appel/segment_pt_pt   0 virtuel_segment_pt_pt_4 c_sauve   "8 8 8
+9 9 9"
+
+# duplication reseau
+
+t "Active 1"        /appel/longueur_bipoint     0 actif      c_sauve    "1"
+t "Active 2"        /appel/longueur_vecteur_lie 0 actif      c_sauve    "1"
+t "Duplique actifs"   /appel/modele   0 les_actifs te_entree  "duplique actifs     <F10>"
+
+

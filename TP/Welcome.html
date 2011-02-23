@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//EN">
+<HTML>
+  <HEAD>
+    <TITLE>NanoEdit</TITLE>
+  </HEAD>
+  <BODY>
+    <H1>NanoEdit</H1>
+
+    Attention, NanoEdit est un produit exp&eacute;rimental, ne nous
+    en veuillez pas s'il plante...
+    <P>
+
+      R&eacute;cuperez tout d'abord Nano&Eacute;dit dans votre compte.
+      Pour cela, ex&eacute;cutez les commandes suivantes (faites un copi&eacute;/coll&eacute;)&nbsp;:
+    <PRE>
+cd		# Pour revenir sur votre r&eacute;pertoire de connexion
+mkdir NE	# Pour faire un r&eacute;pertoire pour Nano&Eacute;dit
+cd NE	        # On y va!
+cp /home/exco/NE/stable/Makefile.proto Makefile
+/usr/local/bin/make		# Compilation & &Eacute;dition des liens & Lancement
+    </PRE>
+    Cette manipulation n'est &agrave; faire qu'une fois.
+
+    <H1>Premier sujet de TP</H1>
+
+    Le <A HREF="utilisation.html">premier sujet</A>
+    est le m&ecirc;me pour toutes les options,
+    c'est pour que vous apreniez &agrave; utiliser NanoEdit.
+
+    <P>
+     
+      Pour tous les sujets de TP un pointeur
+      vous permet de r&eacute;cup&eacute;rer un source C
+      contenant le squelette du TP.
+      Il ne vous restera qu'&agrave; copier ce squelette
+      dans votre r&eacute;pertoire <TT>NE</TT> puis &agrave; le modifier.
+
+    <P>
+      ATTENTION : &agrave; chaque fois que vous copiez un nouveau
+      fichier C dans le r&eacute;pertoire d'objet il faut
+      taper <TT>/usr/local/bin/make depend</TT> pour mettre &agrave; jour
+      le <TT>Makefile</TT>.
+
+    <H1>Sujets suivants</H1>
+    
+    Si vous avez termin&eacute; un sujet en avance, je vous conseille
+    de commencer le sujet suivant.
+    Les sujets n'ont en effet pas le m&ecirc;me niveau de difficult&eacute;.
+    <P>
+      <EM>Dans tout ces sujets, on vous donne un squelette
+	d'objet que vous devez compl&eacute;ter. La premi&egrave;re chose
+	&agrave; faire est de rapatrier le squelette, compiler,
+	cr&eacute;er une instance de l'objet sous Nano&Eacute;dit
+	et l'&eacute;diter afin de voir &agrave; quoi ressemble l'objet et
+	demander l'aide sur les diff&eacute;rents champs.</EM>
+    <P>
+    Les sujets de TP suivants diff&eacute;rent
+    suivant l'options :
+    <UL>
+<!-- 
+      <LI> Option CFAO
+	<UL>
+	  <LI> <A HREF="IsoSurf.html">Affichage surface param&eacute;trique</A>
+	  <LI> <A HREF="Extrusion.html">Extrusion par translation ou rotation</A>
+	  <LI> <A HREF="Repere.html">Manipulation de rep&egrave;re courant</A>
+	</UL>
+      <LI> Option GPAO
+	<UL>
+	  <LI> <A HREF="IsoSurf.html">Affichage surface param&eacute;trique</A>
+	  <LI> <A HREF="Gpao.html">Affichage d'une simulation</A>
+	</UL>
+      <LI> Option RESEAU
+	<UL>
+	  <LI> <A HREF="ObjOrdi.html">Affichage d'un ordinateur</A>
+	  <LI> <A HREF="RecupOrdi.html">R&eacute;cup&eacute;ration des infos</A>
+	  <LI> <A HREF="LiensOrdi.html">Affichage des connexions TCP</A>
+	  <LI> <A HREF="DispoOrdi.html">Disposition automatique</A>
+	</UL>
+ -->
+      <LI> Option IMAGE
+	<UL>
+	  <LI> <A HREF="Primitives.html">Affichage d'objets simples</A>
+	  <LI> <A HREF="IsoSurf.html">Affichage surface param&eacute;trique</A>
+	  <LI> <A HREF="Repere.html">Manipulation de rep&egrave;re courant</A>
+	  <LI> <A HREF="Bresenham.html">Bresenham</A>
+	  <LI> <A HREF="C/o_ex_decoupage.c">D&eacute;coupage</A>
+	  <LI> <A HREF="Octree.html">Octree</A>
+	  <LI> <A HREF="Plan.html">Plan</A>
+	  <LI> <!-- <A HREF="Polynome.html">Affichage Polynome, ses z&eacute;ros</A> -->
+	  <LI> <!-- <A HREF="Stereo.html">Mise en correspondance</A> -->
+	</UL>
+
+    </UL>
+    <P>
+      Les TP sont &agrave; montrer sur &eacute;cran la semaine suivante.
+
+<H1>Squelettes utiles pour les TP d'autres mati&egrave;res</H1>
+
+    Une fois le squelette rapatri&eacute; dans votre r&eacute;pertoire
+    et que Nano&Eacute;dit a &eacute;t&eacute; compil&eacute; et lanc&eacute;,
+    le menu «Cr&eacute;ation» contient
+    un sous-menu «Squelettes».
+
+    <UL>
+      <LI>  <A HREF="C/o_interseg.c">Intersection de segments de droite</A>.
+      <LI>  <A HREF="C/o_triangulation.c">Triangularisation de polygones</A>.
+      <LI>  <A HREF="C/o_convexe.c">Calcul de convexe de polygones</A>.
+      <LI>  <A HREF="C/o_bezier.c">Affiche courbe de Bezier</A>.
+      <LI>  <A HREF="C/o_inter_bez_seg.c">Calcul/Affiche intersection Bezier/Segment de droite</A>.
+      <LI>  <A HREF="C/o_ajoute_pt.c">Ajoute des points &agrave; un tableau de points</A>, on peut bien s&ucirc;r ``empiler'' des noeuds de ce type.
+    </UL>
+
+<!-- 
+    <H1>Pour ajouter vos propre noeuds</H1>
+
+    Une description compl&egrave;te
+    de l'&eacute;diteur se trouve dans
+    <A HREF="../ARTICLE/extension.dvi">extension.dvi</A>.
+ -->
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Mon Sep 29 14:01:49 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Mon Sep 25 11:26:46 CEST 2000
+<!-- hhmts end -->
+
+  </BODY>
+</HTML>

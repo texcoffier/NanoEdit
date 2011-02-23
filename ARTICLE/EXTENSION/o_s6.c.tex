@@ -1,0 +1,22 @@
+% Remember to use the lgrind style
+
+\File{}{0000}{N/A}{00}{00:00}{0}
+\L{\LB{\K{\#include}_\S{}\3o\_objet.h\3\SE{}}}
+\L{\LB{\K{\#include}_\S{}\3t\_geometrie.h\3\SE{}}}
+\L{\LB{\K{\#include}_\<\V{GL}\1\V{gl}.\V{h}\>____________________________________}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\K{struct}_\V{segment}_\{__\V{Triplet}_\V{depart},_\V{arrivee}_;_\}_;}\Tab{48}{___}}
+\L{\LB{\Proc{affiche\_segment}\K{static}_\K{void}_\V{affiche\_segment}(\K{struct}_\V{segment}_\*\V{s},____________\C{}\1\*\*\1\CE{}}}
+\L{\LB{}\Tab{24}{____\V{const}_\V{Champ}_\*\V{ch},______________\C{}\1\*\*\1\CE{}}}
+\L{\LB{}\Tab{24}{____\V{const}_\K{char}_\*\V{qualite})__________\C{}\1\*\*\1\CE{}}}
+\L{\LB{\{_____________________________________________________}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\V{glBegin}(\V{GL\_LINES})_;___________________________________}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\V{glVertex3f}(\V{s}\-\!\>_\V{depart}.\V{x},_\V{s}\-\!\>_\V{depart}.\V{y},_\V{s}\-\!\>_\V{depart}.\V{z})_;}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\V{glVertex3f}(\V{s}\-\!\>\V{arrivee}.\V{x},_\V{s}\-\!\>\V{arrivee}.\V{y},_\V{s}\-\!\>\V{arrivee}.\V{z})_;}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\V{glEnd}();______________________________________________}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\}_____________________________________________________}\Tab{56}{__\C{}\1\*\*\1\CE{}}}
+\L{\LB{\Proc{CLASSE}\V{CLASSE}(\V{segment6},}}
+\L{\LB{_______\K{struct}_\V{segment},}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{depart}_,_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP}_______\V{CHAMP}(\V{arrivee},_\V{L\_point}_\V{P\_triplet}_\V{Edite}_\V{Sauve}_\V{Init3d}_\V{Extrait})}}
+\L{\LB{\Proc{CHAMP\_VIRTUEL}_______\V{CHAMP\_VIRTUEL}(\V{L\_affiche\_gl}(\V{affiche\_segment}))_______\C{}\1\*\*\1\CE{}}}
+\L{\LB{______)}}

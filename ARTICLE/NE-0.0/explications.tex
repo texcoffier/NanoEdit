@@ -1,0 +1,986 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{epsf}
+\usepackage{french}
+
+
+\title{Nano éditeur}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+
+
+\section{Introduction}
+
+Cet éditeur 3D a été créé pour avoir~:
+\begin{itemize}
+\item Un logiciel permettant d'éditer un nuage de point.
+\item Un logiciel facilement extensible et améliorable.
+\item Un exemple de programmation ``correcte'' et lisible sans
+  toutefois être trop complexe.
+\item Un logiciel permettant l'affichage de résultats fonctions
+  de paramètres qui pourront être saisies interactivement.
+\end{itemize}
+
+Ses fonctionnalités les plus importantes sont les suivantes~:
+\begin{itemize}
+\item Documentation en ligne.
+\item {\em Undo}/{\em Redo} total.
+\item Lecture/Écriture dans des fichiers ``lisibles'' et simples
+  avec une compatibilité de format ascendante et descendante.
+\item Interactivité totale sur toute les fenêtres en même temps.
+\item Un modèle géométrique composé d'objets (au sens méthodologie objet).
+  Ceci permet facilement d'ajouter de nouveaux objets.
+\item Les objets peuvent être composés (ou non) d'autre objets.
+  Cela permet de faire des constructions par contrainte.
+\end{itemize}
+
+Ce document va maintenant décrire comment ce logiciel fonctionne
+et comment le modifier.
+Il faut lire ce document et essayer les différentes étapes
+au fur et à mesure, la programmation C utilisée n'étant pas très classique.
+
+ATTENTION : certains fichiers contiennent des programmes simples
+et d'autre des horriblements complexes.
+Ne vous amusez pas à lire le contenu de tous les fichiers,
+vous n'y comprendrez rien.
+Suivez l'ordre indiqué dans ce document.
+
+\section{Utilisation}
+
+Exécutez :
+\begin{verbatim}
+cd
+zcat /home/exco/REDACTEX/COURS/GRAPHIQUE/TP/nanoedit.tar.gz | tar -xvf -
+cd nanoedit-0
+make
+# puis au clavier, entrez comme nom de modèle : couleur
+\end{verbatim}
+
+Pour avoir plus d'informations ainsi que les sujets de TP,
+regarder la page HTML à l'adresse :
+{\tt /home/exco/REDACTEX/COURS/GRAPHIQUE/TP/OPENGL/Welcome.html}
+
+\section{Afficher bêtement un graphique}
+
+On ne peut plus simple.
+Vous éditez le fichier {\tt exemple.c} et vous ajoutez
+vos instructions GL dans la fonction {\tt fct\_affichage}.
+Votre graphisme apparaîtra alors dans les 4 vues.
+
+Ce fichier contient aussi la définition de tous les événements
+qui peuvent arriver et des fonctions qu'ils déclenchent~:
+
+\begin{verbatim}
+/*
+ * Donnees utilisateur -----------------------------------------------+
+ * Cette fonction retourne un nouvel objet -----------------------+   |
+ * Sauvegarde du modele apres l'evenement ----------------------+ |   |
+ * Affichage de toutes les vues apres l'evenement ------------+ | |   |
+ * Lance la fonction pour tous les objets actifs -----------+ | | |   |
+ * Fonction receptrice -----------------------+             | | | |   |
+ *                                            |             | | | |   |
+ * Evenement   Message d'aide                 V             V V V V   V      */
+  {"<Btn1Down>" ,"Active/Désactive un objet",e_selection   ,0,1,1,0       },
+  ...
+  {NULL}
+  } ;
+\end{verbatim}
+
+Le {\tt NULL} indique la fin du tableau, il ne faut rien ajouter derrière.
+
+Les champs décrivant un événement sont~:
+\begin{itemize}
+\item {\em La définition de l'événement.}
+  Pour avoir la liste des événements possibles et leur signification,
+  demandez l'aide interactive sur la fenêtre événement.
+\item {\em Le message qui sera affiché dans la fenêtre événement}
+\item {\em La fonction C qui sera appelée pour faire l'action.}
+  Elle sera détaillé plus loin.
+\item {\em La taille du paquet.} Pour avoir plus d'information
+  sur la signification et l'utilisation du paquet
+  demandez l'aide interactive.
+  Une taille de paquet de -1 ici indique que l'on utilise la valeur
+  donnée par l'utilisateur dans la case taille de paquet.
+\item {\em Affichage.} Si la valeur est différente de 0
+  alors le modèle est réaffiché après l'exécution de l'action.
+  Ceci n'est utile que pour les fonctions faisant des modifications
+  visibles sur le modèle.
+\item {\em Sauvegarde.} Si la valeur est différente de 0 alors
+  le modèle est sauvegardé après l'action.
+  Dans l'exemple, pratiquement chaque action déclenche une sauvegarde,
+  ceci permet de faire le {\em undo} sur toute les actions.
+\item {\em Création.} Une valeur différente de 0 indique
+  que l'action a peut-être créé un objet qu'il faudra intégrer
+  au modèle.
+\item {\em Données utilisateur.} Cette valeur sera passée
+  à la fonction faisant l'action lors de son déclenchement.
+\end{itemize}
+
+\newpage
+
+\section{Configurer les fenêtres et messages sans recompilation}
+
+Avant de commencer, il faut définir le concept de {\tt Widget}.
+Un {\tt Widget} est généralement une zone rectangulaire de l'écran
+ayant un certain comportement (label, bouton, zone de saisie, ...)
+et qui peut dans certains cas contenir d'autre {\tt Widget}.
+
+Le fichier {\tt Exemple.ad} contient la définition de la disposition
+des fenêtres, de la disposition des champs
+à l'intérieur des fenêtres, de tous les textes, des couleurs, ...
+Il vous suffit d'éditer le fichier et de relancer l'éditeur
+pour prendre en compte les modifications.
+Ce fichier est un fichier classique de ressource X11 (Intrinsic).
+
+Son format est le suivant~:
+
+{\tt nom\_de\_widget.nom\_de\_ressource : valeur}
+
+\begin{itemize}
+\item Le nom de {\tt Widget} est comme un nom de fichier
+  aux différences suivantes~:
+  \begin{itemize}
+  \item Le séparateur de nom est le '.'
+    \item Un nom de {\tt Widget} peut être remplacé par la classe
+      du {\tt Widget} ou par un '?' pour indiquer un nom quelconque.
+    \item Si l'on met une '*' à la place du '.' cela remplace
+      une série de nom de {\tt Widget}
+    \end{itemize}
+    Exemples :
+    \begin{itemize}
+    \item {\tt Exemple.evenements.evenements.message} \\
+      Ce nom définit totalement un {\tt Widget}
+      L'application {\tt Exemple} contient une fenêtre appelée
+      {\tt evenements} qui contient un {\tt Widget}
+      {\tt evenements} qui contient un {\tt Widget}
+      {\tt message}
+    \item {\tt Exemple*label\_r} \\
+      Ce nom permet de définir tous les {\tt Widget} s'appelant
+      {\tt label\_r} dans l'application {\tt Exemple}.
+    \item {\tt Exemple.interface*Command}
+      Ceci définie tous les {\tt Widget} de type {\tt Command} (boutton)
+      dans l'application {\tt Exemple} et la fenêtre {\tt interface}.
+      Ceci quel que soit la profondeur dans la hiérarchie du {\tt Widget}
+    \end{itemize}
+\item Les noms de ressource les plus connus sont~:
+  \begin{itemize}
+  \item {\tt background} : couleur du fond du {\tt Widget}
+  \item {\tt foreground} : couleur de tracé du {\tt Widget}
+  \item {\tt width} et {\tt height} : Largeur et hauteur
+  \item {\tt label} : texte à afficher dans un {\tt Widget} de type
+    {\tt Label}, {\tt Command}, {\tt Toggle} (bascule).
+  \item {\tt string} : texte à afficher dans un {\tt Widget} de type
+    {\tt Text}
+  \item {\tt fromVert} : pour indiquer le nom (court) du
+    {\tt Widget} au dessous duquel on se trouve
+  \item {\tt fromHoriz} : pour indiquer le nom (court) du
+      {\tt Widget} à droite duquel on se trouve
+  \end{itemize}
+\item La valeur de la ressource dépend évidemment de son type.
+\end{itemize}
+
+Il est aussi possible de modifier les valeurs des ressources (pas de toutes)
+pendant l'exécution du programme.
+Pour cela lancer l'application {\tt editres} puis faites
+un {\tt Commands/Get tree} sur l'application dont vous voulez
+modifier les ressources.
+Vous verrez alors la hiérarchie des {\tt Widgets}.
+Pour modifier une ressource~: activez un {\tt Widget} et
+faites un {\tt Commands/Show resources box}.
+
+
+\newpage
+
+\section{Ajouter un nouvel objet}
+
+On commencera par le plus simple~: ajouter un objet
+puis ensuite comment modifier l'objet.
+
+\subsection{Ajouter un nouvel objet}
+
+Les principales étapes sont les suivantes~:
+\begin{itemize}
+
+\item Copier les fichiers {\tt o\_point.c} et {\tt o\_point.h}
+  avec un nouveau nom d'objet.
+  Remplacer dans ces deux fichiers le nom {\tt point} (en minuscule) par le
+  nom du nouvel objet.
+  Dans la copie de {\tt o\_point.h} remplacer aussi les {\tt O\_POINT\_H}
+  qui sont dans les deux premières lignes du fichier.
+  
+
+\item Editer {\tt exemple.c}, dupliquer les 2 lignes suivantes
+  et remplacer {\tt point} par le nom de votre objet dans la copie.
+  (Dans le fichier, ces deux lignes ne sont pas consécutives)~:
+\begin{verbatim}
+#include "o_point.h"
+  {"<Key>p"     ,"AJOUTE : point 3D"        ,e_point       ,0,1,1,1},
+\end{verbatim}
+  En choisissant une touche non-utilisée et en mettant votre nom d'objet.
+  
+\item Editer {\tt c\_champ.c}, dupliquer et changer les 2 lignes (séparées)~:
+\begin{verbatim}
+#include "o_point.h"
+    &classe_point,
+\end{verbatim}
+  Ceci permet à l'éditeur de lire un fichier contenant ce nouvel objet.
+
+  Ne regardez pas les fichiers {\tt c\_champ.c} et {\tt c\_champ.h}
+  il font des choses pas très propre avec les types
+  et ne sont compréhensible que par un programmeur C confirmé.
+
+\item Editer {\tt Exemple.ad} pour ajouter de l'aide en ligne
+  sur ce nouvel objet.
+  Recherchez la ligne contenant la chaîne {\tt aide.point.Label.label:}.
+  Cette étape est optionnelle.
+
+\item Editer {\tt Makefile} pour ajouter un nom de fichier {\tt .o}
+  à la liste déjà contenue dans la variable {\tt OBJETS}
+
+\end{itemize}
+
+Avant même de modifier le nouvel objet (en effet pour le moment
+il a le même comportement qu'un point).
+Vérifiez que vous avez tous fait correctement~:
+\begin{itemize}
+\item Taper {\tt make} pour compiler et exécuter.
+\item Créer votre nouvel objet
+\item Render le actif et éditez-le.
+\item Vérifier si sa classe est correcte.
+\item Faites un {\em undo} et un {\em redo}.
+\end{itemize}
+
+\subsection{Modifier un objet sans contrainte}
+
+Dans le {\tt .h} modifier les champs de la structure
+pour mettre ceux qui vous intéressent.
+{\em Toujours laisser le {\tt struct objet objet} en première position}.
+
+Dans le {\tt .c} plusieurs choses doivent être modifiées~:
+\begin{itemize}
+  \item {\em La définition des champs de votre structure}
+\begin{verbatim}
+static struct o_point inutile ;   /* Variable devant s'appeler inutile */
+
+struct champ champs_point[ ] =
+{
+{COORD_X,Flottant,CHAMP(x)   , "0.", Editable, Sauve },
+{COORD_Y,Flottant,CHAMP(y)   , "0.", Editable, Sauve },
+{COORD_Z,Flottant,CHAMP(z)   , "0.", Editable, Sauve },
+{ROUGE  ,Flottant,CHAMP(r)   , "1.", Editable, Sauve },
+{VERT   ,Flottant,CHAMP(v)   , "1.", Editable, Sauve },
+{BLEU   ,Flottant,CHAMP(b)   , "1.", Editable, Sauve },
+{NULL}
+} ;
+\end{verbatim}
+    \begin{itemize}
+    \item 
+      La première colonne indique le nom du champ de votre structure,
+      c'est le nom de {\tt Widget} qui sera utilisé pour l'affichage
+      des champs de votre objet.
+
+      La liste des champs prédéfinis est dans {\tt c\_champ.h}.
+      Mais vous pouvez directement mettre une chaîne de caractère
+      si vous voulez créer un nouveau champ.
+
+      {\em Cette chaîne de caractères doit être en minuscule}
+
+    \item
+      La deuxième colonne indique le type de la variable
+      et aussi la manière de l'afficher, les plus utiles sont~:
+      \begin{itemize}
+      \item {\tt Flottant} :
+        {\tt float} avec un label de champs lors de l'édition.
+      \item {\tt Entier} :
+        {\tt int} avec un label de champs lors de l'édition.
+      \item {\tt Chaine} :
+        {\tt char*} (pas un tableau) avec un label de champs lors de l'édition.
+      \item {\tt Toggle} :
+        {\tt Booleen} c'est une bascule Vrai/Faux (sans label devant)
+      \end{itemize}
+
+      \item
+        La troisième colonne indique le nom du champ de la structure C.
+
+      \item
+        La quatrième contient la valeur par défaut toujours donnée
+        sous la forme d'une chaîne de caractères.
+
+      \item
+        La cinquième indique~:
+        \begin{itemize}
+        \item {\tt Editable} : L'utilisateur peut éditer la valeur.
+        \item {\tt Affiche} : La valeur est affichée mais pas modifiable.
+        \item {\tt AffichePas} : La valeur n'est pas affichée.
+        \end{itemize}
+
+      \item
+        La dernière indique :
+        \begin{itemize}
+        \item {\tt Sauve} : La valeur doit être sauvegardée dans les fichiers
+          car c'est une donnée nécessaire.
+        \item {\tt SauvePas} : La valeur est calculée ou déduite
+          et ne doit pas être sauvegardée.
+        \end{itemize}
+    \end{itemize}
+
+\item {\em La fonction d'affichage} : {\tt t\_point}
+
+  Celle-ci va avoir besoin de savoir si l'objet est actif
+  afin de le dessiner en évidence (d'une manière différente
+  pour montrer à l'utilisateur qu'il est ``sélectionné'') s'il est actif.
+  Le champ booléen {\tt actif} est à vrai si l'objet est actif.
+
+  Généralement pour rendre actif un objet on clique sur son dessin.
+  Si l'on désire qu'une partie du dessin de l'objet ne permette
+  pas de l'activer, on exécute l'instruction~:\\
+  {\tt glLoadName(NE\_TROUVE\_PAS) ;}\\
+  Le dessin tracé ensuite ne sera pas cliquable..
+
+\item {\em La fonction de création} : {\tt e\_point}
+  \begin{itemize}
+  \item {\tt re->objet = o\_objet(\&classe\_point) ;}
+
+    Cette ligne crée un nouvel objet en initialisant à la valeur
+    par défaut tous ces champs.
+
+    \item Si vous avez besoin d'une chaîne de caractères lors de la création,
+      vous pouvez utilisez~: {\tt re->application->interface->message}
+      qui contient le texte courant de la fenêtre message du bas.
+      N'oubliez pas de le dupliquer.
+      Pour avoir plus d'informations, regardez le fichier {\tt o\_texte.c}
+
+    \item {\tt o\_positionne( re->objet, x, y, z) ;}
+
+      La position du curseur dans $\R^3$ lors d'un événement
+      se trouve dans {\tt re->x3d}, {\tt re->y3d}, {\tt re->z3d}
+      
+      Normalement tous les objets graphiques ont une structure
+      contenant des champs X, Y, Z indiquant la position de l'objet.
+      Cette ligne positionne automatiquement ces 3 champs.
+      
+      Dans le cas du point, on aurait pu écrire à la place~:
+\begin{verbatim}
+((struct o_point*)(re->objet))->x = x ;
+((struct o_point*)(re->objet))->y = y ;
+((struct o_point*)(re->objet))->z = z ;
+\end{verbatim}
+      mais c'est moins lisible.
+
+    \item {\tt w\_message(re->application, "Point créé") ;}
+
+      Affiche un message pour l'utilisateur.
+
+    \end{itemize}
+
+
+  \item {\em La définition des méthodes de votre objet}
+\begin{verbatim}
+struct classe classe_point =
+{
+  "point",
+  sizeof(struct o_point),       /* Taille de l'objet */
+  t_point,                      /* Affichage (nom de fonction C) */
+  NULL,                         /* Destruction (nom de fonction C) */
+  NULL,                         /* Previent changement (nom de fonction C) */
+  champs_point,                 /* Les champs de la classe */
+  Vrai                          /* Affiche les informations sur la classe */
+} ;
+\end{verbatim}
+    Si jamais vous avez fait des {\tt malloc} dans la fonction
+    de création d'objet, il faudra créer une fonction
+    de destruction d'objet qui fera les {\tt free}.
+    Par exemple pour l'objet {\\t texte}~:
+\begin{verbatim}
+void u_detruit_texte(struct objet *o)
+{
+  struct o_texte *t = (struct o_texte*) o ;
+  free(t->texte) ;
+}
+\end{verbatim}
+    Attention : n'essayez pas de détruire les composants
+    car ils sont peut-être utilisés par d'autres objets.
+\end{itemize}
+
+Et voila, vous savez maintenant modifier un objet défini sans contrainte.
+Vous remarquerez que vous n'avez pas eu à~:
+\begin{itemize}
+\item Utiliser des fonctions de fenêtrage pour l'édition de l'objet.
+\item La lecture et l'écriture dans un fichier.
+\item Le positionnement, colorisation, ...
+\end{itemize}
+
+
+\newpage
+
+
+\subsection{Modifier un objet avec contrainte}
+
+Il y a deux chose à modifier~: la création de l'objet
+et la ``remise en forme'' de l'objet.
+
+
+\subsubsection{Création d'un objet contraint}
+
+La fonction de création (par exemple {\tt e\_point\_milieu})
+va vérifier le nombre et le type des arguments (objets actif) pour voir s'il
+sont valide.
+
+Les objets actifs sont dans la variable {\tt re->arguments}
+qui est une liste chaînée.
+
+Le nombre d'arguments est donné en appelant simplement
+{\tt {l\_longueur(re->arguments)}}.
+
+Pour accepter comme composants toute cette liste d'arguments,
+on peut faire :\\
+{\tt m\_ils\_deviennent\_mes\_fils(re->objet, re->arguments)}
+
+Pour créer sa propre liste de composants,
+créez une liste (voir {\tt l\_liste.h}) et passez-la
+à :\\
+{\tt m\_ils\_deviennent\_mes\_fils}.
+
+Pour accéder à un élément particulier de la liste,
+vous pouvez faire~:\\
+{\tt (struct objet*)l\_element(re->arguments,numéro)}
+Attention c'est numéroté à partir de 0.
+
+Et pour regarder si cet objet est un point~:\\
+{\tt if ( (struct objet*)l\_element(re->arguments,0) == \&classe\_point )}
+
+
+\subsubsection{Changement d'un objet contraint}
+
+Si l'un des composants change pour une raison ou une autre,
+et que vous avez défini une méthode ``prévient changement''
+alors cette méthode est appelée.
+
+Deux cas sont possibles~:
+\begin{itemize}
+\item {\em Changement de valeur ou de type d'un composant}~:
+
+  Vous recalculez ce qu'il y a à recalculer à partir
+  de la liste des composants.
+  Pour le point milieu, on doit faire la moyenne~:
+\begin{verbatim}
+n = 0 ;
+POUR_LES_FILS( objet, f,
+               n++ ;
+               o_prend_position(f, &x, &y, &z) ;
+               sx += x ;
+               sy += y ;
+               sz += z ;
+               o_prend_couleur(f, &x, &y, &z) ;
+               sr += x ;
+               sv += y ;
+               sb += z ;
+               ) ;
+\end{verbatim}
+  Vous remarquerez que l'on n'accède pas directement aux champs des composants.
+  Cela fonctionne donc quel que soit le type de l'objet.
+
+  Pour repositionner l'objet et le recoloriser :
+
+\begin{verbatim}
+  o_positionne( objet, sx/n, sy/n, sz/n ) ;
+  o_colorise  ( objet, sr/n, sv/n, sb/n ) ;
+\end{verbatim}
+
+\item {\em Destruction d'un composant}
+
+  Dans la liste des composants (fils) les composants détruits
+  sont indiqués par un pointeur {\tt NULL}.
+
+  On peut alors décider si l'objet à changé de classe du fait
+  de la perte d'un des composants.
+  Pour exemple dans {\tt o\_segment.c}
+\begin{verbatim}
+objet->classe = &classe_segment__pt ;
+\end{verbatim}
+  Ceci n'est ``légal'' qui si l'on sous-type l'objet.
+
+  Si l'on veut enlever tous les pointeurs {\tt NULL}
+  de la liste, vous pouvez faire~:
+\begin{verbatim}
+l_enleve(&objet->fils,NULL) ;
+\end{verbatim}
+
+
+\end{itemize}
+
+\subsection{Créer de multiples objets}
+
+Si une fonction doit créer automatiquement des objets.
+Pour les intégrer au modèle affiché, utiliser :
+\begin{verbatim}
+m_integre_objet(objet,re->application) ; /* Utilise état courant */
+m_integre(objet,re->application) ;
+\end{verbatim}
+L'état courant ne contient que la couleur pour le moment.
+
+
+
+
+\section{Comment est structuré cette application}
+
+Pour ajouter de nouveaux types d'objets, vous n'avez pas besoin
+de lire la suite.
+Elle est à lire si vous voulez modifier l'interface
+utilisateur ou alors l'éditeur lui-même.
+
+Pour comprendre cette application de manière {\bf interne},
+l'étape suivante consiste à vérifier
+que les fonctions de bas niveau (n'utilisant rien d'autre)
+ne vous posent pas de problèmes,
+ce sont les fonctions du bas du tableau.
+
+Ensuite regardez les différents objets (en haut du tableau).
+
+Et enfin, les fonction du bloc central sont complexes
+et sont expliquées dans la suite de ce texte.
+
+\begin{tabular}{|rl|}
+\hline
+  exemple       & Le main et la définition des événements \\
+  Exemple.ad    & Apparence et textes liés à l'application \\
+\hline
+  o\_point       & Objet point et point milieu \\
+  o\_segment     & Objet segment (4 classes différentes) \\
+  o\_texte       & Objet texte et texte distance \\
+  o\_objet       & Définition de l'objet et des fonctions génériques \\
+\hline
+  e\_evenements  & Toutes les fonctions réceptrices d'événement \\
+  a\_application & Fonction de manipulation d'objet et vue\_commun \\
+  w\_fenetre     & Ouverture d'une fenêtre d'édition des champs \\
+  a\_application & L'application \\
+  m\_modele      & Manipulation du modèle \\
+  o\_interface   & Definition de l'interface utilisateur principal \\
+  w\_vue         & Une vue comprenant un {\tt Widget} GL pour l'affichage \\
+  u\_vues        & Données communes à toutes les vues \\
+  u\_initialise  & Initialisation de l'application \\
+\hline
+  t\_sol         & Trace le sol \\
+  t\_repere      & Trace le repère \\
+  t\_chaine      & Trace une chaîne de caractères \\
+  o\_classe      & Définition de la structure classe \\
+  c\_champ       & Manipulation des champs d'un objet \\
+  l\_liste       & Utilitaires pour manipuler des listes de {\tt void*} \\
+  u\_base        & Utilitaires de base pour le C \\
+  w\_util        & Outils de base pour la manipulation des {\tt Widgets} \\
+\hline
+\end{tabular}
+
+\newpage
+
+Les structures de données importantes sont les suivantes
+du bas niveau au haut niveau.
+
+\begin{tabular}{|lll|}
+\hline
+Nom structure & Fichier & Commentaire \\
+\hline
+{\tt l\_liste}       &{\tt l\_liste.h}&La liste d'objets quelconque \\
+{\tt champ}       &{\tt c\_champ.h}&Informations sur une structure \\
+{\tt classe}      &{\tt o\_classe.h}&Informations sur la classe \\
+{\tt objet}       &{\tt o\_classe.h}&Informations communes aux instances \\
+{\tt donnees\_vues}&{\tt u\_vues.h} &Nécessaire à l'affichage des vues \\
+{\tt vue}         &{\tt w\_vue.h}  &Données particulière à chaque vue \\
+{\tt interface}   &{\tt o\_interface.h}& L'interface utilisateur \\
+{\tt application} &{\tt a\_application.h}& Les données de l'application \\
+\hline
+\end{tabular}
+
+Il est conseillé de regarder ces différentes structures
+du bas niveau au haut niveau.
+
+Une autre méthode consiste à regarder comment
+sont écrites les fonctions réceptrice d'événements
+(dans {\tt e\_evenement.c})
+
+
+\subsection{Structure champ}
+
+Elle définie des renseignements sur une
+zone mémoire d'une instance de classe.
+
+\begin{itemize}
+\item {\tt char *nom ;} \\
+  Le nom du champ.
+  Ce nom est employé pour la sauvegarde/récupération dans un fichier
+  ainsi que pour nommer les {\tt Widget} qui permettent
+  d'afficher la valeur ({\tt Widget "nom"})
+  et le nom ({\tt Widget "label\_nom"}) de ce champ.
+
+\item {\tt enum {...} type\_champ ;} \\
+  Valeur de l'énumération à usage interne (ne servant pas à
+  définir de nouveaux objets)~:
+  \begin{itemize}
+  \item {\tt Liste} : {\tt struct l\_liste*} pour stocker les composants.
+  \item {\tt Classe} : Un pointeur sur classe.
+  \item {\tt Vue} : Une vue GL, le numéro donne le type.
+  \item {\tt Applique}, {\tt Ferme} et {\tt AppliqueFerme}.
+    Les boutons de commande en bas des fenêtres d'édition d'objet.
+    Leur comportement est standard et il ne correspondent
+    pas à un champ de structure de donnée.
+  \end{itemize}
+  Type utiles à la définition de nouveaux objet.
+  \begin{itemize}
+  \item {\tt Entier} : Un entier ou booléen (affiché avec un label).
+  \item {\tt Flottant} : Une nombre flottant (avec un label).
+  \item {\tt Chaine} : Un pointeur sur caractère (avec un label).
+  \item {\tt Toggle} : Un entier/booléen affiché comme une bascule.
+  \item {\tt Texte} : Un pointeur sur caractère, {\tt Widget AsciiText}.
+  \item {\tt Label} : Un pointeur sur caractère, {\tt Widget Label}.
+  \end{itemize}
+
+\item {\tt int  position ;} \\
+  La position de la zone mémoire (en octet) par rapport
+  au début de la structure objet.
+  Le calcul de cette position mémoire est facilité
+  par la macro {\tt CHAMP} qui permet de trouver la position
+  d'un champ dans une structure.
+  L'inconvénient de cette macro est qu'elle oblige
+  à déclarer une variable globale (localw au fichier)
+  nommée {\tt inutile}.
+  ATTENTION : certains compilateurs n'aiment pas cette macro,
+  pour avoir une implémentation portable,
+  il faudrait initialiser dynamiquement (par programme)
+  le contenu de ce champ.
+
+\item {\tt char *defaut ;} \\
+  Chaîne de caractères permettant d'initialiser la valeur
+  initiale du champ.
+  Si c'est un pointeur NULL et que le type du champ est
+  une chaîne de caractères : celle-ci sera aussi un pointeur NULL.
+
+\item {\tt enum { AffichePas, Affiche, Editable} edite ;} \\
+  Lors de l'édition d'un objet, le champ
+  pourra ne pas être visible, l'être ou l'être et être éditable.
+
+\item {\tt enum { SauvePas, Sauve } fichier ;} \\
+  Le champ sera sauvegardé ou non dans le fichier
+  de sauvegarde de modèle.
+
+\end{itemize}
+
+Les fonctions sur les champs les plus utiles sont :
+\begin{itemize}
+\item {\tt char* c\_recupere(struct objet* o, char *nom\_champ)} \\
+  Récupère la valeur du champ de l'objet sous forme d'une chaîne de
+  caractère. ATTENTION : il faut utiliser immédiatement cette chaîne
+  car c'est un pointeur sur une variable locale
+  qui sera modifié au prochain appel.
+
+\item {\tt void c\_sauve(struct objet* o, char *nom\_champ, char *valeur)}
+  Sauvegarde la valeur donnée dans le champ nommé.
+\end{itemize}
+
+Le passage par une chaîne de caractère ralentit considérablement
+mais permet de simplifier tous les programmes car ils
+n'ont à tenir compte que d'un seul type de champ.
+
+
+
+\subsection{Structure classe}
+
+Elle définie la classe et donc le comportement
+des instances de cette classe.
+
+\begin{itemize}
+\item {\tt char *nom ;} \\
+  Le nom de la classe, ce nom est utilisé pour stocker/lire
+  la classe de l'objet dans un fichier mais aussi pour
+  nommes tous les {\tt Widget} liés à aux instances
+  de cette classe. Donc il faut éviter les caractères
+  qui ne sont pas alphanumériques.
+  
+\item {\tt int taille\_structure ;} \\
+  La taille de l'instance de l'objet, ceci
+  est nécessaire pour la création d'une instance.
+
+\item {\tt void (*affichage)  (struct objet *) ;} \\
+  La fonction appelée chaque fois que l'on doit afficher
+  une instance de cette classe.
+  Ou NULL si cette fonctionnalité n'existe pas.
+
+\item {\tt void (*destruction)(struct objet *) ;} \\
+  La fonction appelée lorsque l'on détruit une instance
+  de la classe. Cette fonction libèrera toute
+  la mémoire allouée durant la naissance et vie de l'instance.
+  Ou NULL si cette fonctionnalité n'est pas nécessaire.
+
+\item {\tt void (*changement) (struct objet *) ;} \\
+  La fonction appelée pour prévenir l'instance
+  que l'un de ses composants a été détruit ou a été modifié.
+  Dans le cas d'une destruction, le pointeur sur le composant
+  manquant devient un pointeur NULL.
+
+\item {\tt struct champ *champs ;} \\
+  Les champs de l'objet qui sont utiles pour~:
+  \begin{itemize}
+  \item Sauvegarder/Récupérer l'instance dans un fichier.
+  \item Afficher la fenêtre d'édition.
+  \item Accéder à certains champs connus~: couleur, position, ...
+  \end{itemize}
+
+\item {\tt Booleen affiche\_champs\_classe ;} \\
+  Dans le cas ou l'instance est éditée ou sauvegardée,
+  si ce booléen est vrai, les champs de l'objet
+  générique seront affichés (voir {\tt struct objet})
+
+\end{itemize}
+
+
+
+
+\subsection{Structure objet}
+
+Elle définie les données qui sont communes à toutes les instances de classe.
+Cette structure.
+doit être le premier champ de toutes les structures définissant un objet.
+
+\begin{itemize}
+\item {\tt struct classe *classe ;} \\
+  La classe de l'objet. C'est ceci qui permet de connaître
+  sont comportement.
+
+\item {\tt struct l\_liste *parent ;} \\
+  La liste des objets dont celui-ci est un composant.
+
+\item {\tt struct l\_liste *fils ;} \\
+  La liste des composants de l'objet.
+
+\item {\tt Booleen actif ;} \\
+  Indique si l'objet est actif ou non.
+
+\item {\tt Booleen change ;} \\
+  Indique si l'objet a subit un changement.
+  Si oui, il faudra prévenir ses parents.
+  Ce champ est modifié automatiquement si l'on modifie
+  l'un des champs de la structure via la fonction {\tt c\_sauve}.
+
+\item {\tt Widget edite ;} \\
+  Le {\tt Widget} correspondant à la fenêtre d'édition de l'objet.
+  Ou 0 si elle est fermée.
+
+\item {\tt struct objet *nom ;} \\
+  Pointeur sur le début de l'objet lui-même ou
+  la valeur de ce pointeur en mémoire avant sa dernière sauvegarde.
+  C'est seulement utile pour reconstruire le graphe dans
+  les fonctions {\tt m\_sauve} et {\tt m\_recupere}.
+\end{itemize}
+
+
+
+
+\subsection{Structure donnees\_vues}
+
+Elle contient tout ce qui est commun à toutes les vues.
+
+\begin{itemize}
+\item {\tt float x\_oeil, y\_oeil, z\_oeil ;}
+\item {\tt void (*fonction\_affichage)(struct vue *) ;} \\
+  C'est là ou la fonction d'affichage de l'utilisateur est stockée.
+\item {\tt struct application *application ;}
+  Malheureusement, ce pointeur brise la hiérarchie des structures.
+  Mais il est nécessaire.
+\item {\tt Booleen aimant\_entier ;}
+\item {\tt Booleen aimant\_existant ;}
+\item {\tt Booleen affiche\_sol ;}
+\end{itemize}
+
+
+
+\subsection{Structure vue}
+
+Elle contient ce qui est nécessaire à l'affichage d'une vue.
+
+\begin{itemize}
+\item {\tt struct donnees\_vues *donnees ;} \\
+  Les données vuent au-dessus.
+
+\item {\tt enum type\_vue { VueX, VueY, VueZ, VuePersp} type ;} \\
+  Le numéro de vue figure dans le fichier de ressources.
+  Ne pas modifier l'ordre sans le modifier.
+
+\item {\tt GLXContext gl\_context ;} \\
+  Nécessaire pour le bon fonctionnement de GL
+
+\item {\tt Widget gl ;} \\
+  Le {\tt Widget} GL
+
+\end{itemize}
+
+
+\subsection{Structure evenement}
+
+C'est la structure la plus importante.
+C'est en effet elle qui est l'unique paramètre
+des fonctions réceptrices d'un événement.
+
+La première partie déjà expliquée contient des renseignements
+rentré par l'utilisateur et la deuxi\-ème des renseignements
+qui dépendent de l'état courant.
+
+\begin{itemize}
+\item {\tt char *code\_recepteur ;}
+\item {\tt char *message ;}
+\item {\tt void (*recepteur)(struct evenement*) ;}
+\item {\tt int paquet ;}
+\item {\tt Booleen affiche ;}
+\item {\tt Booleen sauve ;}
+\item {\tt Booleen creation ;}
+\item {\tt void* donnees\_utilisateur ;}
+
+\item {\tt int nb\_declenchements ;} \\
+  Pour analyser les événements utilisés.
+
+
+\item {\tt struct vue *vue ;} \\
+  La vue dans laquelle s'est déclenché l'événement.
+
+\item {\tt struct application *application ;} \\
+  L'application. Cette donnée est inutile car en fait accessible
+  à partir de la vue. Mais c'était moins lisible.
+
+\item {\tt XEvent     *event ;} \\
+  L'événement X11 (voir {\tt /vol/X11R6/include/X11/Xlib.h})
+
+\item {\tt Widget     widget ;} \\
+  Le {\tt Widget} sur lequel l'événement est arrivé.
+
+\item {\tt float x3d, y3d, z3d ;} \\
+  La position dans $\R^3$ du curseur lors de l'événement.
+
+\item {\tt struct l\_liste *arguments ;} \\
+  La liste de composants de l'objet que l'on veut créer.
+
+\item {\tt struct objet *objet ;} \\
+  L'objet sur lequel l'événement porte ou l'objet nouvellement
+  créé par vous.
+\end{itemize}
+
+Presque toute les fonctions de traitement d'événement sont
+dans {\tt e\_evenement.c}
+
+Une astuce de programmation consiste à faire ces fonctions
+de traitement d'événement de telle fa\c con qu'elles traitent
+un seul objet et de définir l'événement de telle
+manière que la fonction soit appelée successivement
+pour tous les objets actifs.
+Ceci évite donc de faire une boucle pour tous les objets actifs.
+
+
+
+
+\subsection{Structure/Objet interface}
+
+Pour simplifier le programme, on traite l'interface utilisateur
+comme la fenêtre d'édition d'un objet particulier : l'interface.
+
+\begin{verbatim}
+struct objet objet ;
+struct vue *vue_x, *vue_y, *vue_z, *vue_persp ;
+float r, v, b ;
+int deselection ;
+int selection ;
+int destruction ;
+char *titre ;
+char *sous_titre ;
+char *message ;
+char *aide ;
+int paquet ;
+struct donnees_vues donnees_vues ;
+\end{verbatim}
+
+Quelques remarques :
+\begin{itemize}
+\item Le champ {\tt donnees\_vues} de toutes les vues pointe
+  sur le champ {\tt donnees\_vues} de cette structure.
+\item Les champs {\tt titre} et {\tt sous\_titre} permettent
+  de donner un nom à la fenêtre et au {\tt Widget} de type {\tt form}
+  qu'elle contient.
+\end{itemize}
+
+
+
+
+
+\subsection{Structure application}
+
+C'est la structure de plus haut niveau.
+
+\begin{itemize}
+\item {\tt void *donnees\_utilisateur ;} \\
+  On laisse à l'utilisateur la possibilité de stocker
+  ses propres informations pour l'application.
+
+\item {\tt struct evenement *recepteurs ;} \\
+  Un tableau contenant tous les récepteurs d'événements.
+
+\item {\tt struct l\_liste *liste\_vues ;} \\
+  La liste des vues, ceci est utile pour toutes les réafficher.
+
+\item {\tt struct l\_liste *liste\_objets ;} \\
+  La liste de tous les objets que l'on doit afficher : le modèle.
+
+\item {\tt struct l\_liste *liste\_actifs ;} \\
+  La liste des objets actifs (sélectionnés).
+
+\item {\tt struct l\_liste *liste\_creations ;} \\
+  La liste des objets créés.
+  C'est utile pour la sélection automatique des objets créés.
+
+\item {\tt char *nom\_sauvegarde ;} \\
+  Le nom du fichier contenant le modèle.
+
+\item {\tt int numero\_sauvegarde ;} \\
+  Le numéro de la sauvegarde courante.
+
+\item {\tt struct interface *interface ;} \\
+  L'interface utilisateur (c'est un objet).
+
+\item {\tt struct info      *evenements ;} \\
+  La fenêtre contenant la liste des événements.
+
+\item {\tt XtAppContext app\_context ;} \\
+  Obligatoire pour X11.
+
+\item {\tt Widget sommet ;} \\
+  Obligatoire pour X11.
+\end{itemize}
+
+
+
+
+
+\subsection{Et X11 dans tout \c ca ?}
+
+Toutes les créations de {\tt Widget} sont regroupées
+dans {\tt w\_util.h} et sont complètement indépendante
+du reste de l'application.
+
+L'ouverture d'une fenêtre (d'édition de champs de structure) est
+dans {\tt w\_fenetre.c} et c'est la seule
+fonction ouvrant des fenêtres.
+Le fichier contient d'autres fonctions qui agissent en interaction
+avec cette fenêtre.
+
+Ailleurs dans les sources, il y a quelques fonctions
+de déclenchement d'action ou d'inspection qui sont utilisées mais rarement.
+En fait le reste est ``pratiquement'' indépendant d'X11,
+le programme serait beaucoup plus propre si les différentes
+parties étaient totalement indépendantes.
+
+
+\end{document}
+

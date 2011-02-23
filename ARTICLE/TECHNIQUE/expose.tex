@@ -1,0 +1,154 @@
+\documentclass[landscape]{seminar}
+
+%\usepackage{french}
+\usepackage{graphics}
+\usepackage{colordvi}
+\usepackage{../EXTENSION/lgrind}
+\input{sem-a4.sty}
+
+\title{Techniques de programmation}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\newcommand{\cfile}[1]{\fontsize{7}{8}\selectfont
+\input #1
+}
+\newcommand{\ligne}[0]{\centerline{\rule{10cm}{.1mm}}}
+
+\pagestyle{empty}
+
+\begin{slide}
+  \maketitle
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{Introduction}
+
+  La suite présente des techniques
+  diverses en variées de programmation
+  utilisables en C.
+
+  Le but est de pallier aux insuffisance
+  des langages de programmation.
+
+  La plupart de ces techniques sont
+  mises en oeuvre dans NanoÉdit.
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{Programmation symbolique}
+
+  Le C (et C++) ne permet pas d'accéder :
+  \begin{itemize}
+  \item ne permet pas d'accéder à la liste des champs d'une structure.
+  \item ne permet pas d'accéder au nom de structures, de fonction, d'énumération.
+  \item ne permet pas de faire des calculs symboliques.
+  \item de générer des fonctions et structures par programmes.
+  \end{itemize}
+
+  Plusieurs solutions sont possibles.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \subsection*{Analyseur}
+
+  On peut faire un autre programme qui
+  analyse le programme C afin de générer
+  ce qui manque.
+
+  Solution facile mais peut élégante car l'on
+  a besoin de fichiers suplémentaires
+  et d'écrire l'analyseur.
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \subsection*{Préprocesseur}
+
+  Il permet de faire beaucoup de chose,
+  malheureusement, il ne permet pas de faire
+  de conditions, de tests et de recursions.
+
+  Il est néanmoins très pratique et permet
+  d'éviter beaucoup de redondance dans les
+  programmes.
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \subsubsection*{Boucle FOR}
+
+Pour éviter la redondance de l'indice de boucle.
+
+\ligne
+
+\cfile{C/for.ctex}
+\ligne
+
+\cfile{C/for.cpp}
+
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsubsection*{Débuggage}
+
+Il est encore mieux d'avoir la fonction {\tt eprintf}
+au lieu de {\tt fprintf}
+
+\ligne
+
+\cfile{C/bug.ctex}
+\ligne
+
+\cfile{C/bug.cpp}
+
+
+
+
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}
+  \section*{}
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+

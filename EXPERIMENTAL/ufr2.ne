@@ -1,0 +1,84 @@
+
+classe vue
+nom 1074102944
+edite 1075652248
+titre Vue Axe X
+pas_vue 0.1
+angle_vue 0.1
+point_de_vue 3.8 0 0
+point_vise -0.2 0 0
+b_persp 0
+geometrie 444 258 611 632
+
+classe vue
+nom 1074105616
+edite 1076880416
+titre Vue Perspective
+pas_vue 0.1
+angle_vue 0.1
+point_de_vue 5.54177 0.655007 2.54897
+point_vise 1.29377 0.540923 1.13193
+haut -0.282529 -0.386269 0.878051
+geometrie 316 68 785 775
+
+classe ufr
+actif 23
+nom 1074100936
+edite 1079337024
+fils 1074101072
+du 2
+dv 5
+
+classe table_point3
+nom 1074101072
+fils 1074100280 1074101608 1074101768 1074101496 1074101160 1074101296 1074101856 1074102032 1074102136 1074102240
+
+classe point3
+nom 1074100280
+y 0.0241653
+z -2.02989
+
+classe point3
+nom 1074101608
+y 0.400056
+z -2.09433
+
+classe point3
+nom 1074101768
+y 0.4081
+z 1.99767
+
+classe point3
+nom 1074101496
+y 0.0563857
+z 1.99767
+
+classe point3
+nom 1074101160
+y 0.153047
+z 2.046
+
+classe point3
+nom 1074101296
+y 0.314149
+z 2.23932
+
+classe point3
+nom 1074101856
+y 0.3947
+z 2.3682
+
+classe point3
+nom 1074102032
+y 0.298039
+z 2.59374
+
+classe point3
+nom 1074102136
+y 0.185267
+z 2.72263
+
+classe point3
+nom 1074102240
+y 0.0241653
+z 2.75485

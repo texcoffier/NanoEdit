@@ -1,0 +1,78 @@
+Préambule
+---------
+Cet exposé s'adresse aux membres du LIGIM, mais aussi aux autres
+enseignants du bâtiment 710, tout particulièrement aux
+enseignants d'algorithmie et de programmation,
+mais aussi aux enseignants qui veulent permettre
+à leurs étudiants de faire des TP plus intéressants.
+
+Ce qui suit n'est PAS le plan de l'exposé...
+
+
+Pourquoi NanoÉdit
+-----------------
+
+NanoÉdit a été créé afin de rendre les TP de techniques graphiques du DESS
+plus intéressant pour les étudiants.
+Jusqu'à présent les étudiants développaient une application complète,
+ceci leur prend énormément de temps et ils passaient peu de temps
+à étudier le vif du sujet.
+Désormais, ils étendront une application existante qui leur offrira
+un environnement conviviale pour tester leurs TP,
+que ceux-ci soient liés aux techniques graphiques ou non.
+Les points intéressants de NanoÉdit sont les suivants :
+   - Le noyau de NanoÉdit est très petit mais il fait le maximum.
+     Cela montre aux étudiants l'importance d'une programmation modulaire.
+   - Pour étendre NanoÉdit, il suffit d'ajouter un seul fichier (en langage C)
+     contenant la description de l'extension.
+   - Les étudiants n'ont à connaître aucune fonction du noyau.
+   - NanoÉdit utilise un ensemble de techniques de programmation
+     que les étudiants on rarement le temps d'aborder en cours/TP
+
+NanoÉdit a un énorme avantage, il permet de fusionner simplement
+les travaux de différentes personnes qui travaillent séparément
+et des faire communiquer les programmes qu'elles ont écrits.
+
+Description de NanoÉdit
+-----------------------
+
+Le coeur de NanoÉdit :
+	- Interprète la définition des classes d'objet, de champs, de types.
+	- Permet d'éditer/lire/stocker un réseau orienté sans cycle d'objets.
+	- Charge dynamiquement les fichiers objets (.o)
+          Dans le futur, on pourra modifier un source et voir
+	  ce que cela donne sans quitter l'éditeur.
+	- Gère les contraintes et la propagation des événements.
+
+Toutes les autres fonctionnalités sont externes à NanoÉdit
+et sont des objets commes les autres, l'utilisateur
+peut donc facilement les réécrire.
+
+L'objet "interface" :
+   - Transforme l'éditeur en un serveur HTTP.
+   - Permet d'éditer les modèles via un navigateur WWW.
+
+L'objet "interface Motif" (sous-classe d'interface)
+   - Gère les fenêtres et leur contenu (avec Motif)
+   - Les raccourcis clavier, aide interactive, ...
+
+L'objet "modèle" :
+   - Undo/Redo.
+   - Menu hiérarchique contextuel.
+   - Création contextuelle des objets.
+
+L'objet "vue" :
+   - Environnement graphique 3D pour la visualisation et la saisie.
+
+
+Comment fonctionne le noyau et comment l'étendre
+------------------------------------------------
+
+Cette partie de l'exposé sera facultative
+elle servira aux gens qui veulent utiliser
+NanoÉdit pour l'enseignement ou la recherche.
+
+
+Pour en savoir plus :
+
+http://www710.univ-lyon1.fr/~exco/NanoEdit/nanoedit.html

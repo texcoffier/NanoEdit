@@ -1,0 +1,42 @@
+#!/bin/sh
+# -*- ksh -*-
+
+if [ "" = "`which povray`" ]
+then
+  exit 0
+fi
+
+
+echo "Test la traduction en POV"
+
+X=1400
+
+for I in 1 2
+do
+  t "Charge reseau1"  /appel/modele    	   0 charge  te_entree pov${I}
+  
+  rm -f pas_de_nom.pov 2>/dev/null
+  t "Change pov"      /appel/pov  	   0 qualite c_sauve  "9" 
+    
+    povray +Ipas_de_nom.pov +W128 +H128 </dev/null 2>/dev/null
+    $ZCAT DUMPS/pov${I}.tga.gz >xxx.tga
+    if cmp pas_de_nom.tga xxx.tga >/dev/null
+    then
+      :
+    else
+      echo "Les images POV${I}.ne sont différentes."
+      if [ "" != "$DISPLAY" ]
+      then
+	xv xxx.tga &
+	xv pas_de_nom.tga &
+	exit
+      fi
+    fi
+    rm xxx.tga pas_de_nom.*
+done
+
+
+# A tester encore : lampe locale (MARCHE PAS)
+#                   spot
+
+

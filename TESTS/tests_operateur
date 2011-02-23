@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo "Test de l'évaluation de modèles avec variables/opérateurs"
+
+X=1200
+
+t "Charge tst_variable"  /appel/modele        0 charge  te_entree tst_variable
+t "Change point"         /appel/point3        0 triplet c_sauve   "11 22 33"
+t "Change segment"       /appel/segment_pt_pt 0 depart  c_sauve   "10 20 30"
+
+t "Charge tst_operateur" /appel/modele        0 charge  te_entree tst_operateur
+
+t "Charge tst_operateu"  /appel/modele        0 charge  te_entree tst_operateu
+t "Change point"         /appel/point3        0 triplet c_sauve   "0 0 0"
+t "Change point"         /appel/point3        1 triplet c_sauve   "10 20 30"
+t "Change point"         /appel/point3        2 triplet c_sauve   "4 5 6"
+
+# Chargement de Chargement de Chargement avec variables communes
+t "Charge bug_op3"  /appel/modele        0 charge  te_entree bug_op3
+
+# Multi vue d'operateur
+t "Charge tst_multivue"  /appel/modele        0 charge  te_entree tst_multivue
+
+t "Inverse ordre"        /appel/operateur     0 les_actifs te_entree  "inverse ordre       <F8>"
+
+t "Charge double_test"  /appel/modele 0 charge  te_entree operateur_double_test

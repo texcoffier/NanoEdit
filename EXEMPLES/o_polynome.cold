@@ -1,0 +1,90 @@
+#include "o_classe.h"
+#include "o_objet.h"
+#include "c_champ.h"
+#include "t_base.h"		/* Pour P_Entier, L_Nombre, L_Nombre_Positif */
+#include "t_table.h"
+#include <math.h>
+#include <GL/gl.h>
+
+struct moi
+{
+  struct objet objet ;		/* Obligatoire pour tous les objets */
+  struct t_table_flottant f ;
+  float xmin, xmax, pas ;
+} ;
+
+PREPARE_DEFINITION_CHAMPS
+
+static struct champ champs_polynome[] =
+{
+  {"flottants",P_Table_flottant,L_Table_flottant,Extrait,CHAMP(f)   , "1 2",0},
+  {"xmin"     ,P_Flottant      ,L_Nombre        ,Extrait,CHAMP(xmin), "-10",1},
+  {"xmax"     ,P_Flottant      ,L_Nombre        ,Extrait,CHAMP(xmax), " 10",2},
+  {"pas"      ,P_Flottant      ,L_Nombre        ,Extrait,CHAMP(pas),   ".1",3},
+  {NULL}
+} ;
+
+float cal_poly(struct t_table_flottant* f, float x)
+{
+  int i  ;
+  float p ;
+
+  p = f->table[0] ;
+  for(i=1;i<f->nb;i++)
+    p += f->table[i] * pow(x,(float)i) ;
+  return(p) ;
+}
+
+static void affiche_polynome(struct objet *o)
+{
+  float x ;
+
+  glBegin(GL_LINE_STRIP) ;
+  for( x=MOI->xmin ; x<MOI->xmax ; x+=MOI->pas )
+    glVertex2f( x, cal_poly(&MOI->f,x) ) ;
+  glEnd() ;
+}
+
+void init_classe_polynome(struct classe *c)
+{
+  c->nom              = "polynome" ;
+  c->taille_structure = sizeof(struct moi) ;
+  c->champs           = champs_polynome ;
+  c->affichage        = affiche_polynome ;
+}
+
+
+
+static void changement(struct objet *o)
+{
+  eprintf("Changement o=%d\n", (int)o)  ;
+  EPRINTF("======================\n") ;
+  if ( FILS_CHANGE )  EPRINTF("===== FILS_CHANGE\n") ;
+  if ( ACTIF_CHANGE )  EPRINTF("===== CHANGEMENT ETAT ACTIF DANS FILS\n") ;
+  if ( TOUT_CHANGE )  EPRINTF("===== TOUT_CHANGE\n") ;
+  if ( UN_CHAMP_CHANGE )  EPRINTF("===== UN_CHAMP_CHANGE\n") ;
+  if ( CHAMP_CHANGE(xmin) || CHAMP_CHANGE(xmax) )
+    {
+      EPRINTF("===== xmin|xmax CHANGE\n") ;
+      if ( MOI->xmin > MOI->xmax )
+	{
+	  MOI->xmax = MOI->xmin ;
+	  CHANGEMENT_CHAMP(xmax) ;
+	}
+    }
+  if ( CHAMP_CHANGE(pas) )
+    {
+      if ( MOI->pas <.01 )
+	{
+	  MOI->pas = .01 ;
+	  INVALIDATION_CHAMP(pas) ;
+	}
+    }
+}
+
+void init_classe_polynome_rouge(struct classe *c)
+{
+  c->nom              = "polynome_rouge" ;
+  c->surclasse        = "polynome" ;
+  c->changement       = changement ;
+}

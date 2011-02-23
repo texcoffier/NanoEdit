@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<TITLE>Sc&eacute;nario d'animation</TITLE>
+</HEAD>
+<BODY>
+<H1>Sc&eacute;nario d'animation</H1>
+
+    Un exemple complet est dans le mod&egrave;le
+    <TT>Charge/Exemples/animation simple</TT>.
+    Les objets permettant de faire l'animation sont :
+    <UL>
+      <LI> «seconde», il g&eacute;n&egrave;re un nombre flottant donnant
+	le temps en seconde. On lui donne le pas de l'animation.
+	Il essaye de faire du temps r&eacute;el si possible.
+	Pour g&eacute;n&eacute;rer une video, vous mettez le temps
+	&agrave; 0, vous cliquez sur <TT>Anime</TT> et vous
+	lancer l'objet seconde. Quand la video est
+	termin&eacute;e vous quittez Nano&Eacute;dit.
+	Remarque&nbsp;: Vous pouvez poursuivre l'&eacute;dition
+	du mod&egrave;le PENDANT la video.
+      <LI> «interpolation_quadruplet» g&eacute;n&egrave;re la trajectoire
+	d'un point sur une ligne bris&eacute;e par interpolation lin&eacute;aire.
+	On le param&egrave;tre bien s&ucirc;r par l'objet seconde.
+	Avant le temps de d&eacute;part, on est sur le premier point,
+	apr&egrave;s la fin on est sur le dernier point.
+      <LI> «interpolation_table_quadruplet» la trajectoire
+	d'une ligne bris&eacute;e dans un grille.
+      <LI> «switch» permet de choisir un objet (figure, attributs, ...)
+	en fonction du temps. contrairement aux pr&eacute;c&eacute;dents,
+	rien n'est visible avant et apr&egrave;s le temps d'existence.
+    </UL>
+    Dans 'Exemples/Animations il y a un environnement permettant
+    de faire des animations simples avec une édition possible
+    de la trajectoire.
+	
+<P>
+
+</BODY>
+</HTML>

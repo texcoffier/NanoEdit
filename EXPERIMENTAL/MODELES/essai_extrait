@@ -1,0 +1,35 @@
+
+classe distance_pt_pt
+fils 269821952 269821840
+
+classe conversion_texte
+fils 269821840
+
+classe variable
+fils 269822104
+nom 269821840
+nom_variable 0:toto
+
+classe conversion_texte
+fils 269821952
+
+classe extrait
+fils 269822016
+nom 269821952
+edite 269817592
+
+classe segment_pt_pt
+fils 269822168 269822104
+nom 269822016
+
+classe point
+nom 269822104
+x 0.3
+y 0.2
+z 0.1
+
+classe point
+nom 269822168
+x 1
+y 11
+z 111

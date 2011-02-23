@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+# -*- python -*-
+
+import os
+import sys
+import sre
+
+def convert(name_and_weight):
+    if os.path.exists("ANIM/" + name_and_weight[0][0]):
+        return
+    s = "convert"
+    for name, weight in name_and_weight:
+        s += (" ANIMATION/" + name) * weight
+    s += " -average ANIM/" + name_and_weight[0][0]
+    print s
+    os.system(s)
+
+
+files = [f for f in os.listdir("ANIMATION")]
+files.sort()
+
+try:
+    os.mkdir("ANIM", 0755)
+except OSError:
+    pass
+
+milli_old = None
+milli_dt = None
+for f in files:
+    s = f.split("s")
+    milli = int(s[1])
+    m = s[0].split("m")
+    milli += 1000 * int(m[1]) + 1000*60*int(m[0])
+    if milli_old == None:
+        milli_old = milli
+    elif milli_dt == None:
+        milli_dt = milli - milli_old
+    else:
+        if milli - milli_old != milli_dt:
+            sys.stderr.write("Probleme %s, milli=%d milli_old=%d dt=%d\n" % (
+                f, milli, milli_old, milli_dt) )
+            sys.exit(1)
+    milli_old = milli
+        
+
+
+noms = []
+for f in files:
+    milli = int(f.split("s")[-1])
+    if milli % 40 == 0:
+        if len(noms) == 10:
+            convert([(noms[0],1),
+                     (noms[1],2),
+                     (noms[2],4),
+                     (noms[3],7),
+                     (noms[4],11),
+                     (noms[5],11),
+                     (noms[6],7),
+                     (noms[7],4),
+                     (noms[8],2),
+                     (noms[9],1),
+                     ])
+            noms = []
+        elif len(noms) == 5:
+            convert([(noms[0],1),
+                     (noms[1],2),
+                     (noms[2],3),
+                     (noms[3],2),
+                     (noms[4],1),
+                     ])
+            noms = []
+        elif len(noms) == 0:
+            pass
+        else:
+            sys.stderr.write("Je sais pas faire\n")
+            sys.stderr.write(str(noms) + "\n")
+            sys.exit(1)
+    noms.append(f)
+
+    
+

@@ -1,0 +1,60 @@
+#include "o_objet.h"
+#include "t_geometrie.h"	/* Pour faire de la géométrie */
+
+struct essai_champ
+{
+  int	     entier ;
+  Flottant   flottant ;
+  Triplet    point, vecteur, partie ;
+  Quadruplet pointp ;
+  char      *chaine ;
+  int        valeur_interne ;	/* Non vu par NanoÉdit */
+} ;
+/*
+ * Particularités :
+ *   "flottant" est affiché mais pas éditable, c'est une information donnée.
+ *   "partie.x" accède à un champ à l'intérieur d'une structure.
+ *   "vecteur"  étant le premier de la liste avec l'option Init3d
+ *              lors de la création
+ *              sa valeur sera initialisée à la position du curseur.
+ *              Après la création, on peut le déplacer avec '1'
+ *   "pointp"   Après la création, on peut le déplacer avec '2'
+ *   "chaine"   la valeur par défaut n'est pas prise en compte car écrasée
+ *              par la valeur donnée par l'utilisateur lors de la création.
+ *              C'est le noyau qui gère les allocations et désaloccation.
+ */
+CLASSE(champs, struct essai_champ,
+       CHAMP(point   , L_Point3   Edite Sauve DEFAUT("0 0 0"))
+       CHAMP(entier  , L_Entier   Edite Sauve DEFAUT("1998") )
+       CHAMP(vecteur , L_Vecteur3 Edite Sauve DEFAUT("1 1 1")   Init3d)
+       CHAMP(pointp  , L_Point4   Edite Sauve DEFAUT("0 0 0 1") Init3d)
+       CHAMP(chaine  , L_Chaine   Edite Sauve DEFAUT("bonjour") InitChaine)
+       CHAMP(partie.x, L_Flottant Edite Sauve DEFAUT("1997."))
+       CHAMP(flottant, L_Flottant Affiche     DEFAUT("5.5")  )
+       EVENEMENT("0c0h")
+       MENU("Exemple/Champ")
+       )
+/*
+ * Autre écriture de la même classe.
+ * On ajoute des attributs au dernier champs
+ */
+CLASSE(champs2, struct essai_champ,
+       Edite Sauve		/* Champs suivants Sauvé et éditable */
+       CHAMP(point   , L_Point3   DEFAUT("0 0 0"))
+       CHAMP(entier  , L_Entier   DEFAUT("1998") )
+       CHAMP(vecteur , L_Vecteur3 DEFAUT("1 1 1")   Init3d)
+       CHAMP(pointp  , L_Point4   DEFAUT("0 0 0 1") Init3d)
+       CHAMP(chaine  , L_Chaine   DEFAUT("bonjour") InitChaine)
+       L_Flottant		/* Champs suivants sont des flottants */
+       CHAMP(partie.x, DEFAUT("1997."))
+       CHAMP(flottant,
+	     NonEdite Affiche	/* Enlève l'option Edite */
+	     DEFAUT("5.5") 
+	     BULLE_D_AIDE("Vous ne pouvez pas modifier cette valeur !")
+	     LABEL("55/10 =")
+	     TE_HAUTEUR(30)
+	     )
+       EVENEMENT("0c0h")
+       MENU("Exemple/Champ")
+       )
+

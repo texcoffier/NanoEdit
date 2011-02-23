@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<TITLE>Edition de l'arbre</TITLE>
+</HEAD>
+<BODY>
+<H1>Edition de l'arbre</H1>
+
+Pour le moment, pas de glisser/déposer.
+Vous devez utilisez le menu de manipulation
+de la liste des actifs.
+    <DL>
+      <DT>detruire</DT>
+      <DD>Les objets actifs sont détruit.
+	Les fils sont adoptés par les grand-parent.
+	A la place des objets détruit, apparait
+	le mot <TT>DETRUIT</TT> qui permet
+	de na pas changer l'ordre des paramètres des noeuds.
+      </DD>
+
+      <DT>editer, desedite, desactive, active fils, active parent</DT>
+      <DD>Aucune modification de l'arbre n'est faite.</DD>
+
+      <DT>ajoute fils (debut) ou (fin)</DT>
+      <DD>Le premier objet activé adopte les suivants.
+	Il les adopte en les mettant au début ou à la fin
+	de la liste de ses fils.
+      </DD>
+
+      <DT>enleve fils</DT>
+      <DD>Le premier objet activé abandonne les suivants
+	si ceux-ci sont ces fils</DD>
+
+      <DT>inverse ordre</DT>
+      <DD>Si les objets activés sont a,b,c,d,e alors
+	cela échange a/e et b/d partout dans l'arbre.
+      </DD>
+
+      <DT>enleve DETRUIT</DT>
+      <DD>Les objets actifs se débarassent de leur fils
+	<TT>DETRUIT</TT></DD>
+
+      <DT>duplique actifs</DT>
+      <DD>Le réseau complet des objets actifs est dupliqué</DD>
+    </DL>
+    <P>
+
+
+<P>
+<A HREF="animation.html">Comment faire une animation ?</A>
+
+</BODY>
+</HTML>

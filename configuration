@@ -1,0 +1,134 @@
+#!/bin/sh
+# -*- ksh -*-
+set -a
+
+
+BOUNDCHECK=
+export PATH="$PATH"
+
+#
+# Type de la machine
+#
+echo "Analyse Configuration BASE=$BASE"
+
+case `uname -m` in
+  9000/[78]??)	ARCH=HPPA_HPUX ;;
+  IP[1-9]*)	ARCH=RISC_IRIX ;;
+  x86_64)	ARCH=X86_64 ;;
+  i[?3456]86)	ARCH=LINUX386
+	      if [ `expr substr $(uname -r) 1 3` = "2.4" ]
+	      then
+		ARCH="$ARCH-2.4"
+	      fi
+	      ;;
+  *)
+     echo "CPU de type inconnu" >&2
+     exit 1 
+     ;;
+esac
+
+if [ "lirispaj" = `hostname` -o "big" = `hostname` -o "pundit" = `hostname` ]
+then
+  ARCH=LINUX386-PROF
+  export UTILISE_PROFILER=1
+  export UTILISE_PROFILER=
+fi
+
+#
+# Les directories dans lesquels NanoEdit cherche
+#
+DIRECTORIES="
+$DIRECTORY_A_AJOUTER
+$BASE/OBJETS
+$BASE/COEUR
+$BASE/UTILITAIRES
+$BASE/TYPES
+"
+
+if [ "$NE_PAS_INSTRUMENTER" != "" ]
+then
+  export UTILISE_PROFILER=
+fi
+
+if [ "$UTILISE_PROFILER" = "1" ]
+then
+  DIRECTORIES="$DIRECTORIES $BASE/PROFILER"
+fi
+
+# Enleve les blanc en début et fin, remplace les séries de " " par un seul
+DIRECTORIES=`echo $DIRECTORIES | sed -e 's/[ 	][ 	]*/ /g' -e 's/^ //' -e 's/ $//'`
+#
+# La liste de tous les ".c" ".h" "NanoEdit.ad"
+#
+LES_SOURCES=`   echo "$DIRECTORIES "|sed -e 's, ,/*.c ,g' ;
+echo "$DIRECTORIES "|sed -e 's, ,/*.cpp ,g';`
+LES_SOURCES=`eval echo $LES_SOURCES | sed 's/[^ ]*\/\*\.[^ ]*//g'`
+LES_H=`         echo "$DIRECTORIES " | sed -e 's, ,/*.h ,g'`
+LES_H=`eval echo $LES_H | sed 's/[^ ]*\/\*\.[^ ]*//g'`
+RESSOURCES=`    echo "$BASE $DIRECTORIES " | sed -e 's, ,/NanoEdit.ad ,g'`
+RESSOURCES_GTK=`    echo "$BASE $DIRECTORIES " | sed -e 's, ,/gtkrc ,g'`
+
+LES_FONCTIONS=""
+J=`pwd`
+for I in $DIRECTORIES
+do
+  cd $I/OBJ/$ARCH 2>/dev/null || continue
+  if [ -f lib*.so ]
+  then
+    # LES_FONCTIONS=" $LES_FONCTIONS $I/OBJ/$ARCH/lib*.sl"
+    LES_FONCTIONS=" $LES_FONCTIONS $I/OBJ/$ARCH/lib*.so"
+  else
+    if [ "`echo [!o]*.o`" != "[!o]*.o" ]
+    then
+      LES_FONCTIONS=" $LES_FONCTIONS `echo $I/OBJ/$ARCH/[!o]*.o`"
+    fi
+    if [ "`echo o[!_]*.o`" != "o[!_]*.o" ]
+    then
+      LES_FONCTIONS=" $LES_FONCTIONS `echo $I/OBJ/$ARCH/o[!_]*.o`"
+    fi
+  fi
+  cd $J
+done
+
+#
+# Les chemins de tout ces directories pour le compilateur (avec les -I)
+#
+INCLUDES=`echo " $DIRECTORIES" | sed -e 's/ / -I/g'`
+#
+# Quelques valeurs à passé en constante au compilateur
+#
+VERSION_NANOEDIT=`basename $BASE`
+CONSTANTES="-DDIRECTORY_BASE=\\\"$BASE\\\" -DVERSION_NANOEDIT=\\\"$VERSION_NANOEDIT\\\""
+[ "oui" = "$DEBUGGAGE" ] && CONSTANTES="$CONSTANTES -DDEBUG=1"
+
+
+CC="gcc"
+CFLAGS="-D_REENTRANT -O0 -Wall  -Wno-implicit-int -Wno-char-subscripts -Wno-strict-aliasing -ggdb $USER_CFLAGS `libpng-config --cflags` `pkg-config --cflags sdl gtk+-2.0 gtkglext-1.0` -DHAVE_VSNPRINTF -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1"
+LIBR="$USER_LIB -L/usr/local/lib -lstdc++ -L/usr/local/lib `libpng-config --libs` `pkg-config --libs sdl gtk+-2.0 gtkglext-1.0`"
+COMPILE_SHARED="-fPIC"
+COMPILE_SHARED_CXX="-fPIC"
+XINCLUDE_DIR="-I/usr/include -I/vol/X11R6/include"
+DLFCN="-DHAVE_DLFCN_H"
+SHARED="-shared"
+LDFLAGS=""
+UTILISE_LIB="non"
+LD="gcc"
+PRE_LIB=""
+LDFLAGS2="-export-dynamic"
+DLDLIB="-ldl"
+CXX="g++"
+COMPILE_SHARED_CXX=""
+LIBR="$LIBRD $LIBR"
+CFLAGS="$CFLAGS $INCLUDES $XINCLUDE_DIR $CONSTANTES $DLFCN"
+
+# Pour Mandrake 9.1 décommenter :
+# CFLAGS="$CFLAGS -DGLAPIENTRY='' -DGLAPI=extern"
+
+if [ "$NE_PAS_INSTRUMENTER" != "" ]
+then
+  export CFLAGS="$CFLAGS -DFNCCHK_DEBUG"
+fi
+
+[ "$LC_CTYPE" = "" ] && LC_CTYPE=`locale -a | fgrep fr | (read A ; echo $A)`
+
+set +a

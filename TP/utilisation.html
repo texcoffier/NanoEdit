@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Utilisation</title>
+  </head>
+
+  <body>
+    <h1>Utilisation</h1>
+
+    Apr&egrave;s avoir suivi les points 1 &agrave; 8 du
+    <a href="../COURS/Welcome.html">cours d'auto-formation</A>.
+    <P>
+      Maintenant, vous allez cr&eacute;er une pyramide
+      par des m&eacute;thodes diff&eacute;rentes. La pyramide est
+      &agrave; base carr&eacute; et ses sommets sont (-1,-1,0), (1,-1,0), (1,1,0), (-1,1,0), (0,0,1).
+    <P>
+      <EM>ATTENTION : Les mod&egrave;les devront &ecirc;tre contraints,
+      si l'on d&eacute;place un point, tous le reste de la construction
+      doit suivre.</EM>
+      <P>
+
+      <TABLE BORDER>
+	<TR>
+	  <TH>Pyramide faite avec</TH><TH>&Agrave; sauvegarder dans le fichier</TH>
+	</TR>
+	<TR>
+	  <TD>8 segments de droites</TD><TD>pyramide1</TD>
+	</TR>
+	<TR>
+	  <TD>1 polygone et 4 segments de droite</TD><TD>pyramide2</TD>
+	</TR>
+	<TR>
+	  <TD>5 facettes<P>
+	      Ajoutez une lampe pour &eacute;clairer.<BR>
+	Attention, quand on regarde une facette &agrave; partir
+	de l'ext&eacute;rieur, les points doivent &ecirc;tre d&eacute;finis
+	dans le sens trigonom&eacute;trique.
+	La normale &agrave; la facette est en effet
+	d&eacute;finie par la direction dans lequel s'enfonce le tire-bouchon.
+	  </TD><TD>pyramide3</TD>
+	</TR>
+      </TABLE>
+
+      <P>
+      Continuez &agrave; partir du dernier mod&egrave;le :
+    <UL>
+
+      <li> Ajoutez une sph&egrave;re au centre de la pyramide
+	(barycentre des 5 sommets), faite la d&eacute;border
+	l&eacute;g&egrave;rement.
+      <li> Coloriez la sph&egrave;re en lui appliquant une
+	couleur, puis dans un second temps en modifiant
+	les autres  <a href="../COURS/materiaux.html">param&egrave;tres de surface</A>.
+      <li> Faite un mise en sc&egrave;ne en combinant les mod&egrave;les «pyramide1» (2 et 3)
+	ensemble. Pour cela utilisez le noeud «operateur» qui
+	permet de charger un fichier mod&egrave;le. Il suffit alors
+	d'appliquer une translation pour positionner
+	l'objet ou l'on veut.
+	
+      <li> Faite une sortie en lanc&eacute; de rayons de votre mod&egrave;le
+	en utilisant POV RAY. Pour cela cr&eacute;er un objet POV RAY param&eacute;tr&eacute;
+	par la vue que vous voulez afficher en lanc&eacute; de rayon
+	et lancer le calcul en cliquant sur «Applique».
+    </UL>
+
+
+    <h1>Si tous cela est trop facile pour vous (facultatif)</h1>
+
+    D&eacute;finissez un syst&egrave;me plan&eacute;taire
+    avec un soleil, une plan&egrave;te tournant autour de celui-ci
+    et un satellite tournant autour de la plan&egrave;te.
+    Param&eacute;trez tous les mouvements par un flottant repr&eacute;sentant
+    le temps. On utilisera pour cela des translations
+    et rotations (attributs g&eacute;om&eacute;triques).
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Mon Sep 29 15:14:54 METDST 1997 -->
+<!-- hhmts start -->
+Last modified: Tue Aug 29 12:53:41 CEST 2000
+<!-- hhmts end -->
+  </body>
+</html>

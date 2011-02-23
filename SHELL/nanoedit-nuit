@@ -1,0 +1,63 @@
+#!/bin/sh
+
+set -x
+
+export PATH="/vol/shell:/bin:/etc:/sbin:/usr/bin:/usr/sbin:/usr/bin/X11:/usr/bsd:/usr/local/bin:/vol/X11R6/bin:."
+
+. configuration
+
+if [ $# = 0 ]
+	then
+	# Ceci est e×écuté sous Linux (machine lançant le "at")
+	(
+	make verif depends
+	for I in ligimsih b710siab b710hpe ligimpc9 ligimlib # Linux en dernier pour ETAGS
+	do
+		remsh $I "cd `Pwd` ; $BASE/SHELL/nanoedit-nuit $I" 2>&1 |
+		     sed "s/^/$I::/"
+	done 2>&1
+	) |
+	    grep -v   -e "is up to date[.]*$" \
+		      -e "make\[" \
+	 	      -e "Compile dans" \
+	 	      -e "logname:" \
+	 	      -e "stty:" \
+	 	      -e " makedepend$" \
+	 	      -e " clean$" \
+	 	      -e "Analyse Configuration" \
+	 	      -e "Edition des liens" \
+	 	      -e "Attend démarrage Nano" \
+		      -e "pond sur le port" \
+		      -e "logout$" \
+		      -e "/TP/C/o_ex_" \
+          |
+	  if false
+	  then
+	  cat
+	  else
+	  awk '/::Compile / || /Création bibliothèque/ || /DEBUT DES TESTS/ { NOM = $0 ; next ; }
+               /::-l/       { NOM = NOM "\n" $0 ; next ; }
+               NOM=="" { print $0 ; next }
+	               { print NOM ; print $0 ; NOM="" ; }
+		       '
+	  fi
+
+	  # echo "$BASE/SHELL/nanoedit-nuit" | at 06:00
+	    
+	exit 0 ;
+	fi
+
+if [ -x /usr/local/bin/make ]
+    then
+    MAKE=/usr/local/bin/make
+    else
+    MAKE=make
+    fi
+
+umask 022
+$MAKE clean lib Nanoedit tags client
+echo "DEBUT DES TESTS"
+cd TESTS
+$MAKE
+
+

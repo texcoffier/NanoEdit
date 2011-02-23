@@ -1,0 +1,39 @@
+#!/usr/local/bin/bash
+
+# Generation d'un modele nanoedit de graphe
+# en forme de grille reguliere pour demos de remplissage pixel
+
+if [ $# != 2 ]
+	then
+	echo "Il faut donner la largeur et la hauteur de la grille"
+	exit 1
+	fi >&2
+
+L=$1
+H=$2
+
+echo -e "
+classe graph
+edite 1
+editeur_graphe \c"
+
+num() { [ $1 -ge 0  -a  $1 -lt $L  -a  $2 -ge 0  -a  $2 -lt $H ] &&
+	 	echo -e "`expr $1 + $L "*" $2` c$3,"
+
+	}
+
+J=0
+while [ $J != $H ]
+	do
+	I=0
+	JM=`expr $J - 1`
+	JP=`expr $J + 1`
+	while [ $I != $L ]
+		do
+		IM=`expr $I - 1`
+		IP=`expr $I + 1`
+		echo "	x`expr 30 + $I "*" 64` y`expr 30 + $J "*" 64 `:`num $IM $J 1``num $IP $J 2``num $I $JM 3``num $I $JP 4`"
+		I=`expr $I + 1`
+		done
+	J=`expr $J + 1`
+	done | sed 's/,$//'

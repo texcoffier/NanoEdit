@@ -1,0 +1,837 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{french}
+\usepackage{graphics}
+
+\title{Un éditeur interactif de formules comme intégrateur de modeleurs}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\maketitle
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Un modeleur est un logiciel complexe,
+qui est fortement lié au type de modélisation qu'il traite.
+Que cela soit pour l'enseignement ou la recherche,
+il est intéressant de pouvoir modifier un modeleur existant.
+Malheureusement les modeleurs existants sont complexes
+et difficilement modifiables, par exemple {\sc Cascade} de Matra
+est très puissant mais très lourd à utiliser.
+
+Nous avons donc créé un éditeur de formules regroupant les fonctionnalités
+de base de tout modeleur (qu'il soit géométrique ou non).
+La formule est un graphe orienté sans cycle ou les noeuds
+du graphe peuvent être considérés comme des fonctions
+et ou les arcs sortants sont les arguments de la fonction.
+Dans la figure~\ref{formule}, la fonction {\tt Sphère} possède
+deux arguments et est utilisée par la fonction {\tt Centre}.
+
+\begin{figure}[h]
+  \begin{center}
+    \scalebox{.59}{\resizebox{\textwidth}{!}{\includegraphics{art_for1.ps}}}
+    \caption{Une formule}
+    \label{formule}
+  \end{center}
+\end{figure}
+
+Quel sont les points forts de cet éditeur de formules~:
+\begin{itemize}
+\item Il permet de créer le modeleur désiré en
+  ajoutant à l'éditeur de nouvelles classes de noeuds.
+\item Il permet d'intégrer des modeleurs différents dans
+  un même environnement et les fait communiquer.
+\item Il a été conçu pour être facilement extensible par des étudiants et
+  d'utilisation agréable.
+\item L'implémentation d'une nouvelle classe de noeuds est faite simplement
+  en décrivant ses attributs et sans appeler de fonctions
+  du noyau de l'éditeur.
+  Ceci simplifie l'ajout de nouvelles classes.
+\item Il analyse les attributs des classes de noeuds
+  et se met à jour en conséquence,
+  cette technique de programmation permet de faire évoluer indépendemment
+  l'éditeur et les classes de noeuds qu'il manipule.
+\item Il permet de manipuler facilement des données structurées
+  en introduisant la notion de champs.
+\item Il permet d'unifier de manière transparente des représentations
+  différentes d'une même classe de noeuds (par exemple, le segment de droite
+  défini par deux points ou un point et un vecteur)
+\item Il sépare la notion de classe de stockage d'une valeur
+  (entier, flottant, ...) de sa classe logique (nombre, distance, surface, ...)
+\end{itemize}
+
+
+Cet éditeur de formule est un programme de
+4000 lignes en langage C qui gère~:
+\begin{itemize}
+\item la lecture et la sauvegarde des formules (modèles),
+\item le {\em undo}/{\em redo},
+\item la création/destruction/édition des formules de manière interactive
+  ou ``textuelle'',
+\item les fenêtres de dialogue,
+\item les menus déroulants,
+\item les contraintes d'égalité,
+\item l'affichage sous la forme d'un graphe des formules,
+\item l'aide en ligne,
+\item ...
+\end{itemize}
+
+Il est tout aussi important de noter ce que l'éditeur ne contient pas.
+En effet, le fait que ces fonctionnalités aient été développées
+à l'``extérieur'' de l'éditeur dans de nouvelles classes, montre sa souplesse.
+De plus, si ces fonctionnalités ne conviennent pas, on peut
+en développer d'autres versions...
+\begin{itemize}
+\item l'interface utilisateur 3D (avec OpenGL).
+\item les notions de variables et fonctions (pour faire des modèles paramétrés),
+\item la notion d'attribut courant (couleur, repère courant, ...),
+\item les figures et opérations géométriques (sphère, cube, intersection, ...),
+\item En fait il ne contient aucune classe de noeuds dont les
+  instances peuvent intervenir dans la formule modélisée.
+\end{itemize}
+
+La suite décrit le type de formule modélisée par l'éditeur,
+la manière dont les classes de noeuds et de valeurs se décrivent, 
+le fonctionnement de l'éditeur ainsi que quelques objets particuliers.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{La formule}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'éditeur est basé sur la notion de formule,
+en effet tout les modèles qu'ils soient géométriques
+ou non peuvent s'exprimer (plus en moins facilement)
+sous la forme d'une formule \cite{conf:achoui91}\cite{revn:excoffier:90:a}.
+
+Les formules sont alourdies par certains noeuds ({\tt Centre} par exemple)
+qui permettent d'extraire un champ particulier ({\tt Point})
+d'une valeur structurée ({\tt Sphère(Point,Flottant)}).
+Très souvent en effet, on veut utiliser un champ particulier
+de la structure au lieu de toute la structure.
+On préférera écrire la première formule comme indiquée
+dans la figure~\ref{formule2}.
+
+\begin{figure}[h]
+  \begin{center}
+    \scalebox{.59}{\resizebox{\textwidth}{!}{\includegraphics{art_for2.ps}}}
+    \caption{Formule simplifiée}
+    \label{formule2}
+  \end{center}
+\end{figure}
+
+Pour simplifier les formules, les noeuds sont paramétrés
+non seulement par les arguments du noeud mais surtout
+par le {\em contenu} (voir figure~\ref{details}) des arguments du noeud.
+Par exemple le segment de droite a besoin de deux points,
+le premier point sera extrait du premier argument et
+le deuxième point du deuxième argument
+le type des arguments n'a pas d'importance.
+Ceci permet donc de définir un segment de droite entre n'importe
+quels noeuds contenant un point.
+
+\begin{figure}[h]
+  \begin{center}
+    \scalebox{.9}{\resizebox{\textwidth}{!}{\includegraphics{segment.ps}}}
+    \caption{détails}
+    \label{details}
+  \end{center}
+\end{figure}
+On appellera {\em champ} les différentes valeurs (attributs)
+définissant le noeud (les deux points dans le cas du segment)
+ou calculées par le noeud (le vecteur et la longueur du segment).
+Les flèches en pointillés représentent des contraintes
+d'égalité entre les champs de noeuds différents.
+Les champs grisés ont donc toujours tous une valeur identique.
+
+Les champs occupent une place réelle en mémoire,
+ce ne sont pas des {\em pointeurs}.
+Cette duplication des valeurs prend de la place
+mais offre d'énormes avantages~:
+\begin{itemize}
+\item \ 
+  \begin{minipage}[t]{10cm}
+    Lors de la destruction des arguments d'un noeud,
+    les valeurs nécessaires au noeud seront toujours disponibles.
+    Si les paramètres du segment de droite sont détruits,
+    le segment conservera une copie des deux points.
+    Les valeurs des deux points seront modifiables sans contrainte.
+    
+    Si le noeud nombre flottant commun aux deux points est détruit,
+    il n'y aura plus de contrainte sur le positionnement
+    des deux points.
+    
+    Il est aussi possible de détruire tous les nombres flottants
+    mais il ne sera plus possible d'imposer des contraintes
+    individuelles aux coordonnées des points.
+  \end{minipage}
+  \hspace{2cm}
+   \raisebox{-6cm}{\resizebox{3cm}{!}{\includegraphics{segment2.ps}}}
+   \\
+   \\
+  
+\item Du point de vue de la programmation,
+  l'accès aux champs du noeud est direct et donc rapide et simple.
+  Ceci est très important si l'on veut que l'on puisse
+  facilement ajouter des classes de noeuds.
+\end{itemize}
+L'éditeur prend à sa charge la cohérence des valeurs dupliquées
+afin qu'elles soient toutes identiques.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Évaluation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'évaluation initiale de la formule est faite de manière classique,
+en évaluant les arguments puis le noeud.
+Chaque classe de noeuds possède une méthode évaluation.
+Dans l'exemple, si le segment de droite à le point
+de départ ou d'arrivée qui change,
+le vecteur directeur est recalculé par l'évaluation.
+
+L'évaluation d'une formule ne pose pas de problème,
+sa mise à jour sans calculs inutiles est plus délicate.
+On utilise pour cela un marqueur indiquant pour chaque
+champ si celui-ci à été modifié.
+
+L'algorithme se passe en deux étapes,
+la première ``descend'' les changements à partir de l'objet
+modifié et la deuxième ``remonte'' les modifications
+qui se sont propagées.
+Dans les deux cas, un noeud dont l'un des champs est modifié
+est évalué afin qu'il mette à jour ses autres champs si nécessaire.
+Dans la figure~\ref{eval} la valeur 1 est modifiée, la ``descente'' met
+à jour 2 et 3 et la ``remontée'' met à jour 4, 5 et 6
+puis le segment est évalué afin de recalculer le champ vecteur.
+
+\begin{figure}[h]
+  \begin{center}
+    \scalebox{.9}{\resizebox{\textwidth}{!}{\includegraphics{evaluation.ps}}}
+    \caption{Évaluation}
+    \label{eval}
+  \end{center}
+\end{figure}
+
+Cet algorithme ne fonctionne pas dans les cas de contraintes circulaires,
+dans ces cas, il faut le répéter jusqu'à atteindre un état stable 
+ou bien un trop grand nombre d'itérations.
+C'est la solution généralement utilisée dans les tableurs.
+Attention, des contraintes circulaires peuvent apparaître
+dans des graphes orientés sans cycle car il peut
+y avoir des cycles ``non-orientés''.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Classes de noeuds}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le but principal de l'éditeur est d'être facilement extensible.
+Tout a été fait afin que l'ajout de classe de noeuds soit
+le plus simple possible.
+On a donc fixé les contraintes suivantes~:
+\begin{itemize}
+\item Il suffit d'ajouter un seul fichier (en langage C)
+  pour ajouter une nouvelle classe. 
+  On peut améliorer ensuite cette nouvelle classe en ajoutant
+  un fichier d'aide ou en modifiant un fichier de ressources
+  définissant différents textes associés à la classe
+  (menu, raccourci clavier, ...).
+\item On peut ajouter des classes définies par d'autres utilisateurs
+  en spécifiant simplement le répertoire les contenant.
+  L'éditeur pourra utiliser toute les classes définies dans tous
+  les répertoires spécifiés.
+\item Sauf cas très particuliers, l'ajout de classe ne nécessite
+  pas d'appeler des fonctions du noyau,
+  on décrit seulement la classe. 
+  Le temps d'apprentissage nécessaire si l'on désire ajouter
+  de nouvel classes est donc court.
+\end{itemize}
+
+A partir de la description de la classe,
+l'éditeur l'intégrera totalement à l'interface utilisateur.
+Par la suite, on parlera de noeud pour dire instance de classe.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Description de la classe de noeuds}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La description d'une classe définit de nombreuses informations,
+dans la plupart des cas, les valeurs par défaut sont suffisantes
+et donc la définition reste courte, généralement
+quelques dizaines de lignes.
+
+Voici les informations les plus intéressantes~:
+\begin{description}
+\item[Nom] de la classe
+  (point, vecteur, segment\_point\_point, segment\_point\_vecteur, ...)
+
+  Le nom est utilisé pour~:
+  \begin{itemize}
+  \item les écritures/lectures de fichiers formules.
+  \item nommer les {\tt Widgets} utilisés dans l'interface graphique,
+    ils seront configurés {\em via} ce nom.
+    (Les {\tt Widgets} sont les briques de l'interface graphique
+    lorsque l'on utilise X Window)
+  \item trouver le fichier d'aide en ligne.
+  \item créer le menu de création de noeuds.
+  \end{itemize}
+
+\item[Méthode évaluation] qui est appelée en cas de changement
+  en indiquant au noeud~:
+  \begin{itemize}
+  \item Les champs qui ont été modifiés.
+    Ceci permet de savoir ce qui doit être recalculé.
+  \item Si le noeud vient d'être créé.
+    Ceci permet de faire les initialisations.
+  \item Si l'un des arguments à été modifié.
+    Ceci permet de mettre à jour ses champs à partir de ses arguments.
+  \item Si l'un des arguments a basculé de l'état sélectionné
+    à non-sélectionné.
+    Ceci n'est utile que pour les interfaces utilisateur (qui
+    sont des noeuds comme les autres)
+    qui doivent réafficher la scène pour mettre à jour le graphisme
+    des noeuds qui ont changé d'état (et non de valeur)
+  \end{itemize}
+  Cette méthode est utilisée
+  par les segments de droites définis par deux points qui doivent recalculer
+  le vecteur directeur en cas de modification de points.
+  
+\item[La surclasse] qui permet d'hériter des informations définies
+  dans une autre classe.
+  Par exemple la classe segment\_point\_vecteur
+  hérite de toutes les informations
+  de la classe segment\_point\_point,
+  elle doit simplement redéfinir son deuxième champ qui passe
+  de point en vecteur et sa méthode d'évaluation qui maintenant
+  évalue le deuxième point en fonction du premier et du vecteur.
+  
+\item[Méthode Affichage] qui demande au noeud de s'afficher graphiquement.
+  Cette méthode est utilisée par toutes les figures géométriques.
+
+\item[Méthode Applique] qui change l'état courant de l'afficheur graphique.
+  Par exemple la couleur, le type de matériaux, ...
+  L'objet couleur possède une méthode {\tt affiche} qui permet
+  de visualiser la couleur par un point dans $R^3$
+  mais aussi une méthode {\tt applique} qui lui permet
+  de colorier les autres objets.
+
+  En interne l'éditeur n'utilise pas les méthodes {\tt affiche}
+  et {\tt applique}. Ce sont les instances d'interface utilisateur qui
+  les utilisent.
+  
+
+\item[Affiche Arguments] indique si les arguments du noeud
+  doivent être affichés graphiquement.
+
+  Prenons un noeud qui applique une translation à un point,
+  seul le point translaté doit être affiché, pas le point initial.
+
+  Prenons le segment de droite entre deux points, les
+  trois objets doivent être affichés.
+
+\item[Champs] est la liste des champs composant le noeud,
+  c'est l'information la plus importante.
+  Elle permet à l'éditeur d'accéder aux informations contenus dans le noeud,
+  pour les extraire ou bien les modifier.
+  
+\end{description}
+
+Les chaînes de caractères définissant les~: menus,
+raccourcis clavier et
+fenêtres de dialogues sont stockées dans des fichiers de ressources.
+L'aide est définie dans un fichier portant le nom de la classe
+suffixé par {\tt .html}.
+Cette organisation permet une traduction facile, indépendante
+du programme.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Les champs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les champs permettent à l'éditeur~:
+\begin{itemize}
+\item {\bf De lire la valeur du champ sous la forme d'une chaîne de caractères
+  et de la modifier en donnant une chaîne de caractères}.
+
+\item {\bf D'être indépendant du codage des champs}.
+\item {\bf De faire des conversions de types ``transparentes''}.
+  Par exemple, lire un triplet d'entier puis le stocker
+  dans un triplet de flottant.
+
+\item {\bf De pouvoir sauvegarder la valeur du champ dans un fichier} et
+  donc le noeud si l'on sauvegarde tous ses champs.
+  Puisque l'on peut sauvegarder le modèle, il n'y a aucun
+  problème pour faire le {\em Undo} et le {\em Redo}.
+  
+\item {\bf D'afficher et éditer sous forme textuelle le contenu d'un noeud}.
+  Par exemple, pour un noeud point contenant X, Y et Z.
+  
+  \begin{figure}[h]
+    \begin{center}
+      \scalebox{.5}{\resizebox{\textwidth}{!}{\includegraphics{point.ps}}}
+      \caption{Edition d'un noeud point}
+      \label{point}
+    \end{center}
+  \end{figure}
+
+\item {\bf D'initialiser les champs avec une valeur par défaut}.
+  Par exemple le point contient les champs X, Y et Z dont
+  les valeurs par défaut sont 0, 0, 0.
+  On ne sauvegarde dans les fichiers que les valeurs différentes
+  de la valeur par défaut.
+  Pour le point (5,6,0) on ne stocke donc pas la coordonnée Z.
+  
+\item {\bf De gérer les contraintes d'égalité} (flèches en pointillés
+  dans la figure~\ref{details}).
+  Le premier champ de la classe segment de droite est extrait
+  du premier argument du noeud, et il extrait un champ
+  de type point de l'argument.
+  
+\item {\bf De déterminer la validité des paramètres d'un noeud}.
+  La création du noeud ne peut se faire que si l'on peut extraire
+  les champs des arguments.
+  Dans le cas du segment défini par deux points,
+  les deux arguments doivent contenir un champ point sinon
+  la création est impossible.
+
+\item {\bf Définir des menus contextuels de création}.
+  Ici, avec un argument de type point, seul un noeud table
+  de points peut être créé.
+
+  \begin{figure}[h]
+    \begin{center}
+      \scalebox{.60}{\resizebox{\textwidth}{!}{\includegraphics{menu.ps}}}      
+      \caption{Un menu contextuel}
+      \label{menu}
+    \end{center}
+  \end{figure}
+\end{itemize}
+
+Voici les éléments les plus importants
+contenus dans la description d'un champ~:
+\begin{description}
+\item[Nom] du champ.
+
+  Il est utilisé pour les sauvegardes et lecture de fichiers,
+  ainsi que pour nommer les {\tt Widget} contenus dans les fenêtres
+  de dialogue.
+\item[Classe de stockage du champ] (format)
+  qui indique à l'éditeur le type ``physique'' du champ~:
+  entier, flottant, triplet de flottants, chaîne de caractères, ...
+
+  On le verra par la suite, il est possible d'ajouter
+  de nouvelles classes de stockage.
+  Les classes de stockage ne font partie de l'éditeur,
+  elle lui sont externe. Ceci permet d'avoir toute
+  liberté pour définir de nouvelles manières de stocker
+  les informations dans les champs.
+  
+\item[Classe logique du champ]
+  qui indique à l'éditeur la sémantique du champ~:
+  nombre, vecteur, couleur, point, ...
+
+  L'indépendance des classes logique et de stockage permet d'éviter de créer
+  de multiples types combinaison des deux,
+  ainsi que des héritages multiples complexes...
+
+  Ici aussi, les classes logique sont externes à l'éditeur.
+  On peut donc définir autant de classes logique
+  que l'on en désire.
+  
+  Dans le cas du segment de droite, un champ de classe logique point
+  est extrait du premier argument, que ce champ point soit stocké
+  comme 3 flottants, 3 entiers ou bien une chaîne de caractères.
+
+\item[Attributs] dont les principaux indiquent~:
+  \begin{description}
+  \item[Édite] autorise l'utilisateur à modifier la valeur du champ
+    dans la fenêtre d'édition du noeud.
+
+    Ceci est utile pour donner des informations comme
+    le pourcentage de l'image déjà calculé par un lancer de rayon.
+  \item[Sauve] indique que le champ doit être sauvegardé
+    dans le fichier décrivant la formule.
+    Certain champs ne doivent pas être sauvegardé, comme le champ vecteur
+    dans le cas du segment défini par deux points.
+  \item[Extrait] indique que la valeur de ce champ doit être extraite
+    du contenu de l'un des arguments du noeud (s'il existe).
+    C'est cet attribut qui permet de définir les contraintes d'égalité.
+    Il implique la définition du numéro du argument dont on extrait
+    la valeur et de la classe logique du champ que l'on désire extraire.
+
+    Dans le cas du segment de droite, les deux champs points sont extraits
+    de deux arguments.
+
+    Par exemple le point peut être paramétré par trois arguments.
+    Le champs X, Y et Z seront extraits des arguments 1, 2 et 3
+    et extrairont un champ de classe logique {\em nombre},
+    que celui-ci soit entier, flottant, ...
+
+  \item[Obligatoire] est souvent lié à {\em extrait} et indique
+    que l'argument d'où l'on extrait la valeur doit obligatoirement exister.
+    On s'interdit par exemple de créer un segment de droite sans arguments.
+  \end{description}
+
+\item[Défaut] indique la valeur du champ pour l'initialiser.
+  Cette valeur est aussi utilisée pour ne pas sauvegarder des champs
+  dont la valeur est celle par défaut.
+\end{description}
+
+Le point le plus important de la description est
+la définition des classes logique et de stockage du champ.
+Ces deux classes vont définir le comportement du champ.
+Il est possible d'ajouter de nouvelles classes logique et de stockage,
+ceci est fait indépendemment du noyau de l'éditeur.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Classe de stockage de champ}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le classe de stockage indique comment le champ est stocké
+dans la structure (définie en langage C).
+De la même manière que pour les classes de noeuds,
+pour ajouter une classe de stockage, 
+on donne des informations à l'éditeur,
+voici les plus importantes~:
+\begin{description}
+\item[Nom] du type~: aucun, entier, flottant, triplet d'entier, ...
+\item[La surclasse] afin d'hériter de certaines méthodes.
+\item[Écrit] : méthode permettant de stocker une chaîne de caractère
+  dans le champ.
+\item[Lit] : méthode retournant le contenu du champ sous
+  la forme d'une chaîne de caractères.
+\item[Libère] : méthode libérant la mémoire occupée par le champ.
+  Lors de la destruction d'un noeud, on libérera tous les champs du noeud.
+\item[Créer Widget] : Cette méthode retourne un {\tt Widget}
+  permettant l'édition interactive du contenu du champ.
+  Généralement c'est une zone d'édition de texte.
+  Mais cela peut être une bascule booléenne, une zone graphique, ...
+\end{description}
+
+Ces informations permettent à l'éditeur de manipuler des champs
+de type complexes, par exemple des polyèdres, B-Rep, Octree, ...
+La difficulté étant de traduire la structure en chaîne de caractères
+et inversement.
+
+Puisque que c'est la classe de stockage qui définit comment
+le champs s'affiche
+lors de l'édition de sa valeur (grâce à {\em créer Widget})
+l'éditeur n'impose pas de restriction sur le contenu
+des fenêtres d'édition de noeud.
+C'est pour cela que l'interface utilisateur 3D
+peut être construit comme une fenêtre d'édition
+de noeud et non pas inclus dans le noyau de l'éditeur.
+
+Il est possible de définir une classe de stockage ``virtuelle''
+ne correspondant à aucune zone en mémoire.
+Un champ avec une classe de stockage virtuelle
+déclenche une fonction choisie par le champ
+lorsque l'on change ou lit son contenu.
+Par exemple, pour le segment de droite, la longueur du segment
+n'est pas stockée dans le noeud, elle est recalculée
+à chaque fois qu'elle est nécessaire.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Classe logique de champ}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Il est très simple de définir des types logiques.
+Les informations à définir sont les suivantes~:
+\begin{description}
+\item[Nom] du type logique. Il sera utilisé dans l'interface utilisateur
+  afin d'indiquer les ``types'' des paramètres d'un noeud (figure\ref{menu}).
+  Par exemple~: Point, Vecteur, Nombre, Nombre Positif, ...
+  Ce nom va apparaître dans les arguments des noeuds dans les menus.
+\item[La surclasse] du type logique, par exemple, la surclasse
+  de {\em angle} est {\em nombre}.
+\item[Prédicat] est une méthode ajoutant à la classe, des instances
+  de la surclasse. Par exemple {\em nombre positif}
+  a comme surclasse {\em nombre} et un {\em nombre} est considéré
+  de la classe nombre positif s'il vérifie le prédicat ($>=0$ dans ce cas).
+
+  Si un prédicat devient faux, les champs et noeuds dépendants
+  (même indirectement)
+  du champ ne vérifiant plus le prédicat deviennent rouge pour indiquer
+  leur invalidité.
+
+\item[Méthode de sous classement] détermine si un champ
+  peut-être
+  sous-classé dans la classe logique indiquée.
+  Cette méthode est rarement utile mais extrêmement puissante.
+  Elle permet par exemple de réaliser des unions ou intersections
+  de classes logiques.
+\item[Initialisation Automatique] indique si ce type logique
+  doit être initialisé automatiquement par une chaîne de caractères
+  ou un triplet de flottants.
+  L'initialisation est faite par l'interface utilisateur lors
+  de la création d'un noeud.
+  Par exemple, lors de la création d'un noeud point,
+  les coordonnées du point sont initialisées par
+  la position du curseur.
+\end{description}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Fonctionnement de l'éditeur}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le principe de base de l'éditeur est de construire
+une liste de noeuds ``actifs'' (pouvant être vide)
+puis d'exécuter une action (commande).
+Les noeuds actifs sont clairement visibles dans la fenêtre
+contenant la formule.
+Dans les exemples, le point est actif.
+Dans la fenêtre formule (gérée par le noyau de l'éditeur),
+le point est en évidence.
+Dans l'interface 3D (interface externe à l'éditeur),
+le point est relié à l'origine par un chemin
+suivant Z, Y et X.
+
+\begin{figure}[h]
+  \resizebox{!}{7cm}{\includegraphics{graphe.ps}} \hfill
+  \resizebox{!}{7cm}{\includegraphics{3d.ps}}
+  \caption{Noeud actif dans le graphe et dans l'interface 3D}
+  \label{3d}
+\end{figure}
+
+La plupart des actions déclenchent une sauvegarde du modèle
+afin d'avoir la possibilité d'annuler la commande.
+La sauvegarde de la formule se fait en faisant une sauvegarde
+du graphe, on sauvegarde chaque noeud en parcourant
+la liste des champs à sauvegarder et en stockant
+dans le fichier la conversion en texte du contenu du champ.
+
+Les actions peuvent être déclenchées à partir
+d'un menu hiérarchique contextuel (figure\ref{menu}).
+Ce menu permet notamment de créer des noeuds,
+il indique le nom de la classe du noeud et
+les classes logiques des arguments qui sont extraits ou obligatoires.
+Si les arguments ne concordent pas avec la liste des noeuds
+actifs, le choix dans le menu est impossible.
+
+Les actions peuvent aussi être déclenchées par des raccourcis clavier.
+Un même raccourci clavier peut permettre
+la création de noeud de classe différentes.
+C'est la classe qui est la plus en adéquation avec la liste
+des noeuds actifs qui sera utilisée pour créer l'instance.
+
+L'édition d'un noeud est faite simplement en ouvrant
+une fenêtre et en demandant à chacun des champs affichable/éditable du noeud
+de créer le {\tt Widget} permettant de modifier sa valeur.
+L'éditeur ne contient en fait qu'une seule fonction ouvrant
+une fenêtre, c'est celle qui amorce l'édition d'un noeud.
+
+Lors de la création d'un noeud, la position du curseur 3D
+est stockée dans le premier champ du noeud dont la classe logique
+accepte l'initialisation automatique à une valeur 3D
+et dont la valeur n'est pas extraite d'un argument du noeud.
+Par exemple le premier champ de la sphère (son centre
+dans la figure\ref{details}) a pour classe logique
+point et sera donc initialisé automatiquement lors de la création
+de la sphère si le centre de celle-ci n'est pas paramétré.
+Ceci est vrai aussi pour l'initialisation automatique par
+une chaîne de caractères.
+
+La modification interactive de la position de point 3D contenu
+dans un noeud agit de même, c'est le $n^{\textrm{\scriptsize ème}}$ champ
+acceptant l'initialisation automatique par un triplet de flottant qui
+sera modifié.
+L'utilisateur utilise les touches '1', '2', '3', ...
+pour choisir le champs qu'il veut mettre à jour.
+Il pourra ainsi modifier le premier point d'un segment
+de droite ou le deuxième.
+%Évidemment après modification, les valeurs qui ont besoin
+%d'être recalculées le seront.
+
+
+L'aide est visualisée à l'aide d'un navigateur {\em World Wide Web},
+on peut demander l'aide sur toute zone affichée.
+En effet toute zone affichée correspond à un nom de classe
+de noeud ou bien un nom de champ.
+Dans tous les cas, un fichier d'aide portant
+ce nom est recherché dans tous les répertoires
+contenant des définitions de classes de noeuds.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Les noeuds}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'ajout de nouvelles classes de noeuds est très facile,
+elle ne nécessite que la connaissance des classes de stockage et logiques
+de base.
+L'ajout de nouvelles classes de stockage est plus complexe
+car il fait intervenir des conversions en chaînes de caractères
+ainsi que des {\tt Widget}.
+
+La suite détaille quelques classes de noeuds
+particuliers montrant les possibilités
+d'extension de l'éditeur.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Variable et Opérateur}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'éditeur permet de modéliser une formule,
+mais celle-ci devient rapidement complexe et il
+faut la découper en différentes formules.
+En fait il faut définir des fonctions (ou modèle paramétré).
+
+{\em L'éditeur ne permet pas de faire des fonctions},
+mais ont peut ajouter deux nouvelles classes de noeuds
+qui vont permettre de définir des fonctions.
+
+Une fonction est une formule paramétrée par des {\em variables}
+et stockée dans un fichier.
+Par exemple la fonction {\tt sphereCR} définissant
+la sphère paramétrée par centre et rayon
+(elle  utilise la sphère unitaire).
+
+\begin{figure}[h]
+  \begin{center}
+    \scalebox{.5}{\resizebox{\textwidth}{!}{\includegraphics{fonction.ps}}}
+    \caption{Modèle de sphère paramétrée par centre et rayon}
+    \label{sphereCR}
+  \end{center}
+\end{figure}
+
+Un {\em opérateur} est un noeud qui évalue une fonction
+en remplaçant le contenu des {\em variables} de la fonction
+par les paramètres du noeud opérateur.
+Le graphe de la figure~\ref{3d} contient un
+opérateur appelant la fonction {\tt sphereCR}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interface utilisateur}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'interface utilisateur 3D (figure~\ref{3d}) est un noeud comme un autre,
+il ne s'affiche pas graphiquement mais son édition
+permet d'avoir une visualisation/interaction 3D
+avec ses arguments (la scène à éditer).
+Cette approche permet aux utilisateurs de définir
+leur propre interface graphique 3D mais aussi
+de {\em sauvegarder l'interface utilisateur avec
+le modèle}. L'utilisateur peut définir des vues
+de différents détails du modèle avec des points de vue différents
+et le sauvegarder avec le modèle.
+
+L'éditeur de formule étant essentiellement à vocation 3D,
+il crée automatiquement 4 vues
+qui n'apparaissent pas dans la formule
+et qui permettent une interaction 3D avec celle-ci.
+
+L'interface 3D a été développée avec OpenGL,
+toutes les fonctions d'affichage de noeuds utilisent OpenGL.
+L'éditeur lui-même ne fait pas référence à OpenGL
+car il n'est pas lié à la modélisation géométrique et au ``graphique''.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Applique}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La modélisation 3D utilise la notion d'état courant,
+souvent en définissant des opérateurs (translation, couleur, ...)
+le modifiant.
+Ce style de modification d'état courant n'a pas été retenu
+en effet, ces opérateurs sont trop particuliers.
+On utilise donc un opérateur ``appliquant'' les changements
+d'état courant aux autres noeuds.
+On le voit dans la figure~\ref{sphereCR}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Lancer de rayon}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le lancer de rayon permet d'avoir un bien meilleur rendu
+des scènes 3D.
+De la même manière que pour les autres extensions,
+la possibilité de faire du lancer de rayon devait être ajoutée
+sans modifier l'éditeur.
+
+Ceci a été fait en ajoutant la classe de noeuds ``lancer de rayon''.
+Les noeuds de cette classe permettent~:
+\begin{itemize}
+\item D'afficher une image en lancer de rayon de leurs arguments
+  lorsque le noeud est édité.
+  Le calcul d'une image en lancer de rayon est donc une
+  fonction de la formule au même titre que le segment de droite.
+
+\item De recalculer automatiquement l'image si les arguments changent.
+\item D'améliorer spontanément la résolution/qualité de l'image
+   si l'utilisateur ne modifie pas le modèle.
+\item De calculer plusieurs images en même temps
+  en créant plusieurs noeuds avec des paramètres ou points de vues
+  différents.
+\item Un ajout facile de nouveaux noeuds affichable en lancer de rayon.
+
+  En effet, ils demande à leurs arguments
+  de se traduire eux-mêmes dans le format
+  du lancer de rayon utilisé (Persistence Of Vision).
+  Ceci permet d'ajouter de nouvelles classes de noeuds sans
+  modifier la classe lancer de rayon.
+
+  Ils demandent à leurs paramètres de se stocker
+  dans le format du logiciel de lancer de rayon
+  en utilisant un champ de classe de stockage {\em virtuel}
+  et de classe logique ``traduction en POV''.
+  L'écriture dans ce champ déclenche la traduction.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Pour l'enseignement, cet éditeur est agréable car il permet
+très facilement aux étudiants d'intégrer leur travail
+dans un environnement puissant qui le met en valeur.
+
+Pour la recherche, l'indépendance entre les classes
+de noeud, logique et de stockage et le modeleur
+permet d'intégrer des classes développées par différentes
+personnes dans un même environnement et de faire
+{\em communiquer} les différents noeuds entre eux.
+
+\bibliography{exco}
+\bibliographystyle{alpha}
+
+\end{document}

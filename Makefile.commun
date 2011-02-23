@@ -1,0 +1,362 @@
+# -*- makefile -*-
+#
+# Indique ou se trouve le coeur du systeme
+# A modifier si vous recopiez l'application complete chez vous
+#
+BASE = /home/houssam/SVN/prog/NE
+#BASE = .
+
+export BASE CC MAKE CFLAGS PATH
+
+.SILENT:
+
+.SUFFIXES: .cpp
+
+.cpp.o:
+	case $* in \
+	o_*) echo "Compile dynamique $*.cpp " ; \
+	     $(CXX) $(CFLAGS) $(COMPILE_SHARED_CXX) -c $(VPATH)/$*.cpp -o obj.o || \
+		exit 1 ; \
+	     mv -f OBJ/$(ARCH)/$*.o~ OBJ/$(ARCH)/$*.o~~ 2>/dev/null || true ; \
+	     mv -f OBJ/$(ARCH)/$*.o OBJ/$(ARCH)/$*.o~ 2>/dev/null || true ; \
+	     LIB=`read COM LIB FIN <$(VPATH)/$*.cpp ; \
+		    if [ "/*" = "$$COM" -a "LIB:" = "$$LIB" ] ; then \
+		    echo "$$FIN" | sed 's/..$$//' ; fi` ; \
+	     if [ "" != "$$LIB" ] ; then echo $$LIB ; fi || true ; \
+	     [ "$(UTILISE_LIB)" = non ] && LIB="" ; \
+	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $$LIB -o $*.o ; \
+	     rm obj.o ; \
+	     ;; \
+	*) echo "Compile statique  $*.cpp " ; \
+	   $(CXX) $(CFLAGS) $(COMPILE_SHARED_CXX) -c $(VPATH)/$*.cpp -o $*.o || exit 1 ; \
+	rm -f lib*.sl lib*.so 2>/dev/null || true ; \
+	   ;; \
+	esac ; \
+
+
+.c.o:
+	case $(UTILISE_PROFILER)$* in \
+	o_*) echo "Compile dynamique $*.c " ; \
+	     $(CC) $(CFLAGS) $(COMPILE_SHARED) -c $(VPATH)/$*.c -o obj.o || \
+		exit 1 ; \
+	     mv -f OBJ/$(ARCH)/$*.o~ OBJ/$(ARCH)/$*.o~~ 2>/dev/null || true ; \
+	     mv -f OBJ/$(ARCH)/$*.o OBJ/$(ARCH)/$*.o~ 2>/dev/null || true ; \
+	     LIB=`read COM LIB FIN <$(VPATH)/$*.c ; \
+		    if [ "/*" = "$$COM" -a "LIB:" = "$$LIB" ] ; then \
+		    echo "$$FIN" | sed 's/..$$//' ; fi` ; \
+	     if [ "" != "$$LIB" ] ; then echo $$LIB ; fi || true ; \
+	     [ "$(UTILISE_LIB)" = non ] && LIB="" ; \
+	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $$LIB -o $*.o ; \
+	     rm obj.o ; \
+	     ;; \
+	*) echo "Compile statique  $*.c " ; \
+	   $(CC) $(CFLAGS) $(COMPILE_SHARED) -c $(VPATH)/$*.c -o $*.o || exit 1 ; \
+	rm -f lib*.sl lib*.so 2>/dev/null || true ; \
+	   ;; \
+	esac ; \
+
+#
+# Lancement de configuration et relancement du but.
+# C'est 2* la même liste de commandes.
+#
+
+default strace tester rejoue all allt tags cpp_debug run go gdb lance cflow lint depend remove_include compile_directory Nanoedit full_clean Nanoedit-static dump lib depends demo lance_toutes_les_nuits variables Nanoedit_sans_x11 lance_sans_x11  lance_sans_fenetres but client lance_en_ecriture lance_debug profiler lance_sfm lance_partout rejouer valgrind:
+	if $(MAKE) --version >/dev/null 2>&1 ; then : ; else echo "Vous devez utiliser la commande 'make' du GNU" ; false ; fi
+	export LC_ALL="fr_FR.utf8" ; BASE="$(BASE)" DIRECTORY_A_AJOUTER="$(DIRECTORY_A_AJOUTER)" ; export BASE DIRECTORY_A_AJOUTER ; . $(BASE)/configuration >&2 ; $(MAKE) $(@)_
+
+clean soft_clean::
+	if $(MAKE) --version >/dev/null 2>&1 ; then : ; else echo "Vous devez utiliser la commande 'make' du GNU" ; false ; fi
+	BASE="$(BASE)" DIRECTORY_A_AJOUTER="$(DIRECTORY_A_AJOUTER)" ; export BASE DIRECTORY_A_AJOUTER ; . $(BASE)/configuration >&2 ; $(MAKE) $(@)_
+
+#
+# Compilation de tous les .c du directory
+#
+
+default_:
+	echo "Compile dans `pwd` ARCH=$(ARCH)"
+	A_COMPILER=`echo *.c *.cpp | sed -e 's/\.cpp/.o/g' -e 's/\.c/.o/g' -e 's/\*\.[^ ]*//g' ` ; \
+	VPATH=`pwd` ; export VPATH ; \
+	mkdir OBJ OBJ/$(ARCH) 2>/dev/null || true ; \
+	if [ "`echo $$A_COMPILER`" != '' ] ; \
+		then \
+		ICI=`pwd` ; \
+		cd OBJ/$(ARCH) ; \
+		$(MAKE) -I$$ICI -f ../../Makefile $$A_COMPILER || exit 1 ; \
+	        else true ; fi
+
+sauve:
+	mkdir SAUVE 2>/dev/null || true
+	cp *.[ch] SAUVE 2>/dev/null || true
+	for I in */[mM]akefile ; \
+		do \
+		   [ "$$I" = '*/[mM]akefile' ] && break ; \
+		   ( cd `dirname $$I` ; $(MAKE) sauve 2>/dev/null )|| true ; \
+		done
+
+lib_:default_
+	echo "Création bibliothèque `pwd`"
+	cd OBJ/$(ARCH) ; \
+	F=`echo [!o]*.o o[!_]*.o | sed -e 's/[^ ]*\*\.o//g'` ; \
+	if [ " " != "$$F" ] ; \
+		then \
+		rm -f lib*.sl lib*.so ; \
+		NOMLIB=lib`ls -id . | (read A B ; echo $$A)` ; \
+		$(LD) $(LDFLAGS) $(SHARED) $$F $(LIBRD) -o $$NOMLIB.so ; \
+		ln -s $$NOMLIB.so $$NOMLIB.sl ; \
+		fi
+	for I in */[mM]akefile ; \
+		do \
+		   [ "$$I" = '*/[mM]akefile' ] && break ; \
+		   grep -c "^include *\.\." $$I >/dev/null || continue ; \
+		   ( cd `dirname $$I` ; $(MAKE) lib )|| true ; \
+		done
+
+#
+# Edition des liens
+#
+# Avant : $(LD) $(CFLAGS)
+Nanoedit_:client_ $(LES_FONCTIONS)
+	. $(BASE)/configuration ; $(MAKE) OBJ/$(ARCH)/nanoedit
+
+OBJ/$(ARCH)/nanoedit:$(LES_FONCTIONS)
+	echo "Edition des liens."
+	if [ "$(UTILISE_PROFILER)" = "" ] ; \
+	then \
+	mkdir -p OBJ/$(ARCH) 2>/dev/null ; \
+	echo $(CXX) $(LDFLAGS2) $(LES_FONCTIONS) $(LIBR) $(DLDLIB) -o $@ ; \
+	$(CXX) $(LDFLAGS2) $(LES_FONCTIONS) $(LIBR) $(DLDLIB) -o $@ ; \
+	else make Nanoedit-static_ ; \
+	fi
+
+Nanoedit-static_:client_ $(LES_FONCTIONS)
+	$(CC) $(LDFLAGS2) $(PRE_LIB) $(BASE)/{COEUR,OBJETS,TYPES,UTILITAIRES,PROFILER,TESTS}/OBJ/$(ARCH)/*.o $(DLDLIB) $(LIBR) -o OBJ/$(ARCH)/nanoedit
+
+
+client_:OBJ/$(ARCH)/client
+OBJ/$(ARCH)/client:$(BASE)/.client.c
+	-mkdir -p OBJ/$(ARCH) 2>/dev/null
+	$(CC) $(LDFLAGS2) $(BASE)/.client.c -o $@  
+
+
+#
+# Compilation de tous les directory objets
+#
+compile_directory_:
+	@for I in $(DIRECTORIES) ; do N=`pwd` ; cd $$I ; $(MAKE) default || exit 1 ; cd $$N ; done
+#
+# Lancement de l'execution
+#
+lance_:core
+	if [ "" != "$(CHANGE_RESSOURCE_GTK)" ] ; then \
+	eval "cat $(RESSOURCES_GTK) 2>/dev/null | $(CHANGE_RESSOURCE_GTK) >.gtkrc" || true ; \
+	eval "cat $(RESSOURCES) 2>/dev/null | $(CHANGE_RESSOURCE_GTK) >.NanoEdit.ad" || true ; \
+	else \
+	cat $(RESSOURCES_GTK) 2>/dev/null >.gtkrc || true ; \
+	cat $(RESSOURCES) 2>/dev/null >.NanoEdit.ad || true ; \
+	fi ; \
+	export LOGNAME="`id -nu`" ; \
+	export LANG=fr_FR.utf8 ; \
+        M=/tmp/nanoedit-$$LOGNAME/nom_modele ; \
+	if [ -f $$M -a -e "`tty`" ] ; \
+		then \
+		echo "Récupère la version du modèle qui a été" ; \
+		echo "sauvegardée juste avant le plantage ?" ; \
+		read R ; \
+		M=`dirname $$M` ; \
+		case "$$R" in \
+		[oO]|[Oo]ui|[yY]|[yY]es) N=`ls -t $$M/*[0-9] | sed 's/\.ne$$//' | ( read A && echo $$A || true )` ;; \
+		esac ; \
+	else \
+		N= ; \
+	fi ; \
+		echo $$N ; \
+	$$VALGRIND OBJ/$(ARCH)/nanoedit $(USER_OPTIONS) $$N
+
+demo_:compile_directory_ Nanoedit
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-http_ecrit -demo vide" $(MAKE) lance_
+
+valgrind_:compile_directory_ Nanoedit
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	PATH="$$PATH:/home/exco/local/bin" VALGRIND="valgrind --num-callers=10 " USER_OPTIONS="$$USER_OPTIONS -http_ecrit " $(MAKE) lance_
+
+lance_sans_fenetres_:
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-http_ecrit -ouvre_fenetres -ouvre_fenetre_modele $(FICHIER)" $(MAKE) lance_
+lance_sans_x11_:
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-http_ecrit -x11 $(FICHIER)" $(MAKE) lance_
+lance_en_ecriture_:
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-http_ecrit $(FICHIER)" $(MAKE) lance_
+lance_debug_:
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-http_ecrit -debug $(FICHIER)" $(MAKE) lance_
+lance_sfm_:
+	rm -rf /tmp/nanoedit-$$LOGNAME
+	USER_OPTIONS="-ouvre_fenetre_modele $(FICHIER)" $(MAKE) lance_
+#
+# Compile seulement le directory local et lance gdb
+#
+go_:default Nanoedit gdb
+#
+# Compile tout et lance gdb
+#
+run_:compile_directory Nanoedit gdb
+#
+# Lancement du debuggueur
+#
+gdb_:
+	echo $$LD_LIBRARY_PATH
+	gdb `echo " $(DIRECTORY_OBJET)" | sed -e 's/ / -directory /g'` . OBJ/$(ARCH)/nanoedit
+
+strace_:
+	strace OBJ/$(ARCH)/nanoedit
+
+core:
+	rm -f core ; mkdir core
+
+dump_:
+	OBJ/$(ARCH)/nanoedit -dump -x11
+
+#
+# Petits buts utilitaires
+#
+profiler_:
+	$(BASE)/PROFILER/OBJ/$(ARCH)/prof_dump OBJ/$(ARCH)/nanoedit
+
+
+cflow_:$(LES_SOURCES)
+	cflow $(CFLAGS) $(LES_SOURCES) -lm >$@
+lint_:*/*.c
+	lint $(CFLAGS) *.c -lm >$@
+depends_:depend
+	for I in */[mM]akefile ; \
+		do \
+		   if [ "$$I" != '*/[mM]akefile' ] ; \
+			then \
+		   ( cd `dirname $$I` ; touch Makefile.dep ; $(MAKE) depends_ 2>/dev/null ) || true; \
+			fi ; \
+		done
+depend_:
+	L="`echo *.c *.cpp | sed  -e 's/\*\.cpp//' -e 's/\*\.c//'`" ; \
+	if [ "" != "$$L" -a " " != "$$L" ] ; \
+		then \
+		$(CC) -MM `echo $(USER_CFLAGS) $(CFLAGS) | sed 's/-W[^ ]* //g'` $(CONSTANTES) $(INCLUDES) $(XINCLUDE_DIR) $$L >Makefile.dep ; \
+		fi ;
+	echo "`pwd` makedepend"
+
+
+remove_include_:
+	find . -name "*.c" -print | \
+	while read F ; do remove_include "$(CC) $(CFLAGS) -c" $$F "" ; done >$@
+
+cpp_debug_:
+	$(CC) -E $(CFLAGS) COEUR/m_modele.c >$@
+
+stat:
+	echo "Nb ligne totale     :`cat *.[ch]|wc`"
+	echo "Nb ligne vides      :`cat *.[ch]|grep '^[ 	]*$$'|wc`"
+	echo "Nb ligne commentaire:`cat *.[ch]| \
+	       	egrep '^[ 	]*(\*|/\*|\*/)'|wc`"
+	echo "Nb ligne #include   :`cat *.[ch]|grep '^#include'|wc`"
+	echo "Nb ligne { ou }     :`cat *.[ch]| \
+	       	grep '^[ 	]*[{}][ 	]*$$'|wc`"
+	echo "Nb prototypes       :`cat *.h | \
+	       	grep ') *; *$$'|wc`"
+	echo "Nb ligne TRACE()    :`cat *.[ch]|grep 'TRACE('|wc`"
+
+clean_::
+	$(MAKE) clean_other_ BUT=$@
+	rm -rf OBJ/$(ARCH)
+full_clean_::
+	$(MAKE) clean_other_ BUT=$@
+	rm -rf OBJ
+soft_clean_::
+	$(MAKE) clean_other_ BUT=$@
+
+clean_other_:depend_
+	rm -rf *.o exemple *~ cflow *.i *.log *.aux *.dvi *.ps *.bak \
+		cflow lint .???*.html .NanoEdit.ad .gtkrc NanoEdit.ne dump.?? \
+		pas_de_nom.* pas_de_nom .secret a.out index.bt xxx \
+		dump.classe dump.tl dump.tp dump.te "Vue_"*.ppm *.stl \
+		gmon.out mon.out fnccheck.out TAGS
+	for I in */[mM]akefile ; \
+		do \
+		   [ "$$I" = '*/[mM]akefile' ] && break ; \
+		   ( cd `dirname $$I` ; $(MAKE) $(BUT) 2>/dev/null )|| true ; \
+		done
+	echo "`pwd` clean"
+
+
+tar:soft_clean
+	echo
+	echo "Ne fonctionne qu'avec le tar du GNU"
+	echo
+	V=`pwd` ; \
+	V=`basename $$V` ; \
+	cd ../.. ; \
+	( find NE/$$V \
+		-name SAUVE -prune -o \
+		-name OBJ -prune -o \
+		-name BLOB -prune -o \
+		-path 1.11/MODELES -prune -o \
+		! -name nanoedit \
+		! -name so_locations \
+		! -name ".*" \
+		! -name "*.ps" \
+		! -name "TAGS" \
+		! -type d -print ; echo NE/$$V/.client.c ) |\
+	tar -cvf - --files-from - | gzip -9 >$(HOME)/public_html/ne-$$V.tar.gz
+	ls -ls $(HOME)/public_html/ne-*
+
+tags_:
+	etags $(LES_SOURCES) $(LES_H) 2>/dev/null >&2 || true
+
+diff:
+	 diff -u -r --exclude "OBJ" --exclude "*~" --exclude TAGS --exclude ".*" --exclude "*.o" --exclude "*.sl" --exclude "*.so" --exclude Makefile --exclude "*.ne" ../1.15 ../1.16
+
+lance_toutes_les_nuits_:
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo "Toutes les nuits, le contenu du repertoire `Pwd`"
+	echo "va être compilé sur toutes les architectures."
+	echo "Ceci à condition que \"`hostname`\" soit dans le \".rhosts\""
+	echo "et qu'elle ai le droit d'utiliser la commande \"at\""
+	echo "CECI NE MARCHE QU'AU BATIMENT 710, VOIR nanoedit-nuit"
+	echo ""
+	echo ""
+	echo ""
+	echo ""
+	echo "$(BASE)/SHELL/nanoedit-nuit" | at 06:00
+
+lance_partout_:
+	@echo "Sortie des messages dans lance_partout.txt"
+	$(BASE)/SHELL/nanoedit-nuit >lance_partout.txt 2>&1
+
+variables_:
+	echo "export MAKE='$(MAKE)'"
+	echo "export PATH='OBJ/$(ARCH):$(PATH)'"
+	echo "export BASE='$(BASE)'"
+
+rejouer_:
+	-echo "AVANT DE LANCER CETTE MANIP, VOUS DEVEZ RECOPIÉ"
+	-echo "/tmp/nanoedit-`logname` AILLEURS"
+	-echo "Si des images sont générées, elle le seront"
+	-echo "dans des répertoires nommés VUE ou POV"
+	-echo -n "Nom du répertoire : "
+	-read DIR ; \
+	if [ ! -d $$DIR ] ; then echo "INEXISTANT" ; exit 1 ; fi ; \
+	echo -n "Comment voulez-vous rejouer (ecran|vue|pov) : " ; \
+	read COMMENT ; \
+	if [ "vue" = "$$COMMENT" ] ; then \
+	echo -n "Agrandissement : " ; \
+	read AGR ; \
+	echo -n "Réduction : " ; \
+	read RED ; \
+	fi ; \
+	echo -n "Tapez -comprime ou -mpeg ou rien : " ; \
+	read COMP ; \
+	 $(BASE)/SHELL/rejouer $$DIR -$$COMMENT "$$AGR" "$$RED" $$COMP

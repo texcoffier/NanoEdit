@@ -1,0 +1,437 @@
+\documentclass[landscape]{seminar}
+
+%\usepackage{french}
+\usepackage{graphics}
+\usepackage{colordvi}
+\usepackage{../EXTENSION/lgrind}
+\input{sem-a4.sty}
+
+\title{NanoÉdit : La solution à tous vos problèmes !!!}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\newcommand{\cfile}[1]{{\fontsize{7}{3}\selectfont
+\input #1
+}}
+
+
+\pagestyle{empty}
+
+\begin{slide}
+  \maketitle
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{slide}
+%{
+%\scriptsize
+%\parskip -0.51mm
+%\tableofcontents
+%}
+%\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \section*{Introduction}
+
+  Vous êtes chercheur ou étudiant.
+
+  Vous en avez assez de programmer
+  des fonctions inintéressantes.
+
+  Vous voulez en mettre plein la vue
+  aux autres.
+
+  Vous voulez vous donner le moins de travail possible.
+
+  Vous voulez profiter de ce que les autres
+  ont fait.
+
+  Vous ne voulez pas apprendre à utiliser
+  une bibliothèque monstrueuse de fonctions.
+
+  NanoÉdit est LA solution à vos problèmes.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vous n'avez plus de {\tt main()} à faire !}
+
+  NanoÉdit est une application complète dans laquelle
+  vous ajoutez simplement des classes d'objet.
+
+  Vous n'avez donc plus besoin de faire de programme
+  principal et d'analyser les options.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+
+  \subsection*{Vous n'avez plus d'édition des liens à faire !}
+
+  NanoÉdit charge dynamiquement toutes les classes
+  lors du démarrage.
+
+  Dans le futur, il n'y aura même pas besoin d'arrêter
+  NanoÉdit pour changer une classe.
+
+  L'interface utilisateur est créé à partir
+  des informations des classes.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vous pouvez créer des modèles avec vos objets}
+
+  Les instances des classes que vous avez créées
+  peuvent être combinées entre elles
+  afin de former un graphe sans cycle.
+
+  La modélisation consiste alors à créer interactivement un graphe
+  d'objet.
+
+  Il n'y a pas de limite aux constructions possibles.
+
+  Vous pouvez créer autant d'instance de classe
+  que vous voulez.
+  
+  Des menus et raccourcis clavier contextuels permettent
+  de créer rapidement des modèles.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vous pouvez sauvegarder des vues~!}
+
+  Les fenêtres 3D sont des fenêtres d'édition d'objet
+  de NanoÉdit comme les autres.
+
+  Les fenêtres 3D font partie du modèle et on peut
+  donc les éditer comme n'importe quel objet.
+  On peut en ajouter ou en détruire.
+
+  On peut faire des vues spécifiques.
+
+  NanoÉdit n'a aucune fonction graphique,
+  le graphisme lui est apporté par la classe {\tt vue}.
+
+  Vous pouvez réécrire votre interface 3D~!
+  Par exemple en géométrie descriptive.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vous pouvez travailler interactivement en 3D~!}
+
+  L'objet {\tt vue} permet de modifier intéractivement
+  de valeurs ou des couples de valeurs
+  d'un champ quelconque d'un objet.
+
+  On peut déplacer un point, ou changer l'une de ses coordonnées.
+
+  Pour un segment définie par deux points,
+  on peut déplacer l'un ou l'autre.
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Plus de saisie de données à faire !}
+
+  NanoÉdit vous permet d'éditer directement
+  les valeurs contenues dans VOS structures
+  de données.
+
+  Plus besoin donc de saisir les valeurs comme
+  argument ou bien dans des fichiers~!
+
+  De plus NanoÉdit vous permet de facilement
+  ajouter vos tests de validité sur les
+  valeurs entrées (valeur positive par exemple).
+
+  NanoÉdit vous permet de saisir les valeurs textuellement
+  ou bien par tout autre moyen (palette de couleur,
+  point de R2, ...) que vous pouvez imaginer.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Plus de sauvegarde de données à faire !}
+
+  NanoÉdit se charge de sauvegarder ce que vous lui
+  avez demandé de sauvegarder.
+
+  Évidemment, il permet de relire ce qui a été sauvegardé.
+  C'est ainsi qu'il permet de faire le Undo/Redo
+  avec plein de niveaux.
+
+  La libération de la mémoire se fera automatique
+  lors de la destruction de l'instance.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Pas de Widget à faire !}
+
+  Les fenêtres permettant d'éditer les objets sont
+  entièrement gérées par l'objet interface
+  de NanoÉdit.
+  Vous n'avez pas à gérer de Widget.
+
+  On peut même imaginer changer de type de Widget (Motif, Athéna, ...)
+  pendant que l'éditeur fonctionne.
+  D'ailleurs, une interface GTK va être faite.
+
+  Il est possible de faire exécuter des fonctions,
+  de faire des menus, ... tout cela en donnant
+  simplement la bonne sémantique au champ.
+  C'est bien entendu complètement indépendant
+  des Widgets utilisés.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{NanoÉdit est un serveur Web !}
+
+  Quand NanoÉdit fonctionne, il est aussi un serveur WWW.
+
+  Il est possible de modéliser via un navigateur WWW,
+  d'accéder a toutes les informations sur les objets,
+  les classes, les types, ...
+
+  Toute action WWW modifie en temps réel l'état
+  des fenêtres d'édition de NanoÉdit.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Tester votre programme est facile !}
+
+  Vous pouvez facilement créer des configurations de test
+  afin de voir le comportement de vos procédures.
+  NanoÉdit peut fonctionner en {\em batch} pour
+  vérifier régulièrement que vos fonctions
+  donnent toujours le bon résultat.
+
+  La sortie de trace de fonctionnement est incluse
+  dans les classes d'objets, on peut lancer
+  les traces sur un objet par simple clique.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Récupérer le travail des autres est trivial !}
+
+  Vous indiquez seulement à NanoÉdit ou se trouvent
+  les répertoires des autres personnes et automatiquement
+  vous pourrez utiliser ce que les autres ont fait.
+
+  Vous pouvez créer des modèles mélangeant les objets
+  des uns et des autres facilement car
+  NanoÉdit traduit automatiquement les structures de données
+  élémentaires.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Faire des modèles paramétrés est simple !}
+
+  La classe {\tt variable}
+  permet simplement de définir des fonctions.
+  On stocke une fonction par fichier.
+
+
+  La classe {\tt opérateur} permet d'appeler une fonction
+  (un fichier) en donnant la bonne valeur aux paramètres.
+
+  On peut donc très facilement créer des bibliothèques
+  d'objets paramétrés.
+
+
+  On voit aussi la puissance de NanoÉdit car ces
+  deux classes ne sont pas incluses dans le coeur
+  de NanoÉdit.
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Les types de données ont de multiples facettes~!}
+
+  Oubliez la lourdeur des types de données classiques~:
+  point\_3\_flottants, point\_4\_flottants, vecteur\_3\_flottant,
+  vecteur\_4\_flottants, ...
+
+  Avec NanoÉdit, le stockage, l'édition et la sémantique
+  sont trois choses distinctes, combinables à l'infini.
+
+\begin{tabular}{|c|c|c|}
+\hline
+Stockage               & Édition & Sémantique \\
+\hline
+Triplet\_flottant      & Texte   & Point \\
+Quadruplet\_flottant   & Couleur & Vecteur \\
+Chaine                 &         & Couleur \\
+\hline
+\end{tabular}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Hiérarchie de classes et de types.}
+
+  Les classes permettent l'héritage de nombreux attributs.
+
+  Les classes sémantique, stockage et édition permettent
+  aussi l'héritage.
+  Celui est dynamiquement défini par langage
+  en combinant des types existants.
+
+  En fait, une classe de type est une combinaison de nombreux
+  attributs tous modifiables au moment de l'utilisation
+  de la classes.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vos classes sont des moteurs de calcul}
+
+  Quand l'un des champs d'un de vos objet est modifié,
+  NanoÉdit vous préviens afin que vous
+  mettiez vos structures de données à jour.
+
+  Ceci permet de facilement faire des évaluations~:
+  distance, intersection, ...
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{NanoÉdit résoud les contraintes non-circulaires !}
+
+  Construire un graphe force certaines valeurs à être identiques,
+  NanoÉdit évalue le graphe jusqu'à
+  obtenir un état stable.
+  
+  On peut donc faire un grand nombres de constructions
+  par contraintes.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Vous n'appelez pas de fonctions de NanoÉdit !}
+
+  Ceci veux dire que vous n'avez pas besoin
+  d'apprendre plein de fonctions avant
+  de savoir l'utiliser.
+
+  Vous vous contentez de ``dire'' à NanoÉdit
+  ce que vous savez faire et ce que contiennent
+  vos structures de données.
+
+  Le temps d'apprentissage est donc très court.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{L'interface utilisateur est simple et homogène~!}
+
+  TOUTES les fenêtres de NanoÉdit sont du même type,
+  ce sont des fenêtres d'édition d'objet.
+
+  L'interface utilisateur est très simple.
+  On sélectionne des objets puis on indique l'action
+  à faire.
+
+  L'utilisateur peut ajouter ses propres
+  interfaces utilisateurs.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{NanoÉdit est tout petit !}
+
+  Le coeur de NanoÉdit fait 2500 lignes de C
+  (850 en {\tt .h}).
+
+  Il y a 3000 lignes pour la définition
+  des types de bases (logique, stockage, éditeur).
+
+  Il y a 2000 lignes de fonctions utilitaires
+  bien pratiques. Complètement indépendantes
+  de NanoÉdit (listes, chaine de caractères, ...)
+
+  Il y a 2000 lignes pour les {\em classes} interface utilisateur.
+
+  Il y a 1000 lignes pour la {\em classe} modeleur.
+
+  Il y a 1000 lignes pour la {\em classe} interface 3D (la vue).
+
+  Il y a 2000 lignes d'objets divers et variés.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}
+  \subsection*{Conclusion : NanoÉdit est ce qu'il vous faut~!}
+
+  Cela vous simplifira la vie, {\em use it Now !}.
+
+  Si vous avez des problèmes, {\em call Exco Now !}
+
+  De nombreuses personnes utilisent ou vont utiliser
+  NanoÉdit, {\em join us Now~!}
+
+  Vous n'avez pas les sources des modeleur concurrents,
+  {\em throw them away, Now~!}
+
+  De nombreuse personnes ne connaissent pas NanoÉdit
+  et pourtant cela leur simplifirais la vie, {\em tell them Now~!}
+
+  Si vous n'arrivez pas à copier NanoÉdit, {\em retry later, but retry}.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+

@@ -1,0 +1,1526 @@
+\documentclass[12pt]{article}
+\textheight 27cm
+\textwidth 18cm
+\oddsidemargin -1.5cm
+\evensidemargin -1.5cm
+\topmargin -3cm
+
+\usepackage{french}
+\usepackage{graphics}
+\usepackage{./lgrind}
+
+\title{Extension de NanoEdit}
+\author{Thierry EXCOFFIER}
+
+\begin{document}
+
+\def\R{\hbox{\rm I\hskip -2pt R}}
+\def\version{1.14}
+
+Ce document montre de manière très progressive
+comment étendre NanoÉdit.
+Une méthode plus directe consiste en modifier des objets existants.
+Il ne peut être compris que si NanoÉdit a été utilisé intéractivement
+et que le cours d'aprentissage à son utilisation a été suivie.
+
+Par abus de langage, les noeuds des formules sont
+appelé objets.
+
+
+\section{Architecture}
+
+Le répertoire de base est {\tt /home/exco/NE/\version} dans lequel on trouve~:
+\begin{itemize}
+\item {\tt UTILITAIRES} des utilitaires de bases indépendant de NanoÉdit.
+\item {\tt COEUR} le coeur de NanoEdit.
+\item {\tt OBJETS} un répertoire d'objets.
+\item {\tt TYPES} un répertoire de types.
+\item {\tt TESTS} un répertoire contenant des tests de fonctionnement.
+\item {\tt ARTICLES} documentations diverses.
+\item {\tt EXEMPLES} qui contient les fichiers présentés dans ce document.
+\item {\tt Nanoedit.ad} des ressources X11 de base.
+\item {\tt gtkrc} des ressources GTK de base.
+\item {\tt AFAIRE}, une belle liste de choses.
+\end{itemize}
+
+Chaque répertoire (notemment {\tt/home/exco/NE/\version/OBJETS})
+permettant d'étendre NanoÉdit a la structure suivante~:
+\begin{itemize}
+\item {\tt Makefile} une copie de {\tt /home/exco/NE/\version/Makefile.proto}
+\item Des fichiers commençant par {\tt o\_} pour définir des classes.
+\item Des fichiers commençant par {\tt t\_} pour définir des types.
+\item {\tt MODELES} qui contient des modèles.
+\item {\tt Nanoedit.ad} des ressources X11 pour les objets locaux.
+\item {\tt gtkrc} des ressources GTK pour les objets locaux.
+\end{itemize}
+
+\section{Initialisations}
+
+Pour créer un nouveau répertoire de travail et lancer
+NanoEdit~:
+{
+\tt
+mkdir NE\\
+cd NE\\
+mkdir \version\\
+cd \version\\
+cp /home/exco/NE/\version/Makefile.proto Makefile\\
+make                    \# Compile/Edition des liens/Lancement\\
+\# make lance            \# Lance\\
+\# make gdb              \# Lance sous le debuggueur\\
+\# make depend           \# Calcule automatiquement les dépendances dans Makefile\\
+\# make tags             \# Calcule le fichier TAGS (goto M-. sous Emacs)
+}
+
+Si la commande {\tt make} ne fonctionne pas, lancez {\tt /usr/local/bin/make}.
+
+Si vous désirez utilisez des objets créés par d'autre personnes
+éditer le {\tt Makefile} pour modifier la liste des répertoires
+où il faut chercher des objets (pour piquer ceux de vos copains).
+Vous pouvez par exemple ajouter le repertoire {\tt /home/exco/NE/\version/EXEMPLES}
+de NanoÉdit afin de profiter de tous les exemples qui suivent
+sans avoir à les recopier.
+Dans le menu «Charge/EXEMPLES» il y a des exemples d'utilisation
+de tous les objets qui suivent.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Ajout progressif de l'objet segment de droite}
+
+On va présenter pas à pas l'ajout d'un objet
+segment de droite défini par deux points.
+Seul la version finale est complètement fonctionnelle,
+les versions intermédiaires sont incomplètes
+mais néanmoins fonctionnelle.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajouter un objet minimal}
+
+Le programme le plus simple consiste à ajouter à votre répertoire
+un fichier commençant par ``{\tt o\_}'' qui
+contient la définition de la classe (``o\_s1.c'').
+
+{\tt \lgrindfile{o_s1.c.tex}}
+
+Une fois ce fichier entré vous pouvez taper {\tt make}
+pour lancer la compilation et l'exécution.
+
+Dans le menu «création» vous trouvez «NON DÉFINI/segment1»
+qui vous permet de créer une instance de l'objet,
+celle-ci apparait dans la fenêtre contenant le graphe
+du modèle.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Chemin dans le menu, raccourci clavier et aide}
+
+Ces différentes choses ont été ajoutées dans l'objet suivant (``o\_s2.c'')~:
+
+{\tt \lgrindfile{o_s2.c.tex}}
+
+\begin{itemize}
+\item 
+  On indique le raccourci dans cet exemple par :\\ {\tt EVENEMENT("S2")}\\
+  ceci permet de créer l'objet simplement en tapant ``s2''.
+  Le raccourci n'a pas de longueur limite.
+  Si l'on veut indiquer des ``modificateurs'', il suffit
+  de précéder le raccourci par l'une des chaines suivantes~:
+  "Shft+", "Ctrl+", "ShftCtrl+", "Meta+", "ShftMeta+", "CtrlMeta+",
+  "ShftCtrlMeta+".
+
+\item Le chemin dans le menu est explicite par lui-même~:\\
+  {\tt MENU("Exemples/Segment2")}
+
+\item L'aide aussi~:\\
+{\tt BULLE\_D\_AIDE("Plus petit objet que l'on peut faire avec NanoÉdit")}\\
+Pour tester l'aide, vous éditer l'objet et cliquez avec le bouton
+de droite dans la fenêtre.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Le segment de droite possède deux champs}
+
+Voici comment ajouter des champs à l'objet segment de droite~:
+
+\begin{itemize}
+\item On utilise la macro ``CHAMP'' pour ajouter des champs
+  à une classe, le premier argument est le nom du champ dans la structure C,
+  le deuxième est un programme interprété définissant
+  le champ.
+\item ``t\_geometrie.h'' :
+  NanoÉdit contient des types géométriques prédéfinis dans
+  ``TYPES/t\_geometrie.h'', ``Triplet'' est un tableau de 3 ``Flottant''
+  et ``Flottant'' est en fait un ``double''.
+  Mais en fait cela n'a aucune importance, vous pouvez utilisez les
+  types que vous voulez, il est facile d'indiquer à NanoÉdit
+  comment les manipuler.
+\item ``L\_point'' indique le type logique du champ.
+  Le champs représente un point de R3, ce point
+  est stocké dans un ``Triplet'' (type ``P\_triplet''). Si vous voulez stocker
+  ce point dans une chaine de caractère ({\tt char*}) par exemple, vous pouvez
+  mettre ``P\_chaine'' au lieu de ``P\_triplet''.
+  La liste actuelle des types logiques et physiques est à
+  la fin de ce document.
+\item ``Edite'' indique que l'utilisateur peut modifier la valeur
+  du champs intéractivement.
+\item ``Sauve'' indique que la valeur du champ est sauvegardée
+  dans le fichier modèle et sera récupérée lors d'un chargement.
+\end{itemize}
+
+L'objet suivant possède donc deux champs éditables textuellement (``o\_s3.c'').
+
+{\tt \lgrindfile{o_s3.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Améliorations au contenu des champs}
+
+Elles sont nombreuses et triviales.
+
+\begin{itemize}
+\item Si l'on indique une bulle d'aide dans la déclaration
+  du champ, elle s'applique au champ lui-même.
+\item Si l'on indique ``Init3d'' dans les champs, on pourra
+  alors modifier intéractivement la valeur du champs en
+  \begin{itemize}
+  \item Activant l'objet segment
+  \item Positionnant la souris dans une fenêtre 2D.
+  \item Tapant 1 pour modifier la valeur du premier champ
+    et 2 pour modifier celle du deuxième.
+  \end{itemize}
+  Du plus, lors de la création du segment, la valeur du premier champ
+  sera initialisée à la position du curseur.
+\item Si l'on indique ``DEFAUT'', le champ sera initialisé
+  à la valeur indiquée par la chaîne de caractère.
+\item Dans la fenêtre d'édition, la valeur du champ est précédée
+  d'un {\em label} (texte explicatif), par défaut, le texte
+  du label est le nom du champ dans la structure C.
+  Avec ``LABEL'' on peut modifier ceci.
+\end{itemize}
+
+``o\_s4.c''~:
+{\tt \lgrindfile{o_s4.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Extraction du point de départ et d'arrivé}
+
+Pour le moment, le segment de droite n'est pas paramétré.
+On ne peut pas définir un segment de droite à partir de deux points
+existants.
+Pour le rendre paramétré, il suffit d'ajouter ``Extrait''
+dans les champs que l'on souhaite extraire des arguments du noeuds.
+Le premier champs extrait le sera du premier paramètre,
+le deuxième du deuxième, ...
+
+Le fichier contient la définition de deux classes,
+la première veut deux paramètres de type ``L\_point3''
+(Le type ``L\_point3'' indique le type ``P\_triplet''
+par défaut) et
+ne pourra donc pas être paramétrée par un ``L\_point4''.
+La deuxième veut des paramètres de type ``L\_point'' (donc 3 ou 4)
+et les stocke sous forme de triplet dans la structure C (``o\_s5.c'').
+
+{\tt \lgrindfile{o_s5.c.tex}}
+
+Que le champ soit extrait ou non, il est stocké dans
+les enregistrements de la structure C.
+Si les paramètres changent, le changement est reporté
+de manière transparante dans la structure C.
+
+Si l'on désire que le segment de droite soit {\bf obligatoirement}
+paramétré par deux points, on ajoute ``Obligatoire''
+en plus de ``Extrait''
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Affichage du segment sur l'écran}
+
+Il faut ajouter un champ particulier qui indique
+la méthode d'affichage, l'affichage écran doit
+être écrit en utilisant la bibliothèque Open GL.
+Il est aussi possible de définir la méthode d'affichage en POV.
+``o\_s6.c''~:
+
+{\tt \lgrindfile{o_s6.c.tex}}
+
+Par défaut, l'objet «vue» de NanoÉdit change automatiquement
+l'épaisseur des traits, la taille des points
+et le type d'ombrage suivant que l'objet 
+est actif ou non.
+Si vous voulez afifcher l'objet différemment suivant
+qu'il est actif ou non, vous pouvez tester
+si l'objet est actif en testant la valeur de {\tt ACTIF(votre\_objet)}.
+
+Si l'on veut faire un tracé dépendant de la qualité du rendu
+demandé dans la vue, il faut tester la valeur de {\tt qualite[0]}
+qui est un caractère entre '0' et '9', '5' indiquant la qualité ``normale''.
+
+Pour accélérer l'affichage, l'objet «vue» de NanoÉdit stocke
+systématique les ordres d'affichage dans une liste OpenGL.
+Pour définir plus précisemment si l'on doit ou non stocker
+dans une liste OpenGL on peut ajouter des options d'affichage
+dans le champ contenant {\tt L\_affiche\_gl}.
+On peut faire un ou binaire entre les options d'affichage~:
+
+\begin{itemize}
+\item 
+  {\tt AFFICHAGE(Toujours\_different)}\\
+  Chaque fois que la fonction d'affichage est appelée,
+  elle affiche quelque chose de différent, il ne faut
+  donc pas utiliser de liste OpenGL.
+  C'est aussi utile si l'objet à afficher est très gros et qu'il
+  faut trop de mémoire pour faire sa liste.
+
+\item
+  {\tt AFFICHAGE(Toujours\_identique)}\\
+  Quelque soit l'instance de la classe, l'objet à afficher est
+  identique. Par exemple la sphère unité.
+  
+\item
+  {\tt AFFICHAGE(Different\_si\_actif)}
+  L'objet est affiché différemment suivant qu'il est actif ou non,
+  on prévois donc deux listes OpenGL différentes pour les deux cas.
+
+\item
+  {\tt AFFICHAGE(Different\_suivant\_qualite)}
+  L'objet est affiché différemment suivant qu'il est actif ou non,
+  on prévois donc 10 listes différentes suivant la qualité.
+
+\item
+  {\tt AFFICHAGE(Different\_suivant\_type\_affichage)}
+  L'objet est affiché différemment suivant que l'état courant
+  est ponctuel/filaire ou facette. Cela multiplie donc
+  par 3 le nombre de listes OpenGL.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Affichage d'un ``résumé'' de l'objet}
+
+Dans la fenêtre contenant le graphe du modèle, le texte entre
+parenthèse est par défaut le contenu du premier champ
+de l'objet avec l'attribut «Init3d». Ce texte apparait
+aussi dans le menu listant les objets actifs.
+
+
+On peut calculer ce texte soit même en fonction de l'objet.
+Dans le cas du segment (``o\_s7.c'')~:
+
+{\tt \lgrindfile{o_s7.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Le segment doit calculer son vecteur directeur}
+
+Si certain champs d'un objet sont calculés (en fonction d'autres
+champs ou de paramètres), il faut que l'objet soit
+prévenu lors des changements afin qu'il se mette à jour.
+
+Le programme utilise des fonctions utilitaires sur les ``Triplet''
+qui sont définies dans ``UTILITAIRES/u\_geometrie.h'' (``o\_s8.c'')~:
+
+{\tt \lgrindfile{o_s8.c.tex}}
+
+Vous remarquerez que le vecteur n'est ni sauvegardé ni éditable
+car cela n'a pas de sens car on le calcule, par contre, il
+est affichable et d'autres objets peuvent utiliser
+sa valeur en l'extrayant.
+
+Si la valeur est impossible à calculer, alors il faut
+noter que le champ résultat est invalide.
+Dans la fonction changement, on indique~: ``NOTE\_CHAMP\_INVALIDE(objet, resultat)''
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajouter un champ milieu virtuel}
+
+On peut vouloir afficher la valeur du milieu du segment sans
+toutefois l'ajouter dans la structure C, de plus on aimerais
+qu'une modification du milieu entraine un translation
+des deux points du segment.
+
+Pour cela il faut écrire une méthode permettant de calculer
+le milieu et une autre permettant de la modifier.
+Ceci est facile (``o\_s9.c'')~:
+
+{\tt \lgrindfile{o_s9.c.tex}}
+
+Pour la première classe
+le champ milieu n'apparait pas dans la fenêtre d'édition
+mais on peut modifier le milieu intéractivement en activant
+le segment et en tapant '3' car c'est le troisième
+champ initialisable.
+
+Dans la deuxième classe, on peut l'utiliser comme un champ normal
+car il est typé comme un point et il est éditable.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Les ``tags'' de base}
+
+Un ``tag'' est un ``menu'' graphique contextuel.
+Dans le cas du segment de droite, on a envie de voir
+apparaître des carrés aux extrémités du segment lorsque
+celui est actif afin que l'on puisse ``tirer'' sur ces
+carrés pour déplacer l'un ou l'autre des points extrémités.
+L'utilisation basique des ``tags'' est facile, il
+suffit de modifier la fin de la fonction d'affichage.
+
+Le premier paramètre de la fonction affichant le tag
+indique le numéro du champ associé au tag, on peut tout
+à fait associer un tag à un champ virtuel (par exemple
+le milieu du segment de droite).
+
+Voici ``o\_s10.c'' qui affiche un tag pour le point de départ et d'arrivé~:
+
+{\tt \lgrindfile{o_s10.c.tex}}
+
+Remarque : lorsque l'on clique avec le bouton de droite
+sur un objet, on a la liste de tous les champs de l'objet,
+si de plus on clique avec le bouton de droite
+ sur un ``tag'' on a la valeur du champ
+associé au ``tag'' (ça marche aussi pour le milieu
+du segment de droite si le champ virtuel a été ajouté).
+
+Pour varier l'affichage des ``tags'', il y a ``t\_tag'', ``t\_tag\_dilation'',
+``t\_tag\_rotation'', ``t\_tag\_destruction'', ``t\_tag\_poids''
+pour avoir des couleurs différentes
+suivant la sémantique du ``tag''.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Les sous-objets activables}
+
+Dans certain cas, on veut pouvoir désigner et travailler
+sur des sous-objets, par exemple, l'objet ``nuage de point''
+permet d'activer individuellement des points du nuage.
+Pour faire cela, il suffit de prévoir dans la structure
+de donnée la place pour stocker les numéros des
+sous-objets actifs et l'indiquer par un champ spécial.
+Lors de l'affichage, les sous-objets actifs seront
+visualisés de manière particulière afin de donner
+à chacun un numéro différent ({\tt glPushName/glLoadName}).
+
+Voici l'exemple du segment de droite, mais cette fois il est divisé
+en 10 sous-segments. Une fois le segment actif, on peut sous-(in)activer
+des dixièmes de segment avec le bouton du milieu (``o\_s21.c'').
+
+{\tt \lgrindfile{o_s21.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajout du concept de bipoint}
+
+Les types physiques et logiques pour Bipoint existent
+déjà de base, c'est pour cela qu'ils sont postfixés
+par '2' dans l'exemple pour ne pas faire de conflits.
+
+L'ajout de type logique est simple, néanmoins il faut être certain
+que vous avez réellement besoin d'un nouveau type logique.
+C'est-à-dire que cela ne recouvre pas un type existant.
+
+L'ajout du type physique peut être fait de plusieur manières,
+il y en a déjà beaucoup de défini et il sont très simple
+à ajouter.
+
+On stocke généralement les types (logique, physique ou d'éditeur)
+dans un fichier préfixé par ``t\_''.
+
+``t\_segment.c'' :
+{\tt \lgrindfile{t_segment.c.tex}}
+``t\_segment.h'' :
+{\tt \lgrindfile{t_segment.h.tex}}
+``o\_s11.c'' :
+{\tt \lgrindfile{o_s11.c.tex}}
+
+Avec ce nouvelle objet, on peut paramétrer d'autre objets
+directement par une valeur de type ``bipoint''.
+Pour vérifier immédiatement si cela fonctionne, vous pouvez
+utiliser un navigateur WWW pour voir le contenu
+de tous les champs de l'objet segment.
+
+Par la suite, l'objet longueur de bipoint extraira
+la valeur du champ bipoint de l'objet.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Les ``tags'' virtuels}
+
+Les tags virtuels sont ici, car l'exemple donné nécessite la connaissance
+préalable des types physiques.
+
+On peut vouloir changer intéractivement une valeur
+associée à un sous-objet, pour cela on peut utiliser
+des tags virtuels (par exemple les points d'une ``table de point''
+sont déplaçable individuellement).
+
+Les tags virtuel ne sont associé à aucun champ.
+
+Dans le cas de notre segment, l'utilisation des tags virtuels
+permet de changer interactivement la couleur de
+chaque dixième de segment (``o\_s22.c'')~:
+
+{\tt \lgrindfile{o_s22.c.tex}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Amélioration des types}
+
+Il est facile d'ajouter un type logique ``bipoint3''
+bien que le ``3'' n'apporte pas de réelle sémantique
+par contre cela peut simplifier la définition des champs
+car on peut donner un type physique par défaut.
+On peut aussi indiquer beaucoup d'autre valeurs par défaut.
+On n'a pas besoin de réindiquer la hauteur du Widget
+car elle est héritée.
+
+\begin{verbatim}
+DEFINITION_TYPE_LOGIQUE(L_bipoint3, /* Nom du type logique défini */
+                        L_bipoint,  /* Nom de la surclasse */
+                        "Bipoint3", /* Commentaire */
+                        c->tp = &infos_codec_bitriplet ;
+                        )
+\end{verbatim}
+
+Si le segment utilise ``L\_bipoint3'' il n'a pas besoin
+d'indiquer ``P\_bitriplet'' car le type logique l'indique pour lui.
+
+Il est néanmoins plus propre d'indiquer ``L\_bipoint P\_bitriplet''
+car la valeur pourra être extraite du fils que le
+type du champ (dans le fils) soit ``L\_bipoint4'' et
+pas seulement ``L\_bipoint3''.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Vérifions le type bipoint avec un calcul de distance}
+
+Faisons un objet qui prend un bipoint comme paramètre et
+qui calcule la distance entre les deux points (``o\_s12.c'')~:
+
+{\tt \lgrindfile{o_s12.c.tex}}
+
+Remarques concernant l'extraction~:
+\begin{itemize}
+\item Elle se fera même si dans le fils le type est ``L\_bipoint3''
+  ou ``L\_bipoint4'' car elle demande à extraire un ``L\_bipoint''
+  qui est plus général.
+\item Si le type du champ avait été ``L\_bipoint3'' on aurai
+  seulement pu extraire des champs de type ``L\_bipoint3''
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajout d'un bouton pour échanger les deux points}
+
+Dans la fenêtre d'édition, on veut mettre un
+bouton permettant d'échanger le point de départ et
+d'arrivé du segment (``o\_s13.c'')~:
+
+{\tt \lgrindfile{o_s13.c.tex}}
+
+La structure ``Interface\_widget'' contient des informations
+plus détaillée sur l'événement (X11) qui a généré l'événement.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajout d'une bascule pour rendre le segment invisible}
+
+La bascule est par défaut de type ``Booleen'' mais vous
+pouvez lui donner le type physique que vous voulez,
+il prendra les valeurs ``0'' ou ``1''.
+Dans l'exemple, la bascule permet de choisir d'afficher
+ou non le segment (``o\_s14.c'')~:
+
+{\tt \lgrindfile{o_s14.c.tex}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajout d'un menu option}
+
+Le menu option permet de choisir une valeur parmis
+un ensemble de valeur prédéfinies.
+Le menu option a comme valeur la chaine de caractères
+choisie par l'utilisateur.
+Dans l'exemple, le menu permet de choisir la fermeture des
+bornes du segment de droite
+parmi les quatre possibles (``o\_s15.c'')~:
+
+{\tt \lgrindfile{o_s15.c.tex}}
+
+Il est aussi possible de modifier le contenu du menu durant
+l'éxécution du programme en changeant la valeur
+de «menu.description».
+
+Le caractère tabulation dans la description du menu
+permet de définir des colonnes de tableau.
+On peut ajouter à la ligne un caractère de code ASCII 1 après
+lequel vous pouvez indiquer un texte qui sera la valeur réelle
+de l'option suivit d'un arobase (@) pour indiquer que
+la ligne est inactive (texte en grisé dans le menu).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ajout d'un menu de commande}
+
+Le menu de commande contrairement au menu option
+permet d'appeler directement une fonction une
+fois le choix fait.
+Dans le cas du segment, une commande pour
+annuler le premier point et une autre
+pour annuler le deuxième (``o\_s16.c'')~:
+
+{\tt \lgrindfile{o_s16.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Affichage du segment en POV}
+
+Il faut ajouter un champ particulier qui indique
+comment traduire l'objet en POV.
+Ce champ particulier est ``déclenché'' par
+l'objet ``pov'' qui génère le fichier et lance POV (``o\_s17.c'')~:
+
+{\tt \lgrindfile{o_s17.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Mettre une fenêtre Open GL dans l'éditeur de segment}
+
+Ceci peut être utile pour faire une édition graphique de la
+valeur d'un champ ou de l'objet, dans NanoÉdit il existe
+déjà ``vue'', ``couleur'', ``image''.
+L'exemple suivant affiche un segment probabiliste (``o\_s18.c'')~:
+
+{\tt \lgrindfile{o_s18.c.tex}}
+
+Je ne détaille pas ici (voir fin du document),
+mais on peut définir plein de méthodes
+pour manipuler cette fenêtre graphique.
+Aide contextuelle, raccourci clavier, bouton de la souris,
+déplacement du curseur, ...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Mettre une image dans l'éditeur de segment}
+
+Parfois, au lieu de faire du GL, on veut simplement
+afficher une image que l'on vient de calculer dans
+la fonction ``changement''.
+Pour faire cela, il suffit d'ajouter l'image dans la structure C
+(avec le type ``Image'') un ``éditeur'' d'image nommé ``E\_image''
+qui affichera automatiquement l'image à chaque changement.
+La fonction changement se charge d'ailleur d'allouer/libérer l'image
+et d'indiquer son type.
+
+Une fonction qui prend les événements souris a été ajoutée,
+elle permet de déplacer le premier point du segment avec
+le bouton de gauche et le deuxième avec le bouton du milieu.
+On peut laisser le bouton appuyé pour faire le suivi du mouvement.
+
+Deux modèles ont étés fait avec cet objet, l'un extrait
+l'image (``EXEMPLES/23\_image\_3d''), l'autre non (``EXEMPLES/23\_image'').
+Il faut bien comprendre qu'extraire l'image permet de faire des choses
+très intéressante mais que c'est très lent car toute la matrice de points
+est convertie en chaine de caractère et inversement... (``o\_s23.c'')~:
+
+{\tt \lgrindfile{o_s23.c.tex}}
+
+Pour contourner ce problème, on peut extraire un pointeur
+sur un champ de l'objet.
+L'objet ``inversion'' prend une image codée sous la forme
+d'une grille de point et applique une inversion vidéo.
+Il suffit d'une ligne pour indiquer que l'on veut extraire
+un pointeur sur un champ.
+Le pointeur est une exception dans le fonctionnement de NanoÉdit
+qui a été faite uniquement pour éviter de transférer de grosses
+structures de données.
+Une particularité est que le type de ce que l'on extrait est
+différent du type dans lequel on stocke, dans cet exemple
+la donnée est un pointeur mais l'on recherche une image dans le paramètre.
+C'est pour indiquer cette différence que ``TYPE\_DANS\_FILS''
+est précisé. ``o\_inversion.c'')~:
+
+{\tt \lgrindfile{o_inversion.c.tex}}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Affichage d'une ligne brisée}
+
+On peut définir un objet prenant une nombre indéfini de paramètres,
+par exemple {\tt applique}, {\tt table\_point}, ...
+Ces paramètres ne sont pas extraits car le nombre
+de champ n'est pas une constante, il dépend du nombre de paramètres.
+
+L'objet suivant, prend un nombre quelconque d'objets en paramètre
+et lors de son affichage extrait de chacun de ses paramètres
+les coordonnées d'un point afin de tracer la ligne brisée (``o\_s19.c'')~:
+
+{\tt \lgrindfile{o_s19.c.tex}}
+
+Remarques :
+\begin{itemize}
+\item Cet objet n'est pas optimal, en effet, il est plus performant
+  d'avoir une fonction ``changement'' qui stocke dans un tableau
+  interne les coordonnées des points. En fait c'est inutile de
+  le faire car l'objet ``table de point'' est fait pour cela,
+  il n'y a qu'à extraire une table de point toute faite.
+\item 
+  Plusieurs méthodes permettent d'accéder aux paramètres,
+  celle de l'exemple est la plus simple et elle saute automatiquement
+  les paramètres détruits.
+  Il existe ``POUR\_TOUS\_LES\_FILS'' pour parcourir les détruits
+  et l'on peut accéder directement à un fils avec la macro
+  ``FILS(objet,numéro)''
+\item
+  Dans l'exemple on utilise la fonction ``c\_recupere\_type\_sans\_copie''
+  mais on peut extraire un champ particulier en donnant son nom
+  au lieu de son type avec la fonction ``c\_recupere\_ici\_sans\_copie(objet, "nom-champ")''
+\item
+  On peut de plus mettre une contrainte de type sur certains
+  des paramètres sans les extraire grace à
+  l'option ``Obligatoire''.
+  Ceci permet d'avoir le type de premier argument dans le menu de création
+  plutot que ``(...)'' qui n'est pas explicite.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Modification d'une valeur à l'aide d'un ascenseur}
+
+L'utilisation d'un ascenseur permet de modifier en temps
+réel une valeur. Sa contrepartie est que l'ascenseur
+est linéaire et donc borné.
+Si l'on ne défini pas les bornes celles-ci sont 0 et 1.
+
+L'éditeur de type ascenseur est donc à lier avec un triplet
+de valeur (entières ou flottantes), les deux dernières
+indiquant le minimum et le maximum (``o\_ascenseur.c'')~:
+
+{\tt \lgrindfile{o_ascenseur.c.tex}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Paramètres de type objet}
+
+La grande force de NanoÉdit est que l'extraction s'occupe de prendre
+un contenu dans les objets.
+Dans notre cas, le segment veut extraire deux points de ses paramètres
+quelque soit l'objet qui contient le champ point.
+Dans certain cas, on veut extraire un pointeur sur l'objet paramètre,
+dans ce cas, il est nécessaire de fixer la classe de l'objet.
+Dans l'exemple, le segment récupère un pointeur sur un objet
+``point3'' et un ``point4'' (``o\_s20.c'')~:
+
+{\tt \lgrindfile{o_s20.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Disposition des champs dans la fenêtre}
+
+Vous pouvez choisir la disposition des champs dans la fenêtre
+par une méthode rappelant celle des {\em frames} HTML.
+La taille de la fenêtre est la plus petite contenant
+tous les champs. Le dernier champ de chaque boite
+est agrandi pour ne pas laisser de trous.
+
+L'option ``BoiteHomogene'' indique que tous les champs
+de la boite doivent se partager l'espace équitablement (``o\_s24.c'')~:
+
+{\tt \lgrindfile{o_s24.c.tex}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Références}
+
+Les sections qui suivent ne doivent être lu que
+lorsque ce qui précède a déjà été assimilé.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Les types logique}
+
+Les types logiques les plus utilisés sont définis
+dans ``TYPES/t\_base.h'' et ``TYPES/t\_geometrie.h''.
+Un type logique peut modifier n'importe quel attribut
+de champ d'un objet (même le type physique) mais évidemment c'est dangereux.
+
+Les types logique permette une définition d'appartenance
+en plus de l'inclusion (héritage) par deux méthodes~:
+\begin{itemize}
+\item Le prédicat : pour un champ donné on appelle cette fonction
+pour savoir si le champ vérifie le prédicat ou non. Cette fonction
+permet de réduire la taille de la classe.
+Par exemple ``L\_nombre\_positif'' est un ``L\_nombre'' qui n'accepte que des valeurs positives
+et ``L\_triplet'' est un ``L\_valeur'' stocké dans un type physique ``P\_triplet''.
+
+Attention~: les types logiques avec prédicats ne peuvent être
+que des feuilles de la hiérarchie des types logiques.
+
+\item Le sous classage : pour un champ donné on appelle cette fonction
+pour savoir si le champ peut être considéré d'un type logique donné.
+Cette fonction permet d'augmenter la taille de la classe.
+Cette fonction est rarement utile.
+\end{itemize}
+
+Si la valeur contenue dans un champ ne vérifie pas son type logique,
+alors l'objet et le champs apparaissent en rouge (invalide)
+et le rouge se propage dans tous les noeuds les utilisant.
+Par exemple, l'objet couleur devient invalide si l'une
+des 3 composantes devient négative car ``L\_nombre\_positif''
+n'est plus vérifié.
+
+La hiérarchie actuelle des types logiques est la suivante~:
+
+{
+\small
+\input ../../dump.tl
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Les types physique}
+
+Les types physiques de base sont préfixé par ``codec\_''
+et sont définis dans le fichier ``UTILITAIRES/codec.h'',
+et ceux qui sont déjà intégré dans NanoÉdit sont préfixé
+par ``P\_'' et sont définis dans les fichiers ``t\_''.
+
+Un des problèmes en C est l'existence de ``double'' et ``float''
+et que certaines personnes utilisent l'un ou l'autre.
+Pour ne pas alourdir les programmes, NanoÉdit définit
+``flottant'' et ``triplet'' cela allège l'écriture mais l'on
+ne sait pas si ``flottant'' est un ``float'' ou un ``double''.
+La table de conversion est dans ``UTILITAIRES/u\_geometrie.h''.
+
+Les ``codec'' définissent un type physique par une fonction C.
+Suivant le mode, la fonction C effectue différentes opérations.
+Les opérations de base sont la traduction en chaine de caractères
+dans les deux sens et la libération de l'espace mémoire utilisé
+par le type physique.
+
+Les types de base sont suffisemment explicites et
+les autres (énumération, pointeur, union, liste, graphe, ...) sont complexes
+et je n'ai pas le temps de le définir ici bien qu'en final
+leur utilisation soit triviale.
+Par exemple, 25 lignes pour définir la traduction dans les deux sens
+d'un octree ainsi que la libération mémoire.
+
+Pour les tableaux qui sont très souvent utilisés, voici quelques
+explications sur la manière de nommé et d'utiliser ces types.
+
+\subsubsection{Tableaux}
+
+Les noms de type tableaux sont construit logiquement et sont
+sans ambiguïté.
+Il sont donc facile à utiliser une fois la notation
+comprise.
+Quelques indices généraux~:
+\begin{itemize}
+\item Le type d'élément contenu dans le tableau est à la fin du nom.
+\item Dans tous les cas, les indices d'un tableau sont dans le
+  même ordre qu'en C.
+\item Les indices sont nommés : Profondeur, Hauteur, Largeur.
+Leurs abréviations sont donc P, H et L.
+\item Si le nom de l'indice est en minuscule cela veut
+  dire que la dimension du tableau associée à cet indice est constante.
+\item Si le nom de l'indice est en minuscule alors il est
+  suivi de la valeur numérique de la dimension du tableau,
+  par exemple ``codec\_l3\_int'' est un tableau à une dimension
+  de 3 ``int''.
+\end{itemize}
+
+\paragraph{Tableau à une dimension de taille variable}
+
+Voici l'exemple du tableau de ``double'', le codec associé
+au tableau à une dimension de taille variable est ``codec\_L''
+le ``L'' indiquant la largeur. Voici ce qu'il faut mettre
+dans le ``.h''~:
+
+\begin{verbatim}
+typedef struct
+{
+  int     lar ;                         /* Largeur du tableau */
+  double *table ;                       /* Pointeur sur le début du tableau */
+} t_L_double ;
+
+CODEC_PROTOTYPE(codec_L_double, t_L_double)
+\end{verbatim}
+
+Et dans le ``.c''~:
+
+\begin{verbatim}
+TYPE_PHYSIQUE(codec_L_double,           /* Nom du codec */
+              t_L_double,               /* Nom de la structure C à (dé)coder */
+              codec_L(                  /* C'est un tableau à 1 dimension */
+                      (void**)&a->table,/* L'adresse du pointeur de début */
+                      &a->lar,          /* L'adresse de la taille du tableau */
+                      codec_double      /* Le type des éléments du tableau */
+                     ) ;
+              )
+\end{verbatim}
+
+``codec\_L'' se charge de l'allocation et de la libération du tableau
+et de son contenu.
+Parfois on ne peut pas utiliser directement ``t\_L\_double''
+car les structures existantes ne contiennent pas
+la taille du tableau suivi du pointeur sur le début,
+dans ces cas là, il faut définir un codec spécialement
+pour votre type.
+
+On peut évidemment faire des tableaux de tableaux,
+par exemple un tableau de tableau d'entier s'appelera ``codec\_L\_L\_int''
+chacun des tableaux contenu peut avoir une taille différente
+(ce n'est pas un tableau à deux dimension).
+
+\paragraph{Tableau à une dimension de taille fixe}
+
+Dans le ``.h''~:
+
+\begin{verbatim}
+typedef struct
+{
+  int table[5] ;
+} t_l5_int ;
+
+CODEC_PROTOTYPE(codec_l5_int, t_l5_int)
+\end{verbatim}
+
+\begin{verbatim}
+TYPE_PHYSIQUE(codec_l5_int,
+              t_l5_int,
+              codec_l(                  /* C'est un tableau à 1 dimension */
+                      (void*)a->table,  /* L'adresse du début */
+                      5,                /* La taille du tableau */
+                      codec_int         /* Le type des éléments du tableau */
+                     ) ;
+              )
+\end{verbatim}
+
+Chaque tableau d'une taille particulière nécessite
+la création d'un type.
+
+\paragraph{Tableau à deux dimensions de taille variable}
+
+Ce tableau à deux dimensions est stocké en un seul bloc
+de mémoire comme en C.
+Dans le ``.h''~:
+
+\begin{verbatim}
+typedef struct
+{
+  int hau ;                 /* hauteur (nombre de lignes) */
+  int lar ;                 /* largeur (nombre de colonnes) */
+  t_l3_double *table ;      /* Pointeur sur le premier élément */      
+} t_HL_l3_double  ;
+
+CODEC_PROTOTYPE(codec_HL_l3_double, t_HL_l3_double)
+\end{verbatim}
+
+Vous avez remarqué que ``hau'' est déclaré avant ``lar'',
+ceci afin d'utiliser systématiquement le même ordre
+des indices que lors de l'utilisation d'un tableau C.
+
+\begin{verbatim}
+TYPE_PHYSIQUE(codec_HL_l3_double,
+              t_HL_l3_double ,
+              codec_HL(
+                       (void**)&a->table,
+                       &a->hau,
+                       &a->lar,
+                       codec_l3_double
+                      ) ;
+              )
+\end{verbatim}
+
+\paragraph{Tableau avec indirection à deux dimensions de taille variable}
+
+Dans ce cas, on a un tableau de pointeur sur les lignes
+du tableau. On représente le pointeur par un ``\_'' entre
+le ``H'' et le ``L''.
+Dans le ``.h''~:
+
+\begin{verbatim}
+typedef struct
+{
+  int hau ;                 /* hauteur (nombre de lignes) */
+  int lar ;                 /* largeur (nombre de colonnes) */
+  t_l3_double *table ;      /* Pointeur sur le premier élément */      
+} t_H_L_l3_double  ;
+
+CODEC_PROTOTYPE(codec_H_L_l3_double, t_H_L_l3_double)
+\end{verbatim}
+
+Le ``.c'' :
+
+\begin{verbatim}
+TYPE_PHYSIQUE(codec_H_L_l3_double,
+              t_H_L_l3_double ,
+              codec_H_L(
+                       (void***)&a->table,
+                       &a->hau,
+                       &a->lar,
+                       codec_l3_double
+                      ) ;
+              )
+\end{verbatim}
+
+\paragraph{Autres tableaux existants}
+
+\begin{itemize}
+\item ``codec\_hl'' : Tableau à deux dimensions de taille fixe.
+\item ``codec\_PHL'' : Tableau à trois dimensions de taille variable.
+\item ``codec\_h\_L'' : Tableau à deux dimensions avec un nombre
+  de lignes fixe.
+\item ``codec\_HH'' : Tableau à deux dimensions carré.
+\item ``codec\_L\_h : Comme ``h\_L'' mais la traduction textuelle
+  est transposée. C'est utile par exemple si vous avez le type C~:
+\begin{verbatim}
+struct table_point
+{
+  int nb ;
+  float *x, *y, *z ;
+} ;
+\end{verbatim}
+Si vous créez pour cette structure ``codec\_L\_h3'' cela vous permettra
+de communiquer les valeurs aux structures qui contienne
+un tableau de triplet. En effet, une simple transposition suffit.
+
+\item ``codec\_L\_hh'' : comme pour ``L\_h'' le tableau est transposé
+  mais en plus il contient deux lignes de types différents,
+  c'est pour cela que c'est ``hh'' et non ``h2''.
+  C'est utile pour le type C suivant~:
+\begin{verbatim}
+struct table_point
+{
+  int nb ;
+  t_l3_double *points ;
+  float *poids ;
+} ;
+\end{verbatim}
+  En utilisant ce codec, on peut communiquer sans probleme
+  avec des ``l4\_double'' car on peut écrire le poids derrière
+  les coordonnées du point.
+
+\item ``codec\_H\_L\_pp'' : comme le précédent mais appliqué
+  à deux tableaux de deux dimensions qui doivent être mis ensemble.
+  Par exemple une grille de points et une grille de poids.
+\end{itemize}
+
+\paragraph{Utilitaires sur les tableaux et grilles}
+
+Il existe des fonctions d'accès générique aux éléments
+des tableaux et grille~:
+\begin{verbatim}
+/* Déclaration itérateur de table */
+
+struct informations_table it ;
+
+/* Initialise l'itérateur avec le type de la table et sa valeur 
+ * it.dimension     : Dimension de l'espace (1,2,3)
+ * it.taille[0/1/2] : Taille des dimension (même ordre qu'en C)
+ */
+it = codec_informations_table(codec_L_float, void *table) ;
+
+/* Positionnement de l'élément courant dans la table ou la grille */
+codec_positionne_element_table(&it, j, /* i si grille */ ) ;
+
+/* Récupère la valeur de l'élément courant et passe au suivant
+ * si c'est le dernier, revient au premier */
+valeur = codec_recupere_element_courant(&it) ;
+
+/* Sauvegarde une valeur dans l'élément courant et passe au suivant */
+codec_sauve_element_courant(&it, "0") ;
+\end{verbatim}
+
+Ces fonctions ont permis d'écrire ``u\_table.c'' qui contient
+des fonctions ``changement'' génériques et
+des fonctions d'affichage GL ou POV des tables ou grilles
+d'élement quelconques.
+Le moyen le plus simple de profiter de tout cela est
+de nommer "t" le champs contenant la table ou la grille
+et de vous mettre en sous-classe de ``table\_non\_contrainte'', ``table\_contrainte'', ``grille\_non\_contrainte'', ``grille\_contrainte''.
+
+
+\paragraph{Fonctions} utilitaires de haut niveau}
+
+Vous pouvez directement utiliser les fonctions utilitaires,
+certaines n'ont pas besoin que la table/grille soit un champ ``NanoÉdit''~:
+\begin{itemize}
+\item {\tt changement\_table}, {\tt changement\_grille} pour
+  extraire la table/grille des fils ou la remettre dedans suivant
+  ce qui a changé.
+
+\item {\tt t\_grille\_stl}, pour faire une sortie STL de grille,
+Les options d'affichage peuvent être combinées avec un OU binaire~:
+  \begin{itemize}
+  \item T\_FACETTE : affichage facette classique.
+  \item T\_DEGENERE\_(HAUT/BAS/GAUCHE/DROITE) indique qu'un coté
+    de la grille est dégénéré (tous les points identiques).
+  \item T\_FACETTE\_(HAUT/BAS/GAUCHE/DROITE) indique qu'il faut générer
+    une facette pour ce coté de la grille
+  \item T\_RACCORDE\_(GD/HB) indique qu'il faut raccorder le coté gauche
+    au droit ou le haut et le bas. Les lignes/colonnes ne doivent
+    pas être identiques.
+  \end{itemize}
+
+\item {\tt t\_table\_pov\_general}, {\tt t\_table\_pov}, {\tt t\_grille\_pov\_general}, {\tt t\_grille\_pov} pour faire un affichage POV de tables ou des grilles. Aux options précédentes, il faut ajouter~:
+  \begin{itemize}
+  \item T\_PONCTUEL : affiche une petite sphère en chaque point.
+  \item T\_FILAIRE : affichage filaire simulé avec des cylindres.
+  \item T\_POLYGONE : affichage filaire table, en raccordant les 2 extrèmes.
+  \item T\_LISSAGE : utilise la normale fournie en paramètre
+    pour faire un lissage. La normale n'est pas calculée automatiquement.
+  \end{itemize}
+
+\item {\tt t\_table\_general}, {\tt t\_table}, {\tt t\_grille\_general}, {\tt t\_grille} pour faire un affichage GL de tables ou des grilles.
+  Aux options précédentes, il faut ajouter~:
+  \begin{itemize}
+    \item T\_TAG, T\_TAG\_DESTRUCTION, T\_TAG\_POIDS : affichage
+      des TAGS désirés.
+    \item T\_CULL\_FACE : n'affiche pas les facettes à l'envers.
+  \end{itemize}
+
+\item {\tt lit\_tag\_table}, {\tt ecrit\_tag\_table}, {\tt lit\_tag\_grille}, {\tt ecrit\_tag\_grille} pour permettre de modifier interactivement
+  les ``tag'' des tables ou des grilles.
+
+\item {\tt codec\_change\_taille\_table} permet l'allocation et
+  le changement de taille de tables, grille, ... de n'importe quoi.
+  Elle est complexe à utiliser car il faut d'abord calculer ses paramètres.
+  Version simplifiée et plus lente pour NanoÉdit~:
+  {\tt CHANGE\_TAILLE(objet, nom\_champ, les\_tailles)}
+\end{itemize}
+
+
+\subsubsection{Autres codec}
+
+Voici d'autre codec de base~:
+
+\begin{itemize}
+\item ``codec\_enum'' assure le passage d'un entier à une chaine
+  de caractères (par exemple 0:Cube 1:Sphère 2:Cone ...)
+\item ``codec\_union'' permet de choisir entre plusieur choix.
+  Par exemple, il est utilisable pour coder un arbre, le type
+  étant NOEUD ou FEUILLE et l'information dans les deux cas
+  n'étant pas la même.
+\item ``codec\_pointeur'' permet de coder un pointeur typé,
+  le pointeur pouvant être NULL.
+\item ``codec\_pointeur\_non\_null'' idem mais non NULL.
+\end{itemize}
+
+Des macros C permettent de générer automatiquement quelques codec,
+dans tous les cas, la donnée utilisateur est en fin de la structure
+de base.
+\begin{itemize}
+\item ``CODEC\_GRAPHE'' permet de définir le graphe orienté avec
+  les données que l'on veut sur le graphe, les noeuds et les arêtes.
+  Évidemment comme tous les autres codec il s'occupe de l'allocation
+  et de la libération.
+\item ``CODEC\_LISTE'' permet de définir une liste de n'importe quoi.
+\end{itemize}
+
+Exemples de types construit~:
+\begin{itemize}
+\item  ``codec\_arbre\_N\_int\_F\_int'' est un arbre binaire
+  ou les Noeuds et les Feuilles contiennent un entier.
+\item ``codec\_octree''
+\end{itemize}
+
+
+\subsection{Les types physique utilisés par NanoÉdit}
+
+\input ../../dump.tp
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Les types d'éditions}
+
+Ils permettent d'associer un Widget d'affichage/édition
+à une valeur que l'on souhaite intégrer dans la fenêtre d'édition.
+Ils sont peu nombreux et complexe à ajouter,
+je ne redige donc pas la documentation.
+Voici la liste actuelle~:
+
+\input ../../dump.te
+
+
+%\begin{itemize}
+%\item {\tt TE\_NOM("editepas")} nom de l'éditeur
+%\item {\tt TE\_LIT(Editepas\_lit)} retourne le contenu de l'éditeur sous
+%  la forme d'une chaîne de caractères.
+%\item {\tt TE\_ECRIT(Editepas\_ecrit)} stocke une chaîne de caractères
+%  dans l'éditeur.
+%\item {\tt TE\_CREER(Editepas\_creer)} création du Widget
+%\item {\tt TE\_INIT(Editepas\_init)} initialise le Widget
+%\item {\tt TE\_ENTREE(Editepas\_entree)} appelée si on clique sur le Widget
+%\item {\tt TE\_CLAVIER(Editepas\_clavier)} appelée si on tape un
+%  texte dans le Widget
+%\item {\tt TE\_START\_CLASSE(Editepas\_start)} appelée au démarrage de NanoÉdit
+%\item {\tt TE\_STOP\_CLASSE(Editepas\_stop)} appelée à l'arrêt de NanoÉdit
+%\end{itemize}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Tout ce que l'on peut mettre dans un champ}
+
+\begin{itemize}
+\item ``{\tt NOM(...)}'' : Le nom du champ (par défaut le nom dans la structure C, on ne le change généralement pas),
+  celui-ci est utilisé pour nommer~:
+  \begin{itemize}
+  \item les Widgets (utile pour les ressources X11).
+  \item les champs dans les fichiers de sauvegarde.
+  \item ...
+  \end{itemize}
+\item ``{\tt L\_...}'' La classe (ou type) logique qui indique la sémantique du champ. Parfois, le type logique est suffisant pour associer un
+  type de stockage au champ.
+\item ``{\tt P\_...}'' Le type de stockage.
+  Ce type doit correspondre au type utilisé dans la structure du
+  langage C. Ce type détermine comment le champ est traduit
+  de chaîne de caractères en valeur ou inversement.
+\item ``{\tt E\_...}'' L'éditeur interactif utilisé pour l'édition du champ.
+\item ``{\tt DEFAUT("...")}'' indique la valeur par défaut du champ.
+\item ``{\tt BULLE\_D\_AIDE("...")}'' associée au champ.
+\item ``{\tt LABEL("...")}'' label indiqué à gauche du champ,
+  normalement le nom du champ.
+\item ``{\tt TE\_HAUTEUR(...)}'' hauteur du Widget en pixel.
+\item ``{\tt TE\_LARGEUR(...)}'' largeur du Widget en pixel.
+\item ``{\tt CLASSE\_PARAMETRE("cls")}'' Extraction par type d'objet
+\item ``{\tt DEBUT\_BOITE(HORIZONTAL|VERTICALE [BoiteHomogene]), FIN\_BOITE}''
+  disposition des Widgets dans la fenêtre.
+\item Des attributs booleens pouvant être préfixé par {\tt Non}.
+  \begin{itemize}
+  \item ``{\tt Edite}'' la valeur du champ est éditable.
+  \item ``{\tt Sauve}''le champ doit être sauvegardé dans les fichiers.
+  \item ``{\tt Affiche}'' le champ doit être affiché.
+  \item ``{\tt Extrait}'' la valeur du champ est extraite d'un paramètre
+    de l'objet, cela sera détaillé plus tard.
+  \item ``{\tt Obligatoire}'' le champs est obligatoirement Extrait.
+  \item ``{\tt Label}'' un label est indiqué à gauche du champ.
+  \item ``{\tt InitChaine}''
+    % lors de la création de l'objet le premier
+    % champ contenant cette option est initialisé avec la chaîne de
+    % caractère de la fenêtre message.
+    Le premier champ avec cette option est éditable dans le graphe
+    du modèle.
+  \item ``{\tt Init3d}'' lors de la création de l'objet le premier
+    champ contenant cette option est initialisé à la position du curseur.
+    Sinon, cette option permet de décider des champs dont
+    la valeur sera modifiée interactivement en 3D en utilisant
+    les touches '1', '2', ...
+  \item ``{\tt Cree}'' un widget doit être créé mais non-visible
+  \item ``{\tt Initialiser}'' ce champs doit être initialisé à la
+    création de l'objet (option par défaut).
+  \end{itemize}
+\item ``{\tt TYPE\_DANS\_FILS(\_...)}'' pour indiqué dans le cas
+  d'une extraction que l'on veut extraire une donnée différente
+  de son propre type logique (Utilisé pour faire des objets traducteurs
+  de type comme {\tt point\_triplet}.
+\end{itemize}
+
+Remarques :
+\begin{itemize}
+\item Les instructions décrivant un champ peuvent être mise en commun
+  pour un ensemble de champs en les indiquant en dehors d'un champ.
+  Elles s'applique alors sur les champs suivants.
+\item L'ordre des Widgets dans la fenêtre est l'ordre des champs.
+\end{itemize}
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Pour allez plus loin}
+
+Quelques possibilités intéressantes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Destruction d'un objet}
+
+Il est nécessaire de créer une procédure de destruction d'objet
+si des ressources (mémoire, fichier, ...) ont été allouées par les fonctions
+d'affichage ou bien de changement.
+{\em Il n'est pas nécessaire de s'occuper des champs, NanoÉdit
+  les connait, il peut donc les détruire tous seul}
+
+L'exemple suivant lance une commande UNIX puis,
+à chaque affichage récupère ce que la commande UNIX lui donne.
+Evidemment, lors de la destruction de l'objet, il faut
+arrêter le processus (``o\_destruction.c'')~:
+
+{\tt \lgrindfile{o_destruction.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Méthodes sur une zone graphique}
+
+La zone GL permet d'associer des méthodes aux événements.
+Le prototype C de la méthode est~:
+\begin{verbatim}
+static valeur_retournée methode_widget(const Interface_widget *iw)
+\end{verbatim}
+
+Le contenu de la structure {\tt Interface\_widget} est~:
+\begin{verbatim}
+typedef struct
+{
+  void *objet ;                 /* L'objet recevant l'événement */
+  const Champ *ch ;             /* Le champ (Widget) recevant l'événement */
+  Widget w ;                    /* Le Widget recevant l'événement */
+  int b ;                       /* 0: Bouton gauche, 1: milieu, 2: droite */
+  int  x, y ;                   /* Position du curseur */
+  const char *texte ;           /* Texte (touche clavier, ...) */
+} Interface_widget ;
+\end{verbatim}
+
+Les méthodes sont~:\\
+
+\begin{tabular}[h]{|l|l|l|l|p{6.5cm}|}
+\hline
+Événement &Option champ & Retour     &Champ  &Commentaire \\
+\hline
+\hline
+Clavier   &\tt TE\_CLAVIER  &\tt void       &texte  &La description de la touche tapée \\
+\hline
+Affichage &\tt TE\_ECRIT    &\tt void       &       &On doit faire l'affichage \\
+\hline
+Aide      &\tt TE\_AIDE     &\tt const char*&x, y   &On retourne le message d'aide \\
+\hline
+Bouton    &\tt TE\_ENTREE   &\tt Booleen    &b, x, y&On retourne ``Vrai'' pour appeler la méthode ``mouvement'' continuellement\\
+\hline
+Mouvement &\tt TE\_MOUVEMENT&\tt void       &x, y   &Position courante du curseur \\
+\hline
+\end{tabular}\\
+
+Voir ``o\_s18.c'' pour l'utilisation.
+
+% {\tt \lgrindfile{o_destruction.c.tex}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Mise à jour d'un objet par un événement extérieur à l'éditeur}
+
+Par exemple l'affichage de l'heure toutes les secondes.
+Pour activer la mise à jour, il faut rendre actif l'objet ``date''.
+``o\_date.c''~:
+
+{\tt \lgrindfile{o_date.c.tex}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Héritage}
+
+Comme vu précédemment, la classe est définie par langage,
+indiquer une sur-classe revient à interpréter la définition
+de la sur-classe avant la sienne.
+
+La surclasse est indiquée dans la définition
+de la classe par son nom~: {\tt SUR\_CLASSE("nom surclasse")}.
+On hérite de {\em toutes} les informations
+de la surclasse y compris les champs et l'état courant.
+
+La plupart du temps on ne veut pas hériter des champs,
+pour cela on indique dans la définition de la classe
+{\tt HERITE\_PAS\_DES\_CHAMPS}.
+Si néanmoins l'on veut hériter des champs, il faut
+que la structure C utilisée contienne comme premier champ
+la structure C de la sur-classe.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Débuggage}
+
+  Si vous voulez tracer le fonctionnement de l'un
+  de vos noeud, il vous suffit de faire~:
+\begin{verbatim}
+if ( TRACE(objet) )
+   {
+   eprintf("Message de trace simple\n") ;
+   }
+if ( TRACE2(objet) )
+   {
+   eprintf("Message de trace détaillé\n") ;
+   }
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Paquet et Décalage}
+
+Dans la définition de la classe vous pouvez indiquer
+{\tt PAQUET(taille)} et {\tt DECALAGE(nombre)}.
+La valeur par défaut des deux champs est {\tt NB\_NON\_DEFINI}.
+La taille de paquet peut prendre la valeur {\tt NB\_ACTIFS}
+qui indique que le noeud prend tous les actifs comme paramètre.
+
+Par défaut la taille du paquet est déduite des arguments
+d'ou l'on extrait des valeurs et le décalage a la même
+valeur que le paquet.
+
+Remarque~: le segment de droite permet de faire une ligne brisée,
+le décalage n'est donc pas égale à la taille du paquet.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Calcul en arrière plan}
+
+Pour les gens qui en ont besoin, on peut faire des calculs en arrière
+plan tout en continuant à travailler et même à modifier les données
+sur lesquelles sont fait les calculs.
+L'exemple est celui d'un système de particule
+ou l'on fait l'affichage graphique à chaque étape du calcul.
+
+Pour ceux qui veulent entrer leur propre graphe, la syntaxe est la suivante~:
+une liste de noeud, un noeud étant une liste d'indice de noeud connecté
+suivie des coordonnées du point (``OBJETS/o\_particule.c'')~:
+
+{\tt \lgrindfile{o_particule.c.tex}}
+
+Un autre exemple de calcul en arrière plan peut être trouvé
+dans l'objet ``nuage'', en effet le chargement du fichier
+ce fait 10000 lignes par 10000 lignes avec un réaffichage
+toute les secondes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Sortie STL}
+
+Fonction STL de base~:
+
+\begin{verbatim}
+void t_triangle_stl(FILE *f, Triplet *, Triplet *, Triplet *)
+
+void t_debut_polygone_stl(FILE *f) ;
+void t_point_stl(const Triplet *pt) ;
+void t_fin_polygone_stl() ;
+\end{verbatim}
+
+Pour ajouter une fonction de conversion à votre objet c'est
+exactement comme pour POV~:
+
+\begin{verbatim}
+static void ecrit_stl_sphere(void *o, const Champ *c, const char *v)
+{
+  /* v contient le FILE suivit de la qualité d'affichage */
+}
+...
+CHAMP_VIRTUEL(L_affiche_stl(ecrit_stl_sphere))
+\end{verbatim}
+
+Pour faire la traduction en STL, il faut mettre un objet STL
+dans le modèle puis l'éditer pour modifier les paramètres
+et lancer la conversion.
+
+Vous pouvez utiliser les grilles pour sortir facilement
+des objets STL (ou les afficher en GL). Regardez ``o\_solide.c''
+pour plus d'informations.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Configuration de l'affichage}
+
+On peut utiliser NanoÉdit avec Motif ou GTK, le changement
+nécessite une recompilation totale.
+Le choix est fait dans le script ``configuration''
+
+\subsubsection{Avec Motif}
+
+Il est possible de modifier l'apparence de la fenêtre
+d'édition de l'objet en utilisant des ressources X11
+(je vous renvoie alors sur la documentation X11 et
+les commandes {\tt editres} et {\tt xrdb}).
+Par exemple en créant ou éditant le fichier {\tt NanoEdit.ad}
+dans le répertoire contenant le source de votre objet~:
+\begin{verbatim}
+NanoEdit.edite.segment1*label_classe.fontList: -*-*-medium-r-*-*-*-180-*-*-m-*-iso8859-1
+NanoEdit.edite.segment1*classe.background: Red
+NanoEdit.edite.segment1*actif.borderWidth: 10
+\end{verbatim}
+
+\subsubsection{Avec GTK}
+
+Vous éditez un fichier nommé {\tt gtkrc} dans le repertoire
+contenant le source de votre objet~:
+\begin{verbatim}
+style "grosse-fonte" {
+font = "-*-*-bold-r-*-*-*-180-*-*-m-*-iso8859-1"
+}
+style "fond-rouge" {
+bg[NORMAL] = {1.0,0,0}
+}
+
+widget "segment1*label_classe" style "grosse-fonte"
+widget "segment1*trace"        style "fond-rouge"
+\end{verbatim}
+
+Si les ressources de base de GTK ne vous plaisent pas,
+vous pouvez les changer en faisant des substitutions
+avec {\tt sed} par exemple. Pour grossir les fontes,
+vous mettez dans le Makefile~:
+
+\begin{verbatim}
+CHANGE_RESSOURCE_GTK="sed -e 's/-100-/-120-/' -e 's/-80-/-120-/'"
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Makefile}
+
+Quelques buts utiles~:
+\begin{itemize}
+\item ``depends'' recalcul les dépendances (si vous avez des '\#include')
+\item ``tags'' calcul le fichier de TAGS, celui permet lorsque l'on
+  est sous EMACS d'aller instantanément sur la définition d'une fonction.
+  On positionne le curseur sur l'appel de la fonction et on tape 'M-.'
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Edition des liens dynamique}
+
+Elle n'est faite que pour les fichier objets (commençant par ``o\_')
+et malheureusement, je n'arrive pas à faire en sorte que sur
+toute les machines on puisse appeler une fonction d'un fichier
+objet vers un autre fichier objet.
+C'est pour cela que je conseille de déclarer TOUTES les fonctions
+des fichiers ``o\_'' en ``static'' pour ne pas l'oublier.
+
+
+\end{document}

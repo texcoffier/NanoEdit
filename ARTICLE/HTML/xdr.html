@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 4.0//EN">
+<script src="nanoedit.js"></script>
+<script>haut('Définition de type de stockage : XDR');</script>
+    <p>
+      On réutilise l'idée de XDR pour définir de nouveaux
+      type de stockage. Par exemple pour un point&nbsp;:
+
+    <pre>
+codec_point(...)     
+{   		     
+  codec_float(a->x) ;
+  codec_float(a->y) ;
+  codec_float(a->z) ;
+  codec_linefeed() ; 
+}                    
+</pre>
+<p>
+    Cette fonction est utilisée pour&nbsp;:
+    <ul>
+      <li><p>Traduire chaine de caractère en point</p>
+      <li><p>Traduire point en chaine de caractère</p>
+      <li><p>Libérer la mémoire</p>
+      <li><p>...</p>
+    </ul>
+      
+
+<script>bas();</script>
+

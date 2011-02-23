@@ -1,0 +1,44 @@
+#!/bin/sh
+
+echo "Test de paquet et décalage"
+
+X=100
+
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Clavier : 1s"        /appel/modele   0 oper_liste te_clavier "1s"
+t "Clavier : 1e"        /appel/modele   0 oper_liste te_clavier "1e"
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création segment"    /appel/modele   0 creation   te_entree  segment_pt_pt
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création vecteur"    /appel/modele   0 creation   te_entree  vecteur3
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Clavier : 0v"        /appel/modele   0 oper_liste te_clavier "0v"
+t "Clavier : 03"        /appel/modele   0 oper_liste te_clavier "03"
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création repere"     /appel/modele   0 creation   te_entree  repere_pts
+
+t "Paquet = 2"          /appel/modele   0 paquet     c_sauve    2
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création segment"    /appel/modele   0 creation   te_entree  segment_pt_pt
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création vecteur"    /appel/modele   0 creation   te_entree  vecteur3
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Clavier : 0v"        /appel/modele   0 oper_liste te_clavier "0v"
+t "Clavier : 03"        /appel/modele   0 oper_liste te_clavier "03"
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création repere"     /appel/modele   0 creation   te_entree  repere_pts
+
+t "Decalage = 3"        /appel/modele   0 decalage   c_sauve    3
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création segment"    /appel/modele   0 creation   te_entree  segment_pt_pt
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création vecteur"    /appel/modele   0 creation   te_entree  vecteur3
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Clavier : 0v"        /appel/modele   0 oper_liste te_clavier "0v"
+t "Clavier : 03"        /appel/modele   0 oper_liste te_clavier "03"
+t "Charge 9points"      /appel/modele   0 charge     te_entree  9points
+t "Création repere"     /appel/modele   0 creation   te_entree  repere_pts
+
+t "Paquet = -2"         /appel/modele   0 paquet     c_sauve    -2
+t "Decalage = -2"       /appel/modele   0 decalage   c_sauve    -2
+

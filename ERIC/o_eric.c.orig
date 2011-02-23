@@ -1,0 +1,939 @@
+#include "o_objet.h"
+#include "t_eric.h"
+#include "s_string.h"
+#include <GL/gl.h>
+#include "determ.h"
+#include "courbe.h"
+
+/*
+ * VECTEURS HOMOGENES
+ */
+struct pt {
+  VECH coord ;
+} ;
+CLASSE(vech, struct pt,
+       CHAMP(coord, L_coord Edite Sauve Extrait DEFAUT("0 0 0") Init3d)
+       EVENEMENT("CG")
+       MENU("Figures/0d/Coordonnées génériques")
+       )
+
+/*
+ * MATRICES 
+ */
+struct math {
+  MATH m ;
+} ;
+static const char* informations_math(struct math *o)
+{
+  static char tmp[40] ;
+  static char* nom_espace[] = { "R", "BA", "P", "BP" } ;
+
+  sprintf(tmp, "%s%d ---> %s%d",
+	  nom_espace[o->m.n.type_espace], o->m.n.dim,
+	  nom_espace[o->m.m.type_espace], o->m.m.dim) ;
+	  
+  return( tmp ) ;
+}
+CLASSE(math, struct math,
+       BULLE_D_AIDE("La coordonnée homogène (si elle existe)\n"
+		    "est en première ligne.\n"
+		    "\n"
+		    "CA : Cartésien Affine\n"
+		    "CP : Cartésien Projectif\n"
+		    "BA : Barycentrique Affine\n"
+		    "BP : Barycentrique Projectif\n"
+		    )
+       CHAMP(m, L_math Edite Sauve Extrait
+	     DEFAUT("[(1 0 0 0)\n(0 1 0 0)\n(0 0 1 0)\n(0 0 0 1)]\nCA\nCA"))
+       EVENEMENT("MHN")
+       MENU("Attributs/Géométrique ND/Matrice Homogène")
+       INFORMATIONS(informations_math)
+       )
+CLASSE(math2_identite, struct math,
+       CHAMP(m, L_math Affiche
+	     DEFAUT("[(1 0 0)\n(0 1 0)\n(0 0 1)]\nCA\nCA"))
+       MENU("Attributs/Géométrique 2D/MATH2 Identité")
+       EVENEMENT("M2ID")
+       )
+CLASSE(math3_identite, struct math,
+       CHAMP(m, L_math Affiche
+	     DEFAUT("[(1 0 0 0)\n(0 1 0 0)\n(0 0 1 0)\n(0 0 0 1)]\nCA\nCA"))
+       MENU("Attributs/Géométrique 3D/MATH3 Identité")
+       EVENEMENT("M3ID")
+       )       
+CLASSE(math3_projection_xy, struct math,
+       CHAMP(m, L_math Affiche
+	     DEFAUT("[(1 0 0 0)\n(0 0 1 0)\n(0 0 0 1)]\nCA\nCA"))
+       MENU("Attributs/Géométrique Projection/MATH3 XYZ sur XY")
+       EVENEMENT("MP32")
+       )       
+
+/*
+ * TRANSLATIONS DANS UNE DIRECTION
+ */
+struct math_tra {
+  MATH m ;
+  Flottant v ;
+} ;
+static void changement_math2_tx(struct math_tra *o)
+{
+  destru_math(o->m) ;
+  o->m = tx2(o->v) ;
+}
+CLASSE(math2_tx, struct math_tra,
+       CHAMP(v, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_tx)
+       MENU("Attributs/Géométrique 2D/MATH2 translation suivant X")
+       EVENEMENT("M2TX")
+       )
+static void changement_math2_ty(struct math_tra *o)
+{
+  destru_math(o->m) ;
+  o->m = ty2(o->v) ;
+}
+CLASSE(math2_ty, struct math_tra,
+       CHAMP(v, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_ty)
+       MENU("Attributs/Géométrique 2D/MATH2 translation suivant Y")
+       EVENEMENT("M2TY")
+       )
+static void changement_math3_tx(struct math_tra *o)
+{
+  destru_math(o->m) ;
+  o->m = tx(o->v) ;
+}
+CLASSE(math3_tx, struct math_tra,
+       CHAMP(v, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_tx)
+       MENU("Attributs/Géométrique 3D/MATH3 translation suivant X")
+       EVENEMENT("M3TX")
+       )
+static void changement_math3_ty(struct math_tra *o)
+{
+  destru_math(o->m) ;
+  o->m = ty(o->v) ;
+}
+CLASSE(math3_ty, struct math_tra,
+       CHAMP(v, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_ty)
+       MENU("Attributs/Géométrique 3D/MATH3 translation suivant Y")
+       EVENEMENT("M3TY")
+       )
+static void changement_math3_tz(struct math_tra *o)
+{
+  destru_math(o->m) ;
+  o->m = tz(o->v) ;
+}
+CLASSE(math3_tz, struct math_tra,
+       CHAMP(v, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_tz)
+       MENU("Attributs/Géométrique 3D/MATH3 translation suivant Z")
+       EVENEMENT("M3TZ")
+       )
+/*
+ * TRANSLATIONS D'UN VECTEUR
+ */
+struct math_tr {
+  MATH m ;
+  Triplet v ;
+} ;
+static void changement_math2_tr(struct math_tr *o)
+{
+  destru_math(o->m) ;
+  o->m = tr2(o->v.x, o->v.y) ;
+}
+CLASSE(math2_tr, struct math_tr,
+       CHAMP(v, L_vecteur P_triplet Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_tr)
+       MENU("Attributs/Géométrique 2D/MATH2 translation")
+       EVENEMENT("M2TR")
+       )
+static void changement_math3_tr(struct math_tr *o)
+{
+  destru_math(o->m) ;
+  o->m = tr3(o->v.x, o->v.y, o->v.z) ;
+}
+CLASSE(math3_tr, struct math_tr,
+       CHAMP(v, L_vecteur P_triplet Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_tr)
+       MENU("Attributs/Géométrique 3D/MATH3 translation")
+       EVENEMENT("M3TR")
+       )
+/*
+ * ROTATIONS
+ */
+struct math_ro {
+  MATH m ;
+  Flottant theta ;
+} ;
+static void changement_math2_ro(struct math_ro *o)
+{
+  destru_math(o->m) ;
+  o->m = rot2(o->theta) ;
+}
+CLASSE(math2_ro, struct math_ro,
+       CHAMP(theta, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_ro)
+       MENU("Attributs/Géométrique 2D/MATH2 rotation")
+       EVENEMENT("M2RO")
+       )
+static void changement_math3_rx(struct math_ro *o)
+{
+  destru_math(o->m) ;
+  o->m = rx(o->theta) ;
+}
+CLASSE(math3_rx, struct math_ro,
+       CHAMP(theta, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_rx)
+       MENU("Attributs/Géométrique 3D/MATH3 rotation axe X")
+       EVENEMENT("M3RX")
+       )
+static void changement_math3_ry(struct math_ro *o)
+{
+  destru_math(o->m) ;
+  o->m = ry(o->theta) ;
+}
+CLASSE(math3_ry, struct math_ro,
+       CHAMP(theta, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_ry)
+       MENU("Attributs/Géométrique 3D/MATH3 rotation axe Y")
+       EVENEMENT("M3RY")
+       )
+static void changement_math3_rz(struct math_ro *o)
+{
+  destru_math(o->m) ;
+  o->m = rz(o->theta) ;
+}
+CLASSE(math3_rz, struct math_ro,
+       CHAMP(theta, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_rz)
+       MENU("Attributs/Géométrique 3D/MATH3 rotation axe Z")
+       EVENEMENT("M3RZ")
+       )
+/*
+ * HOMOTHETIE
+ */
+struct math_ho {
+  MATH m ;
+  Flottant coef ;
+} ;
+static void changement_math2_ho(struct math_ho *o)
+{
+  destru_math(o->m) ;
+  o->m = ho2(o->coef) ;
+}
+CLASSE(math2_ho, struct math_ho,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_ho)
+       MENU("Attributs/Géométrique 2D/MATH2 homothétie")
+       EVENEMENT("M2HOM")
+       )
+static void changement_math3_ho(struct math_ho *o)
+{
+  destru_math(o->m) ;
+  o->m = ho3(o->coef) ;
+}
+CLASSE(math3_ho, struct math_ho,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_ho)
+       MENU("Attributs/Géométrique 3D/MATH3 homothétie")
+       EVENEMENT("M3HOM")
+       )
+/*
+ * DILATATION SUIVANT UN AXE
+ */
+struct math_di {
+  MATH m ;
+  Flottant coef ;
+} ;
+static void changement_math2_dx(struct math_di *o)
+{
+  destru_math(o->m) ;
+  o->m = dx2(o->coef) ;
+}
+CLASSE(math2_dx, struct math_di,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_dx)
+       MENU("Attributs/Géométrique 2D/MATH2 dilatation axe X")
+       EVENEMENT("M2DX")
+       )
+static void changement_math2_dy(struct math_di *o)
+{
+  destru_math(o->m) ;
+  o->m = dy2(o->coef) ;
+}
+CLASSE(math2_dy, struct math_di,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_dy)
+       MENU("Attributs/Géométrique 2D/MATH2 dilatation axe Y")
+       EVENEMENT("M2DY")
+       )
+/*
+static void changement_math3_dx(struct math_di *o)
+{
+  destru_math(o->m) ;
+  o->m = dx(o->coef) ;
+}
+ CLASSE(math3_dx, struct math_di,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_dx)
+       MENU("Attributs/Géométrique 3D/MATH3 dilatation axe X")
+       EVENEMENT("M3DX")
+       )
+static void changement_math3_dy(struct math_di *o)
+{
+  destru_math(o->m) ;
+  o->m = dy(o->coef) ;
+}
+ CLASSE(math3_dy, struct math_di,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_dy)
+       MENU("Attributs/Géométrique 3D/MATH3 dilatation axe Y")
+       EVENEMENT("M3DY")
+       )
+static void changement_math3_dz(struct math_di *o)
+{
+  destru_math(o->m) ;
+  o->m = dz(o->coef) ;
+}
+ CLASSE(math3_dz, struct math_di,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_dz)
+       MENU("Attributs/Géométrique 3D/MATH3 dilatation axe Z")
+       EVENEMENT("M3DZ")
+       )
+*/
+/*
+ * DILATATION D'UN VECTEUR
+ */
+struct math_dil {
+  MATH m ;
+  Triplet v ;
+} ;
+static void changement_math2_dil(struct math_dil *o)
+{
+  destru_math(o->m) ;
+  o->m = dil2(o->v.x, o->v.y) ;
+}
+CLASSE(math2_dil, struct math_dil,
+       CHAMP(v, L_vecteur P_triplet Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_dil)
+       MENU("Attributs/Géométrique 2D/MATH2 dilatation")
+       EVENEMENT("M2DIL")
+       )
+/*
+static void changement_math3_dil(struct math_dil *o)
+{
+  destru_math(o->m) ;
+  o->m = dil3(o->v.x, o->v.y, o->v.z) ;
+}
+ CLASSE(math3_dil, struct math_dil,
+       CHAMP(v, L_vecteur P_triplet Extrait Edite Sauve)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math3_dil)
+       MENU("Attributs/Géométrique 3D/MATH3 dilatation")
+       EVENEMENT("M3DI")
+       )
+*/
+/*
+ * CISAILLEMENT
+ */
+struct math_ci {
+  MATH m ;
+  Flottant coef ;
+} ;
+static void changement_math2_cxy(struct math_ci *o)
+{
+  destru_math(o->m) ;
+  o->m = cxy2(o->coef) ;
+}
+CLASSE(math2_cxy, struct math_ci,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_cxy)
+       MENU("Attributs/Géométrique 2D/MATH2 cisaillement XY")
+       EVENEMENT("M2CXY")
+       )
+static void changement_math2_cyx(struct math_ci *o)
+{
+  destru_math(o->m) ;
+  o->m = cyx2(o->coef) ;
+}
+CLASSE(math2_cyx, struct math_ci,
+       CHAMP(coef, L_nombre P_flottant Extrait Edite Sauve Init3d)
+       CHAMP(m, L_math Affiche)
+       CHANGEMENT(changement_math2_cyx)
+       MENU("Attributs/Géométrique 2D/MATH2 cisaillement YX")
+       EVENEMENT("M2CYX")
+       )
+/*
+ * INVERSION
+ */
+struct math_inv {
+  MATH in,out ;
+} ;
+static void changement_math_inverse(struct math_inv *o)
+{
+  destru_math(o->out) ;
+  o->out = math_inverse(o->in) ;
+}
+CLASSE(math_inverse, struct math_inv,
+       CHAMP(out, L_math Affiche)
+       CHAMP(in, L_math Extrait Edite Sauve)
+       CHANGEMENT(changement_math_inverse)
+       MENU("Attributs/Géométrique ND/MATH inversion")
+       EVENEMENT("MHINV")
+       )
+/*
+ * OPERATION BINAIRE SUR MATRICE
+ */
+struct math_binaire {
+  MATH gauche, droite, resultat ;
+} ;
+static void changement_math_mul(struct math_binaire *o)
+{
+  destru_math(o->resultat) ;
+  o->resultat = math_mul(o->gauche, o->droite) ;
+}
+CLASSE(math_multiplication, struct math_binaire,
+       CHAMP(resultat, L_math Affiche)
+       CHAMP(gauche, L_math Extrait Edite Sauve)
+       CHAMP(droite, L_math Extrait Edite Sauve)
+       CHANGEMENT(changement_math_mul)
+       MENU("Attributs/Géométrique ND/MATH multiplication")
+       EVENEMENT("MHM")
+       )
+static void changement_math_conjugaison(struct math_binaire *o)
+{
+  destru_math(o->resultat) ;
+  o->resultat = math_conj(o->gauche, o->droite) ;
+}
+CLASSE(math_conjugaison, struct math_binaire,
+       CHAMP(resultat, L_math Affiche)
+       CHAMP(gauche, L_math Extrait Edite Sauve)
+       CHAMP(droite, L_math Extrait Edite Sauve)
+       CHANGEMENT(changement_math_conjugaison)
+       MENU("Attributs/Géométrique ND/MATH conjugaison")
+       EVENEMENT("MHC")
+       )
+/*
+ *
+ */
+struct math_sg2 {
+  MATH m ;
+  Menu semi_groupe ;
+  VECH p, q ;
+} ;
+static void changement_math_sg2(struct math_sg2 *o)
+{
+  destru_math(o->m) ;
+  o->m = math_sem_pt2(o->semi_groupe.index, o->p, o->q) ;
+}
+CLASSE(math2_semig, struct math_sg2,
+       CHAMP(m, L_math Affiche)
+       CHAMP(p, L_coord_point P_coord Extrait Edite Sauve)
+       CHAMP(q, L_coord_point P_coord Extrait Edite Sauve)
+       CHAMP(semi_groupe, L_semig P_option_menu E_option_menu
+	     Extrait Edite Sauve
+	     TE_TEXTE(
+		      "similitude\n"
+		      "hyperbolique\n"
+		      "dilatation\n"
+		      "cisaillement\n"
+		      "affine\n"
+		      "projectif\n")
+	     DEFAUT("affine")
+	     )
+       CHANGEMENT(changement_math_sg2)
+       MENU("Attributs/Géométrique 2D/MATH2 semi-groupe")
+       EVENEMENT("M2SG")
+       )
+/*
+ *
+ */
+struct math_sg3 {
+  MATH m ;
+  Menu semi_groupe ;
+  VECH p, q, r ;
+} ;
+static void changement_math_sg3(struct math_sg3 *o)
+{
+  destru_math(o->m) ;
+  o->m = math_sem_pt3(o->semi_groupe.index, o->p, o->q, o->r) ;
+}
+CLASSE(math3_semig, struct math_sg3,
+       CHAMP(m, L_math Affiche)
+       CHAMP(p, L_coord_point P_coord Extrait Edite Sauve)
+       CHAMP(q, L_coord_point P_coord Extrait Edite Sauve)
+       CHAMP(r, L_coord_point P_coord Extrait Edite Sauve)
+       CHAMP(semi_groupe, L_semig P_option_menu E_option_menu
+	     Extrait Edite Sauve
+	     TE_TEXTE(
+		      "similitude\n"
+		      "hyperbolique\n"
+		      "dilatation\n"
+		      "cisaillement\n"
+		      "affine\n"
+		      "projectif\n")
+	     DEFAUT("affine")
+	     )
+       CHANGEMENT(changement_math_sg3)
+       MENU("Attributs/Géométrique 3D/MATH semi-groupe")
+       EVENEMENT("M3SG")
+       )
+
+/*
+ * Plongements
+ */
+struct math_cst {
+  MATH mr ;
+} ;
+static void changement_plong_xy(struct math_cst *o)
+{
+  destru_math(o->mr) ;
+  o->mr = plong_xy();
+}
+CLASSE(op_plong_xy, struct math_cst,
+       CHAMP(mr, L_math Affiche)
+       CHANGEMENT(changement_plong_xy)
+       MENU("Attributs/Géométrique 3D/Plongements/Plongement dans Oxy")
+       EVENEMENT("M3PLONG")
+      )
+
+/*--------------------------------------
+ * IFS
+ */
+struct ifs
+{
+  IFS lifs ;
+} ;
+
+static void changement_ifs(struct ifs *o)
+{
+  int i ;
+  static Chaine s ;
+  const Champ *ch ;
+
+  if ( !FILS_CHANGE(o) )
+    return ;
+
+  /*
+   * Creation de la nouvelle chaine de caractere.
+   */
+  i = 0 ;
+  s_efface(&s) ;
+  s_putchar(&s, '(') ;
+  POUR_LES_FILS
+    (o, f,
+     {
+       if (c_trouve_type((const void**)&f, &ch,  &infos_L_math))
+	 {
+	   s_strcat_char(&s, c_recupere_ici_sans_copie(f,ch)) ;
+	   s_putchar(&s, '\n') ;
+	 }
+     }) ;
+  s_putchar(&s, ')') ;
+  eprintf("%s\n", s_char(&s)) ;
+  codec_sauve_texte(codec_ifs, &o->lifs, s_char(&s)) ;
+}
+
+CLASSE(ifs, struct ifs,
+       CHAMP(lifs, L_ifs TYPE_DANS_FILS(L_math) Affiche Obligatoire)
+       CHANGEMENT(changement_ifs)
+       EVENEMENT("MHIFS")
+       MENU("Figures/?d/MATH IFS")
+       PAQUET(NB_ACTIFS)
+)
+
+/*
+ * Controle
+ */
+struct controle
+{
+  L_VECH lcontrole ;
+} ;
+
+static const char* informations_controle(struct controle *o)
+{
+  static char tmp[20] ;
+
+  sprintf(tmp, "%d points", o->lcontrole.nb );
+
+  return( tmp ) ;
+}
+
+static void changement_controle(struct controle *o)
+{
+  int i ;
+  static Chaine s ;
+  const Champ *ch ;
+
+  if ( !FILS_CHANGE(o) )
+    return ;
+
+  /*
+   * Creation de la nouvelle chaine de caractere.
+   */
+  i = 0 ;
+  s_efface(&s) ;
+  s_putchar(&s, '(') ;
+  POUR_LES_FILS
+    (o, f,
+     {
+       if (c_trouve_type((const void**)&f, &ch,  &infos_L_coord))
+	 {
+	   s_strcat_char(&s, c_recupere_ici_sans_copie(f,ch)) ;
+	   s_putchar(&s, '\n') ;
+	 }
+     }) ;
+  s_putchar(&s, ')') ;
+  eprintf("%s\n", s_char(&s)) ;
+  codec_sauve_texte(codec_controle, &o->lcontrole, s_char(&s)) ;
+}
+
+CLASSE(controle, struct controle,
+       CHAMP(lcontrole.nb, L_entier Affiche)
+       CHAMP(lcontrole, L_controle TYPE_DANS_FILS(L_coord) Obligatoire Affiche)
+       CHANGEMENT(changement_controle)
+       /*EVENEMENT("MHIFS")*/
+       MENU("Attributs/Géométrique ND/VECH Controle")
+       PAQUET(NB_ACTIFS)
+       INFORMATIONS(informations_controle)
+)
+
+/*
+ * GIFS
+ */
+struct gifs
+{
+  GIFS lgifs ;
+} ;
+CLASSE(gifs, struct gifs,
+       CHAMP(lgifs, L_gifs)
+       CHAMP(lgifs.proj  , L_math      Extrait Sauve Edite)
+       CHAMP(lgifs.ifs   , L_ifs       Extrait Sauve Edite)
+       CHAMP(lgifs.te    , L_math      Extrait Sauve Edite
+	     DEFAUT("[(1 0 0 0)\n(0 1 0 0)\n(0 0 1 0)\n(0 0 0 1)]")
+	     )
+       CHAMP(lgifs.extrem, L_table_int Extrait Sauve Edite DEFAUT("(0)"))
+       EVENEMENT("MHGIFS")
+       MENU("Figures/?d/MATH GIFS")
+)
+
+struct gifs_math
+{
+  GIFS out ;
+  GIFS in ;
+  MATH m ;
+} ;
+
+static void changement_gifs_math(struct gifs_math *o)
+{
+  destru_gifs(o->out) ;
+  o->out = gifs_mul(o->m, o->in) ;
+}
+
+CLASSE(math_fois_gifs, struct gifs_math,
+       CHAMP(out, L_gifs)
+       CHAMP(in  , L_gifs      Extrait Sauve Edite)
+       CHAMP(m  , L_math      Extrait Sauve Edite)
+       CHANGEMENT(changement_gifs_math)
+       EVENEMENT("*")
+       MENU("Figures/?d/*")
+)
+
+
+/*
+ * FIGIT
+ */
+typedef struct
+{
+  GIFS gifs;
+  int iter ;
+  Menu motif;
+  RVB couleur;
+  MATH tima ;
+  int largeur, hauteur ;
+} FIGIT_NE;
+
+static void ecrit_pov_figit(FIGIT_NE *o,const Champ *c,const char *v)
+{
+   FIGIT figv;
+   if ( v[0]=='\0') return ;
+   figv = fig_n(o->gifs, o->iter,o->motif.index);
+   figv.couleur = o->couleur ;
+   /* appel à la fonction d'éric */
+   pov_determ((FILE *)atoi(v),figv);
+}
+
+static void affiche_figit(FIGIT_NE *o)
+{
+   FIGIT figv;
+  if ( o->gifs.ifs.nb == 0 )
+    return ;
+   figv = fig_n(o->gifs, o->iter,o->motif.index);
+   figv.iter = iter_n(9) ;
+   figv.couleur = o->couleur ;
+   /* appel à la fonction d'affichage itérative */
+   gl_determ(figv);
+}
+
+static void affiche_tima(FIGIT_NE *o)
+{
+  int i, j ;
+
+  if ( TRACE(o) )
+	eprintf("TIMA = %d\n", o->tima.c) ;
+
+  if ( o->tima.c == NULL || o->gifs.ifs.nb == 0 )
+    return ;
+
+  glBegin(GL_QUADS) ;
+  for(i=0;i<o->tima.n.dim;i++)
+    for(j=0;j<o->tima.m.dim;j++)
+      {
+        glColor3f(o->tima.c[j][i], o->tima.c[j][i], o->tima.c[j][i]) ;
+        glVertex2i(i,j) ;
+        glVertex2i(i+1,j) ;
+        glVertex2i(i+1,j+1) ;
+        glVertex2i(i,j+1) ;
+      }
+  glEnd() ;
+
+}
+
+static void changement_figit(FIGIT_NE *o)
+{
+  FIGIT figv ;
+
+  if ( o->tima.c )
+    destru_math(o->tima) ;
+  o->tima.c = NULL ;
+
+  if ( o->gifs.ifs.nb == 0 )
+	return ;
+
+  figv = fig_n(o->gifs, o->iter,o->motif.index);
+  figv.couleur = o->couleur ;
+
+  *((TIMA*)&o->tima) = tima_nul(o->largeur, o->hauteur);
+
+  tima_figv(o->tima,figv);
+}
+
+CLASSE(figit, FIGIT_NE,
+
+       CHAMP(gifs   , L_gifs    Extrait Sauve Edite
+	DEFAUT("[(1 0 0)\n"
+	"(0 1 0)\n"
+	"(0 0 1)]\n"
+	"CA\n"
+	"CA\n"
+	"([(1 0 0)\n"
+	"(0 0.5 0)\n"
+	"(0 0 0.5)]\n"
+	"CA\n"
+	"CA\n"
+	"[(1 0 0)\n"
+	"(0.5 0.5 0)\n"
+	"(0 0 0.5)]\n"
+	"CA\n"
+	"CA\n"
+	"[(1 0 0)\n"
+	"(0.5 0.5 0)\n"
+	"(0.5 0 0.5)]\n"
+	"CA\n"
+	"CA)\n"
+	"[(1 0 0)\n"
+	"(0 1 0)\n"
+	"(0 0 1)]\n"
+	"CA\n"
+	"CA\n"
+	"(0)\n"))
+       CHAMP(iter   , L_nombre P_entier Extrait Sauve Edite DEFAUT("5"))
+       CHAMP(couleur, L_couleur P_coord Extrait Sauve Edite          )
+       CHAMP(motif  , L_nombre  P_option_menu E_option_menu Sauve Edite
+	     TE_TEXTE("Point\n"
+		      "Segment\n"
+		      "Triangle\n"
+		      "Quadrilatere\n"
+		      "Sphere\n"
+		      "Cube\n"
+		      )
+	     DEFAUT("Point")
+	     )
+       CHAMP(tima, L_math)
+       EVENEMENT("FI")
+       CHAMP_VIRTUEL(L_affiche_gl(affiche_figit))
+       CHAMP_VIRTUEL(L_affiche_pov(ecrit_pov_figit))
+       MENU("Figures/?d/MATH FIGIT")
+)
+
+CLASSE(figit_tima, FIGIT_NE,
+       CHAMP(gifs   , L_gifs    Extrait Sauve                  )
+       CHAMP(iter   , L_nombre P_entier Extrait Sauve Edite DEFAUT("5"))
+       CHAMP(couleur, L_couleur P_coord Extrait Sauve Edite DEFAUT("1 1 1") )
+       CHAMP(motif  , L_nombre  P_option_menu E_option_menu Sauve Edite
+	     TE_TEXTE("Point\n"
+		      "Segment\n"
+		      "Triangle\n"
+		      "Quadrilatere\n"
+		      "Sphere\n"
+		      "Cube\n"
+		      )
+	     DEFAUT("Point")
+	     )
+       CHAMP_VIRTUEL(L_affiche_gl(affiche_tima))
+	CHAMP(largeur, L_nombre P_entier Edite Sauve DEFAUT("256"))
+	CHAMP(hauteur, L_nombre P_entier Edite Sauve DEFAUT("256"))
+        CHANGEMENT(changement_figit)
+       MENU("Figures/?d/MATH FIGIT TIMA")
+	)
+
+/*
+ * Convertion du repere de NanoEdit en MATH
+ */
+struct conv_repere_en_math
+{
+  MATH out ;
+  Transfo in ;
+} ;
+
+static void changement_conv_repere_en_math(struct conv_repere_en_math *o)
+{
+  int i ;
+
+  if ( o->out.m.dim == 0 )
+    {
+      o->out = math_crea(3,3) ;
+      o->out.c[0][0] = 1. ;
+      o->out.c[0][1] = 0. ;
+      o->out.c[0][2] = 0. ;
+      o->out.c[0][3] = 0. ;
+    }
+  for(i=0;i<3;i++)
+    {
+      o->out.c[i+1][0] = ((Flottant*)&o->in.origine)[i] ;
+      o->out.c[i+1][1] = ((Flottant*)&o->in.v1)[i] ;
+      o->out.c[i+1][2] = ((Flottant*)&o->in.v2)[i] ;
+      o->out.c[i+1][3] = ((Flottant*)&o->in.v3)[i] ;
+    }
+}
+
+
+CLASSE(MATH_de_repere, struct conv_repere_en_math,
+       CHAMP(out, L_math Affiche)
+       CHAMP(in, L_transfo Extrait Edite Sauve)
+       MENU("Attributs/Géométrique 3D/MATH3")
+       CHANGEMENT(changement_conv_repere_en_math)
+       EVENEMENT("MH2")
+       )
+
+/*-------------------------------------------------------------------
+ * OPERATIONS sur les IFS
+ */
+struct ifs_math_ifs {
+  IFS ifsr;
+  MATH t;
+  IFS ifs1;
+} ;
+/* Conjugaison par une matrice */
+static void changement_ifs_conj(struct ifs_math_ifs *o)
+{
+  destru_ifs(o->ifsr) ;
+  o->ifsr = ifs_conj(o->t,o->ifs1) ;
+}
+CLASSE(op_ifs_conj, struct ifs_math_ifs,
+       CHAMP(ifsr, L_ifs Affiche)
+       CHAMP(t, L_math Extrait Edite Sauve)
+       CHAMP(ifs1, L_ifs Extrait Edite Sauve)
+       CHANGEMENT(changement_ifs_conj)
+       MENU("Figures/?d/Deformations/Conjugaison")
+      )
+
+struct ifs_ifs2 {
+  IFS ifsr;
+  IFS ifs1;
+  IFS ifs2;
+} ;
+/* melange */
+static void changement_ifs_mel(struct ifs_ifs2 *o)
+{
+  destru_ifs(o->ifsr) ;
+  o->ifsr = ifs_mel(o->ifs1,o->ifs2) ;
+}
+CLASSE(op_ifs_mel, struct ifs_ifs2,
+       CHAMP(ifsr, L_ifs Affiche)
+       CHAMP(ifs1, L_ifs Extrait Edite Sauve)
+       CHAMP(ifs2, L_ifs Extrait Edite Sauve)
+       CHANGEMENT(changement_ifs_mel)
+       MENU("Figures/?d/Combinaisons/Melange")
+      )
+
+/*-------------------------------------------------------------------
+ * BIBLIOTHEQUE D'IFS 
+ */
+
+struct ifs_cst {
+  IFS ifsr;
+} ;
+/* Triangle de Sierpinski dans CA(2) */
+static void changement_ifs_sierpinski(struct ifs_cst *o)
+{
+  destru_ifs(o->ifsr) ;
+  o->ifsr = sierpinski() ;
+}
+CLASSE(ifs_sierpinski, struct ifs_cst,
+       CHAMP(ifsr, L_ifs Affiche)
+       CHANGEMENT(changement_ifs_sierpinski)
+       MENU("Figures/2d/Filaires/Triangle de Sierpinski")
+       )
+/* Tetraedre de Sierpinski dans CA(3) */
+static void changement_tetra_sierpinski(struct ifs_cst *o)
+{
+  destru_ifs(o->ifsr) ;
+  o->ifsr = tetra_sierpinski() ;
+}
+CLASSE(tetraedre_sierpinski, struct ifs_cst,
+       CHAMP(ifsr, L_ifs Affiche)
+       CHANGEMENT(changement_tetra_sierpinski)
+       MENU("Figures/3d/Filaires/Tetraedre de Sierpinski")
+       )
+
+struct ifs_reel {
+  IFS ifsr;
+  Flottant r;
+} ;
+/* Arc de parabole dans BA(2) */
+static void changement_ifs_para(struct ifs_reel *o)
+{
+  destru_ifs(o->ifsr) ;
+  o->ifsr = arc_b2_para(o->r) ;
+}
+CLASSE(ifs_para, struct ifs_reel,
+       CHAMP(r, L_nombre P_flottant Extrait Edite Sauve Init3d
+	     DEFAUT("0.5"))
+       CHAMP(ifsr, L_ifs Affiche)
+       CHANGEMENT(changement_ifs_para)
+       MENU("Figures/2d/Courbes/Parabole")
+       )
+

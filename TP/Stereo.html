@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>St&eacute;r&eacute;rovision</title>
+  </head>
+
+  <body>
+    <h1>St&eacute;r&eacute;rovision</h1>
+
+Le but de ce TP est de vous fournir un outils pour tester
+les futurs TP de st&eacute;r&eacute;ovision.
+
+
+<P>
+
+Le noeud que vous devez faire est une cam&eacute;ra et va afficher
+dans R<SUP>3</SUP>.
+On suppose que vous savez retrouver le rep&egrave;re associ&eacute; &agrave; votre
+cam&eacute;ra afin de la positionner.
+<P>
+<UL>
+<LI> La pyramide de vision associ&eacute;e la cam&eacute;ra.
+<LI> L'image vue par la cam&eacute;ra.
+	Cette image doit &ecirc;tre stock&eacute;e au
+	format PPM.
+	  L'ent&ecirc;te est (format printf): 
+	  <TT>"P6\n%d %d\n255\n",</TT> en sp&eacute;cifiant la largeur et hauteur.
+	Derri&egrave;re on met tous les pixels avec un octet R puis V puis B
+	pour chaque pixel. (Les valeurs des octets sont &eacute;crites
+	en binaire, pas en d&eacute;cimal).
+	<STRONG>La largeur et la hauteur de l'image doivent
+	  &ecirc;tre des puissances de 2</STRONG>
+
+<LI> Et pour quelques-uns des pixels de contour d&eacute;tect&eacute;s
+	la droite partant de l'oeil et traversant le pixel.
+<LI> DANS LE FUTUR, elle affichera en plus une croix &agrave; la position
+	d&eacute;tect&eacute; en 3D.
+	<BR>
+	  On affichera une couleur diff&eacute;rente par
+	  correspondance (il ne faudra pas en faire trop
+	  sinon on ne pourra pas les diff&eacute;rencier).
+</UL>
+
+L'objet <A HREF="C/o_camera.c">o_camera.c</A> contient
+le squelette de la cam&eacute;ra.
+<P>
+Vous avez aussi <A HREF="camera.eps">une figure pour mieux comprendre</A>
+ce que je veux.
+
+
+    <hr>
+    <address><a href="mailto:exco@b710hpd.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+<!-- Created: Fri Nov 21 12:46:15 MET 1997 -->
+<!-- hhmts start -->
+Last modified: Fri Nov 21 15:03:11 MET 1997
+<!-- hhmts end -->
+  </body>
+</html>

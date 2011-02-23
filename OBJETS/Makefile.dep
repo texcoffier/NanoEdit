@@ -1,0 +1,656 @@
+o_affiche_stl.o: o_affiche_stl.c \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h
+o_applique.o: o_applique.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_applique.h u_etat_courant.h \
+ u_vue.h /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_audio.o: o_audio.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_bezier.o: o_bezier.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_boulier.o: o_boulier.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_table.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h
+o_couleur.o: o_couleur.c /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_xt_interface.h \
+ o_interface.h o_nuplet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_hlsrvb.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h
+o_cubeg.o: o_cubeg.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_table.h u_vue.h
+o_date.o: o_date.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h
+o_delaunay.o: o_delaunay.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_delaunay.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_table.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/stl.h
+o_divers.o: o_divers.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_etat_courant.h u_vue.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_xt_interface.h \
+ o_interface.h /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h \
+ u_modele.h /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h
+o_evaluateur.o: o_evaluateur.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_graphe.o: o_graphe.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h
+o_ifs.o: o_ifs.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_vue.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_hlsrvb.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/stl.h
+o_image.o: o_image.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_image.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h
+o_interface.o: o_interface.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_httpd.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h u_modele.h
+o_interpolateur.o: o_interpolateur.c \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_vue.h
+o_joystick.o: o_joystick.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h /usr/include/SDL/SDL.h \
+ /usr/include/SDL/SDL_main.h /usr/include/SDL/SDL_stdinc.h \
+ /usr/include/SDL/SDL_config.h /usr/include/SDL/SDL_platform.h \
+ /usr/include/SDL/begin_code.h /usr/include/SDL/close_code.h \
+ /usr/include/SDL/SDL_audio.h /usr/include/SDL/SDL_error.h \
+ /usr/include/SDL/SDL_endian.h /usr/include/SDL/SDL_mutex.h \
+ /usr/include/SDL/SDL_thread.h /usr/include/SDL/SDL_rwops.h \
+ /usr/include/SDL/SDL_cdrom.h /usr/include/SDL/SDL_cpuinfo.h \
+ /usr/include/SDL/SDL_events.h /usr/include/SDL/SDL_active.h \
+ /usr/include/SDL/SDL_keyboard.h /usr/include/SDL/SDL_keysym.h \
+ /usr/include/SDL/SDL_mouse.h /usr/include/SDL/SDL_video.h \
+ /usr/include/SDL/SDL_joystick.h /usr/include/SDL/SDL_quit.h \
+ /usr/include/SDL/SDL_loadso.h /usr/include/SDL/SDL_timer.h \
+ /usr/include/SDL/SDL_version.h
+o_lampe.o: o_lampe.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h
+o_modele.o: o_modele.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h u_applique.h \
+ u_vue.h u_etat_courant.h u_modele.h
+o_nombre.o: o_nombre.c /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_nuplet.o: o_nuplet.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h
+o_obj.o: o_obj.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_vue.h u_etat_courant.h
+o_objet.o: o_objet.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h
+o_particule.o: o_particule.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h
+o_plan.o: o_plan.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_vue.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h
+o_pov.o: o_pov.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_image.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_vue.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h
+o_repere.o: o_repere.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h \
+ u_vue.h u_repere.h
+o_segment.o: o_segment.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h o_nuplet.h \
+ u_etat_courant.h /home/houssam/SVN/prog/NE/UTILITAIRES/stl.h
+o_solide.o: o_solide.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_table.h u_vue.h
+o_stl.o: o_stl.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_vue.h u_etat_courant.h
+o_table.o: o_table.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h u_table.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h u_etat_courant.h
+o_vue.o: o_vue.c /home/houssam/SVN/prog/NE/TYPES/t_gl.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_xt_interface.h \
+ o_interface.h /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h u_vue.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_fichier.h u_modele.h
+o_xt_interface.o: o_xt_interface.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_httpd.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h
+u_applique.o: u_applique.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_applique.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/pov.h
+u_delaunay.o: u_delaunay.c u_delaunay.h
+u_modele.o: u_modele.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_modele.h
+u_simplex.o: u_simplex.c
+u_table.o: u_table.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h u_table.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/s_string.h u_etat_courant.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/stl.h
+u_vue.o: u_vue.c /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h u_vue.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_graphique.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_geometrie.h u_etat_courant.h \
+ u_modele.h
+u_xt_interface.o: u_xt_interface.c u_xt_interface.h \
+ /home/houssam/SVN/prog/NE/COEUR/o_objet.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/eprintf.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec_base.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_geometrie.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/codec.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/l_liste.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_memoire.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_widget.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_etat.h \
+ /home/houssam/SVN/prog/NE/TYPES/t_base.h o_interface.h \
+ /home/houssam/SVN/prog/NE/UTILITAIRES/u_repartiteur.h

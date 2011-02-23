@@ -1,0 +1,50 @@
+		  NanoÉdit : un modeleur algébrique
+			 Exposé le ??/??/2002
+	    Salle de conférence du 2ème étage Bâtiment 710
+				   
+Préambule
+---------
+
+Cet exposé s'adresse aux enseignants en informatique et à tous ceux
+qui ont besoin d'un outil simple permettant de faire de la
+modélisation ou bien d'accélérer leur cycle de développement logiciel.
+
+
+NanoÉdit : Un modeleur algébrique
+---------------------------------
+
+NanoÉdit a été créé au LIGIM afin de rendre les TP plus instructifs
+pour les étudiants. En effet, pour chaque TP les étudiants développent
+une application complète, ceci prend énormément de temps et ils
+passaient peu de temps à étudier le vif du sujet.
+
+NanoÉdit est un modeleur algébrique complet dans lequel les étudiants
+insèrent leur TP fournissant ainsi de nouvelles fonctionnalités
+au modeleur. Leur TP est facilement testable
+car NanoÉdit prend en charges toutes les entrées sorties et l'interface
+utilisateur.
+
+Les points intéressants de NanoÉdit sont les suivants :
+
+   - Création interactive de modèles algébriques.
+   - Undo/Redo, Sauvegarde/Récupération, Aide en ligne, ...
+   - Évaluation du modèle algébrique.
+   - Modifications des programmes sources sans quitter le modeleur.
+   - Le noyau de NanoÉdit est très petit (3500 lignes).
+     Cela montre aux étudiants l'importance d'une programmation modulaire.
+   - Pour étendre NanoÉdit, il suffit d'ajouter un seul fichier
+     (en langage C ou C++) contenant la description de l'extension.
+   - Pour l'utiliser, ont à connaître aucune fonction du noyau.
+
+
+NanoÉdit a un énorme avantage, il permet de fusionner simplement
+les travaux de différentes personnes qui travaillent séparément
+et de faire communiquer les programmes qu'elles ont écrits
+même si ceux-ci n'utilisent pas les mêmes structures de données
+et les même langages de programmation.
+
+
+Pour en savoir plus :
+---------------------
+
+http://www710.univ-lyon1.fr/~exco/NanoEdit/nanoedit.html

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Plan</title>
+  </head>
+
+  <body>
+      <h1>Plan</h1>
+
+      Remarques :
+      <UL>
+	<LI>
+	  Le squelette de ce TP est long car il contient
+	  beaucoup de fonctions utilitaires (qui existent peut-&ecirc;tre
+	  ailleurs mais que je n'ai pas trouv&eacute;).
+	<LI>
+	  Squelette : <A HREF="C/o_ex_plan.c">o_ex_plan.c</A>.
+	<LI>
+	  L'objet plan est le plan Z=0 fait pour &ecirc;tre vu par dessus.
+	<LI>
+	  L'objet plan contient de nombreux bool&eacute;en qui permettent
+	  de d&eacute;cider ce qui est affich&eacute;. Par d&eacute;faut rien.
+	<LI>
+	  La fonction d'affichage de l'objet plan est en partie
+	  &eacute;crite pour vous simplifier la vie.
+    </UL>
+
+    Vous devez compl&eacute;ter les fonctions vides.
+    La suite de ce texte donne quelques indications
+    pour certaines des fonctions.
+    <P>
+      Il est important que vous essayez de comprendre
+      la fonction "affiche" pour voir &agrave; quoi correspondent
+      les fonctions que vous devez r&eacute;aliser.
+      
+      <h2>Affichage du plan</h2>
+      
+      Faite l'affichage du plan dans la fonction <TT>affiche_plan</TT>.
+      Le plan est infini et doit &ecirc;tre correctement orient&eacute;.
+      De plus il doit &ecirc;tre ``correctement'' &eacute;clair&eacute; si l'on
+      suppose que l'utilisateur travaille pr&egrave;s de l'origine.
+      
+      <h2>Projection orthogonale</h2>
+      
+      Faire la projection de la sc&egrave;ne compl&egrave;te sur le plan
+      sans modifier un seul attribut graphique.
+      <P>
+	Vous n'avez besoin que de fonctions Open GL classiques
+	que vous avez d&eacute;j&agrave; utilis&eacute; ainsi que de la fonction
+	<TT>affiche_modele(o, urgent)</TT> pour demander
+	&agrave; r&eacute;afficher tout le mod&egrave;le.
+	
+      <h2>Transformation du plan appliqu&eacute;e aux projections</h2>
+      
+      Avec la m&eacute;thode pr&eacute;c&eacute;dente, si l'on applique une transformation
+      &agrave; l'objet plan, celui-ci se d&eacute;place avec la projection orthogonale.
+      Ceci peut &ecirc;tre utile dans quelques rares cas, mais la plupart
+      du temps, on ne souhaite pas se comportement.
+      <P>
+	Comment l'&eacute;viter ? Si <EM>T</EM> est la transformation courante du plan
+	et <EM>P</EM> la projection orthogonale, vous avez mis votre rep&egrave;re courant
+	&agrave; <EM>T.P</EM>.
+	Or ceci n'est pas bon, en effet, les objets qui vont &ecirc;tre
+	trac&eacute; apr&egrave;s vont aussi subir la transformation du plan.
+	Donc vous devez calculer <EM>T.P.T<SUP>-1</SUP></EM>.
+      <P>
+	<small>C'est un peu le m&ecirc;me probl&egrave;me que de faire une rotation
+	  autour d'un axe quelconque alors que vous n'avez
+	  que la rotation d'axe Z</small>
+      <P>
+	Pour faire cela vous avez besoin (dans le d&eacute;sordre) de
+<PRE>
+	glGetDoublev    avec GL_MODELVIEW_MATRIX
+	inversion4x4
+	glMultMatrixd
+</PRE>
+
+
+      <h2>D&eacute;coupage positif</h2>
+      
+      La projection orthogonale s'applique aux objets qui sont des
+      deux cot&eacute;s du plan, il peut &ecirc;tre int&eacute;ressant de ne projeter
+      que ceux du cot&eacute; positif. Pour cela on ajoute
+      un plan de d&eacute;coupage (<TT>glClipPlane, GL_CLIP_PLANE0, glEnable</TT>)
+      <P>
+	La difficult&eacute; est que le d&eacute;coupage s'effectue dans l'expace de
+	mod&eacute;lisation, or, lors de la projection on vient d'applatir
+	l'espace, il n'est donc plus possible de le d&eacute;couper.
+      <P>
+	L'astuce est donc de transformer :<br>
+      MATRICE_PROJECTION=P<br>
+      MATRICE_MODELISATION=M<br>
+      en<br>
+      MATRICE_PROJECTION=P*M<br>
+      MATRICE_MODELISATION=Identit&eacute;<br>
+      On a besoin de <TT>glMatrixMode</TT> pour indiquer sur
+      quel matrice on veut travailler.
+
+      <h2>Projection en noir</h2>
+
+      Utilisez <TT>glBlendFunc</TT> et <TT>glEnable</TT>
+      pour que tout soit dessin&eacute; en noir avant l'affichage
+      du mod&egrave;le projet&eacute;.
+
+      <h2>Ombres port&eacute;es</h2>
+
+      La fonction <TT>affiche_projection</TT> re&ccedil;oit en param&egrave;tre
+      les coordonn&eacute;es de la source lumineuse.
+      Utilisez-les pour calculer la matrice de perspective
+      associ&eacute;e &agrave; la lampe pour qu'elle proj&egrave;te les objets
+      sur le plan.
+      <P>
+	Je vous conseille de cr&eacute;er la matrice perspective unitaire
+	vous m&ecirc;me, puis de la positionner correctement.
+      <P>
+	D'autre part, il faut ajouter un deuxi&egrave;me plan de d&eacute;coupage
+	pour que les objets derri&egrave;re la lampe ne fassent pas d'ombre.
+      <P>
+
+      <h2>Ombre assombrissant le plan</h2>
+	
+    On ne peut pas faire cette action <EM>simplement</EM>
+    sauf en utilisant des extensions Open GL.
+    <P>
+    La m&eacute;thode compliqu&eacute; consiste &agrave; afficher le plan de sa couleur normale,
+      puis les ombres, pui afficher a nouveau le plan avec cette
+      fois une couleur transparente pour teinter les ombres....
+
+
+      <hr>
+      <address><a href="mailto:exco@big.jeudego.org">Thierry EXCOFFIER</a></address>
+<!-- Created: Thu Dec 30 21:10:07 CET 1999 -->
+<!-- hhmts start -->
+Last modified: Wed Aug 30 15:05:58 CEST 2000
+<!-- hhmts end -->
+  </body>
+</html>

@@ -1,0 +1,23 @@
+h1 {
+	align: center ;
+	font-family: Utopia, Times ;
+	font-size: 60pt ;
+}
+
+li.petit {
+	font-size: 100% ;
+}
+
+p, td.droite, li {
+	font-family: Utopia, Times ;
+	font-size: 30pt ;
+}
+
+tt, pre {
+	background: #DDD ;
+	font-family: Courier ;
+	font-type: m ;
+	font-size: 30pt ;
+}
+
+

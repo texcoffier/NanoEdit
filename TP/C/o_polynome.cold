@@ -1,0 +1,94 @@
+/*
+ * Vous devez modifier la fonction "affiche" de ce fichier
+ * puis la fonction "changement" pour le calcul des zeros.
+ */
+#include "o_classe.h"		/* Definition des classe */
+#include "o_objet.h"		/* Definition des noeuds */
+#include "c_champ.h"		/* POUR POUVOIR AJOUTER DES CHAMPS */
+#include "u_triplet.h"		/* struct u_triplet, struct u_quadruplet */
+#include "t_base.h"		/* Valeur flottante */
+#include "t_table.h"		/* Structure t_table_triplet */
+#include "t_void.h"		/* Bascule Booleene */
+#include "t_widget.h"		/* Bascule Booleene */
+#include "w_fenetre.h"		/* Bascule Booleene */
+#include <GL/gl.h>		/* Pour OpenGL */
+
+struct moi			/* Le nom "moi" est obligatoire */
+{
+  struct objet objet ;		/* Obligatoire */
+  float xmin, xmax ;		/* indique les bornes du parametre */
+  float pas ;			/* Pour incrementer le parametre */
+  struct t_table_flottant coeff;/* Table de flottants */
+  struct t_table_flottant zeros;/* Les zero que vous avez calcule */
+  Booleen affiche_les_zeros ;   /* Si vrai : affiche les zeros graphiquement */
+  Booleen affiche_le_chemin ;   /* Si vrai : affiche les etape de resolution */
+} ;
+
+PREPARE_DEFINITION_CHAMPS	/* CETTE LIGNE EST OBLIGATOIRE */
+/*
+ * Ceci permet a l'editeur de connaitre le contenu de
+ * la structure C et ce qu'il doit en faire
+ */
+static struct champ champs[] =
+{
+  {"pas"      ,P_Flottant      ,L_Nombre       ,Edite|Sauve,CHAMP(pas) ,".1"},
+  {"xmin"     ,P_Flottant      ,L_Nombre       ,Edite|Sauve,CHAMP(xmin),"-10"},
+  {"xmax"     ,P_Flottant      ,L_Nombre       ,Edite|Sauve,CHAMP(xmax), "10"},
+  {"flottants",P_Table_flottant,L_Table_flottant,Extrait    ,CHAMP(coeff),
+   "-2\n-1\n1\n1\n-0.125", 0}, /* -2 - x + x^2 + x^3 - 0.125 x^4  */
+  {"zeros"    ,P_Table_flottant,L_Table_flottant,Affiche,CHAMP(zeros),""},
+  CHAMP_BOOLEEN("affiche_les_zeros",affiche_les_zeros,"0"),
+  CHAMP_BOOLEEN("affiche_le_chemin",affiche_le_chemin,"0"),
+  {NULL}
+} ;
+
+static void affiche(struct objet *o)
+{
+  /*
+   * Affichage du polynome.
+   * Le nombre de flottants definissant le polynome : MOI->coeff.nb
+   * Les valeurs des flottants                      : MOI->coeff.table
+   *
+   * L'Exemple affiche les points de coordonnees (coef[i],i/10,0)
+   */
+  int i ;
+  glBegin(GL_LINE_STRIP) ;
+  for(i=0;i<MOI->coeff.nb;i++)
+    glVertex3f(MOI->coeff.table[i],
+	       i/10.,
+	       0.) ;
+  glEnd() ;
+
+  if ( MOI->affiche_les_zeros )
+    {
+    }
+
+  if ( MOI->affiche_le_chemin )
+    {
+    }
+}
+
+static void changement(struct objet *o)
+{
+  if ( CHAMP_CHANGE(coeff) )	/* Les coefficients ont ete modifie */
+    {
+      /*
+       * Vous faite le calcul des zeros.
+       * Il faut que vous allouiez MOI->zeros.table et positionniez
+       * correctement MOI->zeros.nb
+       */
+
+
+
+      CHANGEMENT_CHAMP(zeros) ; /* la table des zeros a ete modifiee */
+    }
+}
+
+void init_classe_polynome(struct classe *c)
+{
+  c->taille_structure= sizeof(struct moi); /* Indique la taille */
+  c->nom	     = "polynome" ;        /* Nom du noeud */
+  c->champs	     = champs ;            /* Indique les champs */
+  c->affichage       = affiche ;           /* Methode affichant le polynome */
+  c->changement      = changement ;        /* Méthode d'évaluation du noeud */
+}

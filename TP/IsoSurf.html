@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+  <HEAD>
+    <TITLE>Affichage d'une surface param&eacute;trique</TITLE>
+  </HEAD>
+  <BODY>
+    <H1>Affichage d'une surface param&eacute;trique</H1>
+
+    <table border><tr><td>
+    Option GPAO/CFAO : Vous en faite le maximum.<BR>
+    Option IMAGE : Vous faites tout.
+    </table>
+
+    <p>
+      Le but de ce TP et des suivants est de vous faire
+      ajouter de nouvelles classes d'objet dans NanoEdit
+      (comme le segment, la sph&egrave;re, ...).
+      Dans tous les cas, un squelette de programme
+      vous est fourni et vous modifiez ce squelette
+      afin d'ajouter l'affichage (avec Open GL)
+      de l'objet en question.
+    <p>
+
+<h2>Premi&egrave;re &eacute;tape : recopier le squelette</h2>
+
+      Il faut recopier le
+      <a href="C/o_iso_surf.c">squelette de o_iso_surf.c</a>
+      dans le r&eacute;pertoire <tt>NE</tt> que vous
+      avez cr&eacute;&eacute; au pr&eacute;c&eacute;dent TP.
+      Pour ce faire, vous pouvez ex&eacute;cuter la commande :
+<pre>
+cp /home/exco/NE/stable/TP/C/o_iso_surf.c $HOME/NE
+</pre>
+    Ensuite, vous allez dans le r&eacute;pertoire <tt>NE</tt>
+    et vous tapez <tt>/usr/local/bin/make</tt>. Une fois lanc&eacute;,
+    vous pouvez cr&eacute;er une instance de <tt>iso_surface</tt>
+    (dans le menu <TT>TP Infographie</TT>)
+    et l'&eacute;diter pour voir son contenu.
+<p>
+      Vous remarquerez que dans la fen&ecirc;tre 3D,
+      un point et un message sont apparus lors de la cr&eacute;ation.
+
+<h2>La surface &agrave; afficher</h2>
+
+    Soit une fonction param&eacute;trique &agrave; deux param&egrave;tres dans R<SUP>3</SUP>.
+      Cette fonction retourne un point de R<SUP>3</SUP> calcul&eacute; en fonction
+      des param&egrave;tres <i>u</i> et <i>v</i>.
+      
+<PRE>static Triplet fonction(float u, float v)
+{
+La formule fournie dans le squelette
+donne la surface en bas de cette page.
+}
+</PRE>
+
+    Une iso-param&eacute;trique est une courbe obtenue en reliant
+    les points retourn&eacute;s par la fonction en fixant
+    tous les param&egrave;tres sauf 1.
+    Par exemple en faisant varier <i>u</i> entre -1 et 1
+    et en fixant <i>v</i> &agrave; 0.65.
+<p>
+      L'image suivante montre plusieurs iso-param&eacute;triques,
+      dans un sens c'est le <i>u</i> qui est fix&eacute;,
+      dans l'autre c'est le <i>v</i>.
+      <p>
+      <IMG ALIGN=TOP SRC="iso.gif" ALT="Une surface dessin&eacute;e par des isoparametriques">
+      
+
+    <h2>Affichez !</h2>
+
+    Dans l'ordre, ajoutez les lignes de programme C pour
+    faire l'affichage de la surface&nbsp;:
+    <UL>
+      <LI> Ponctuel
+      <LI> Filaire
+      <LI> Facette Quadrangulaire
+      <LI> Facette Triangulaire
+    </UL>
+    Petite exp&eacute;rience amusante : activez la surface, mettez le curseur
+    dans une fen&ecirc;tre 3d, appuyez continuellement sur la touche
+    1 (ou 2,3,4,5,6) et d&eacute;placez le curseur.
+
+    <h2>Affichez diff&eacute;rement si le noeud est actif ou pas</h2>
+
+    Vous devez d&eacute;j&agrave; avoir remarqu&eacute; que votre
+    surface s'affiche diff&eacute;remment suivant qu'elle est active
+    ou non. Ceci est g&eacute;r&eacute; automatiquement par
+    Nano&Eacute;dit qui change l'&eacute;tat courant de GL pour
+    modifier l'affichage.
+    <P>
+      Dans certain cas, on veut afficher de informations suppl&eacute;mentaires
+      sur l'objet quand il est actif (ou afficher des ``tags'').
+      Pour cela, on peut utiliser la fonction <TT>ACTIF(o)</TT> pour tester
+      si l'objet est actif ou non.
+    <P>
+      Quand la surface est active, afficher graphiquement la normale
+      au sommets des facettes en dessinant un petit trait.
+
+    <h2>Affichage de ``tag''</h2>
+
+    Un tag permet de modifier les valeurs associ&eacute;es &agrave; un objet
+    de mani&egrave;re intuitive (essayez avec un segment de droite).
+    Les ``tag'' sont une fonctionnalit&eacute; de Nano&Eacute;dit qui utilise
+    de nombreuses fonctions complexes de GL, si vous
+    devez programmer vous m&ecirc;me se genre de fonctionnalit&eacute; je
+    vous souhaite bonne chance.
+    <P>
+      Avec Nano&Eacute;dit tout est simple. Vous avez diff&eacute;rentes
+      fonction d'affichage de ``tag'' qui permettent d'avoir
+      une s&eacute;mantique visuelle identique pour les diff&eacute;rents objets&nbsp;:
+      <UL>
+      <LI> t_tag_origine : Translation/D&eacute;placement de point/objet
+      <LI> t_tag_dilatation : Dilatation de l'objet
+      <LI> t_tag_rotation : Rotation de l'objet
+      <LI> t_tag_destruction : Destruction d'une sous-partie de l'objet
+      <LI> t_tag_poids : Modification du poids (4&egrave;me coordonn&eacute;e).
+    </UL>
+
+    Lors de l'affichage, vous demandez &agrave; afficher le ``tag''
+    en passant en param&egrave;tre&nbsp;:
+    <UL>
+      <LI> Le num&eacute;ro du champ dont la valeur doit &ecirc;tre modifi&eacute;e.
+	(c'est le num&eacute;ro de la touche clavier utilisable pour
+	le modifier interactivement diminu&eacute; de 1).
+      <LI> La position du point 3D &agrave; ``tagger''.
+	(pointeur sur <TT>Triplet</TT>).
+    </UL>
+
+    C'est tout, votre ``tag'' est maintenant fonctionnel !
+    Faite des ``tags'' pour modifier les min et max de u et v.
+
+    <P>
+      Il est possible de faire des ``tag'' d&eacute;clanchant
+      l'appel de fonctions C mais cela d&eacute;passe le cadre
+      de vos TP. Pour plus d'information regardez
+      le <A HREF="../ARTICLE/EXTENSION/extension.ps.gz">cours d'extension</A>
+      ou bien la classe <TT>segment9_</TT> de <A HREF="../EXEMPLES/o_s9.c">l'exemple</A>.
+
+
+    <hr>
+    <address><a href="mailto:exco@ligim.univ-lyon1.fr">Thierry EXCOFFIER</a></address>
+    <!-- Created: Mon Sep 29 14:01:49 METDST 1997 -->
+    <!-- hhmts start -->
+Last modified: Mon Sep 25 11:25:58 CEST 2000
+<!-- hhmts end -->
+  </BODY>
+</HTML>

@@ -1,0 +1,59 @@
+#include <math.h>		/* Pour sqrt() */
+#include "o_objet.h"
+
+struct racine
+{
+  Flottant racine_valeur ;	/* La racine carrée */
+  Flottant valeur ;		/* Le parametre */
+} ;
+/*
+ * Cette fonction n'est appelé que si c'est nécessaire.
+ * Cette fonction ce resume à une ligne si l'on ne tient pas compte
+ * de la validité du calcul.
+ */
+static void changement_sqrt2(struct racine *o)
+{
+  if ( CHAMP_CHANGE(o, racine_valeur) )
+    {
+      /*
+       * Contrainte dans l'autre sens
+       */
+    if ( CHAMP_INVALIDE(o, racine_valeur) )
+	NOTE_CHAMP_INVALIDE(o, valeur) ;
+    else
+      {
+	o->valeur = o->racine_valeur * o->racine_valeur ;
+	NOTE_CHAMP_CHANGE(o, valeur) ;
+      }
+    }
+  if ( CHAMP_CHANGE(o, valeur) )
+    {
+      if ( CHAMP_INVALIDE(o, valeur) )
+	NOTE_CHAMP_INVALIDE(o, racine_valeur) ;
+      else
+	{
+	  o->racine_valeur = sqrt(o->valeur) ;
+	  NOTE_CHAMP_CHANGE(o, racine_valeur) ;
+	}
+    }
+}
+
+CLASSE(sqrt2, struct racine,
+       L_Nombre_Positif P_Flottant Edite 
+       CHAMP(racine_valeur, Init3d)
+       CHAMP(valeur,        Extrait Sauve DEFAUT("2"))
+       CHANGEMENT(changement_sqrt2)
+       MENU("Exemple/Racine2")
+       )
+/*
+ * Contrainte "racine"
+ */
+CLASSE(sqrt3, struct racine,
+       L_Nombre_Positif P_Flottant Edite Extrait Sauve Obligatoire
+       CHAMP(racine_valeur,)
+       CHAMP(valeur,)
+       CHANGEMENT(changement_sqrt2)
+       MENU("Exemple/Racine")
+       )
+
+
