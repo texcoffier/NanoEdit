@@ -1,10 +1,7 @@
 # -*- makefile -*-
-#
-# Indique ou se trouve le coeur du systeme
-# A modifier si vous recopiez l'application complete chez vous
-#
-BASE = /home/houssam/SVN/prog/NE
-#BASE = .
+
+# Essaye de deviner ou se trouve ce fichier
+BASE=$(shell if [ "$$BASE" != "" ] ; then echo $$BASE ; else echo "$(MAKEFILE_LIST)" | (read A B ; B=$$(dirname "$$B") ; if [ "$$B" = "." ] ; then pwd ; else echo "$$B" ; fi ) ; fi)
 
 export BASE CC MAKE CFLAGS PATH
 
@@ -61,6 +58,7 @@ export BASE CC MAKE CFLAGS PATH
 #
 
 default strace tester rejoue all allt tags cpp_debug run go gdb lance cflow lint depend remove_include compile_directory Nanoedit full_clean Nanoedit-static dump lib depends demo lance_toutes_les_nuits variables Nanoedit_sans_x11 lance_sans_x11  lance_sans_fenetres but client lance_en_ecriture lance_debug profiler lance_sfm lance_partout rejouer valgrind:
+	if [ ! -f Makefile.dep ] ; then $(MAKE) depend_ depends_ ; fi
 	if $(MAKE) --version >/dev/null 2>&1 ; then : ; else echo "Vous devez utiliser la commande 'make' du GNU" ; false ; fi
 	export LC_ALL="fr_FR.utf8" ; BASE="$(BASE)" DIRECTORY_A_AJOUTER="$(DIRECTORY_A_AJOUTER)" ; export BASE DIRECTORY_A_AJOUTER ; . $(BASE)/configuration >&2 ; $(MAKE) $(@)_
 
@@ -230,7 +228,7 @@ cflow_:$(LES_SOURCES)
 	cflow $(CFLAGS) $(LES_SOURCES) -lm >$@
 lint_:*/*.c
 	lint $(CFLAGS) *.c -lm >$@
-depends_:depend
+depends_:depend_
 	for I in */[mM]akefile ; \
 		do \
 		   if [ "$$I" != '*/[mM]akefile' ] ; \
@@ -243,6 +241,7 @@ depend_:
 	if [ "" != "$$L" -a " " != "$$L" ] ; \
 		then \
 		$(CC) -MM `echo $(USER_CFLAGS) $(CFLAGS) | sed 's/-W[^ ]* //g'` $(CONSTANTES) $(INCLUDES) $(XINCLUDE_DIR) $$L >Makefile.dep ; \
+	else touch Makefile.dep ; \
 		fi ;
 	echo "`pwd` makedepend"
 
