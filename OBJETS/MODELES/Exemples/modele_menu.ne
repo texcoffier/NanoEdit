@@ -1,7 +1,7 @@
 
 classe vue
-nom 1080340544
-edite 135593880
+nom 163403816
+edite 160743952
 titre Vue Axe Z
 pas_vue 0.1
 angle_vue 0.1
@@ -11,221 +11,251 @@ point_vise 0.177122 0.275523 0
 haut 0 1 0
 b_persp 0
 menu_qualite 3: Très mauvaise
-geometrie 370 73 683 801
+geometrie 2058 249 683 801
 
 classe lampe
-nom 137009304
+nom 163401856
 observateur 1 1 2
 	0 0 -1
 	0 0 0
 	0 1
 
 classe applique
-nom 136737088
-fils (136405680 136743104 135720712 136090624)
+nom 161252696
+fils (163311552 163316536 163402720 163125760)
+ferme 1
+commentaire L'objet que l'on manipule
 
 classe couleur
-nom 136405680
+nom 163311552
 r 0
 b 0
 
 classe translation
-nom 136743104
-fils (136712800)
+nom 163316536
+fils (163035960)
+cache_tag 1
+cache_tag_symetrie 1
 
 classe vecteur3
-nom 136712800
-x 1
+nom 163035960
+x 0
 y 1
 z 0
 
 classe homothetie
-nom 135720712
-angle 0.2
+nom 163402720
+homo 0.5
+cache_tag 1
+cache_tag_symetrie 1
 
 classe sphere
-nom 136090624
+nom 163125760
 
 classe applique
-nom 136405288
-fils (136405872 136540984 136790616 136787280 136968168)
+nom 163042624
+fils (163308248 163595320 163596912 163598160 163599608)
 
 classe applique
-nom 136405872
-fils (137014904 137000504 136713064 136776792 136978240 136533984 136128288 136128552)
+nom 163308248
+fils (163589336 163098168 163592312 163592608 163593232 163593544 163594328 163594688)
+ferme 1
+commentaire Menu de gauche
 
 classe translation
-nom 137014904
+nom 163589336
 t_origine -3.01107 1.9631 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 137000504
-fils (136585160 136585232 136585304 136712800)
+nom 163098168
+fils (163592096 163592168 163592240 163035960)
 oper bouton_charge
 
 classe texte
-nom 136585160
+nom 163592096
 valeur x=1
 
 classe texte
-nom 136585232
+nom 163592168
 valeur x
 
 classe texte
-nom 136585304
+nom 163592240
 valeur 1
 hauteur -2.92251
 
 classe translation
-nom 136713064
+nom 163592312
 t_origine 0 -1 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136776792
-fils (136978096 136585232 136978168 136712800)
+nom 163592608
+fils (163593056 163592168 163593128 163035960)
 oper bouton_charge
 
 classe texte
-nom 136978096
+nom 163593056
 valeur x=0
 
 classe texte
-nom 136978168
+nom 163593128
 valeur 0
 
 classe translation
-nom 136978240
+nom 163593232
 t_origine 0 -1 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136533984
-fils (136535872 136535944 136978168 136712800)
+nom 163593544
+fils (163594152 163594224 163593128 163035960)
 oper bouton_charge
 
 classe texte
-nom 136535872
+nom 163594152
 valeur y=0
 hauteur 0
 
 classe texte
-nom 136535944
+nom 163594224
 valeur y
 hauteur 0
 
 classe translation
-nom 136128288
+nom 163594328
 t_origine 0.0196802 -1.01845 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136128552
-fils (136540912 136535944 136585304 136712800)
+nom 163594688
+fils (163595248 163594224 163592240 163035960)
 oper bouton_charge
 
 classe texte
-nom 136540912
+nom 163595248
 valeur y=1
 hauteur 0
 
 classe applique
-nom 136540984
-fils (136541056 136541320)
+nom 163595320
+fils (163595488 163596256)
 ferme 1
+commentaire Rayon Sphere = 0.2
 
 classe translation
-nom 136541056
+nom 163595488
 t_origine -2 3 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136541320
-fils (136148056 136790472 136790544 135720712)
+nom 163596256
+fils (163596616 163596736 163596808 163402720)
 oper bouton_charge
 
 classe texte
-nom 136148056
+nom 163596616
 valeur Rayon sphère = 0.2
 
 classe texte
-nom 136790472
-valeur angle
+nom 163596736
+valeur homo
 
 classe texte
-nom 136790544
+nom 163596808
 valeur 0.2
 
 classe applique
-nom 136790616
-fils (136790688 136790952)
+nom 163596912
+fils (163597048 163597360)
 ferme 1
+commentaire Rayon Sphere = 0.5
 
 classe translation
-nom 136790688
+nom 163597048
 t_origine 1 3 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136790952
-fils (136987432 136790472 136787208 135720712)
+nom 163597360
+fils (163597952 163596736 163598072 163402720)
 oper bouton_charge
 
 classe texte
-nom 136987432
+nom 163597952
 valeur Rayon sphère = 0.5
 
 classe texte
-nom 136787208
+nom 163598072
 valeur 0.5
 
 classe applique
-nom 136787280
-fils (136964496 136964600 136964864)
+nom 163598160
+fils (163598384 163598504 163598816)
+ferme 1
+commentaire Coloriage rouge
 
 classe couleur
-nom 136964496
+nom 163598384
 v 0
 b 0
 
 classe translation
-nom 136964600
+nom 163598504
 t_origine -2 -2 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136964864
-fils (136967928 136968024 136968096 136405680)
+nom 163598816
+fils (163599360 163599432 163599504 163311552)
 oper bouton_charge
 
 classe texte
-nom 136967928
+nom 163599360
 valeur Colorier en rouge
 
 classe texte
-nom 136968024
+nom 163599432
 valeur point
 
 classe texte
-nom 136968096
+nom 163599504
 valeur 1 0 0
 
 classe applique
-nom 136968168
-fils (136968240 136965240 136968344)
+nom 163599608
+fils (163599832 163599952 163600264)
+ferme 1
+commentaire Coloriage Vert
 
 classe couleur
-nom 136968240
+nom 163599832
 r 0
 b 0
 
 classe translation
-nom 136965240
+nom 163599952
 t_origine 1 -2 0
+cache_tag 1
+cache_tag_symetrie 1
 
 classe operateur
-nom 136968344
-fils (136775104 136968024 136775200 136405680)
+nom 163600264
+fils (163600800 163599432 163600872 163311552)
 oper bouton_charge
 
 classe texte
-nom 136775104
+nom 163600800
 valeur Colorier en vert
 
 classe texte
-nom 136775200
+nom 163600872
 valeur 0 1 0
