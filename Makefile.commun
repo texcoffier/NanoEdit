@@ -1,7 +1,7 @@
 # -*- makefile -*-
 
 # Essaye de deviner ou se trouve ce fichier
-BASE=$(shell if [ "$$BASE" != "" ] ; then echo $$BASE ; else echo "$(MAKEFILE_LIST)" | (read A B ; B=$$(dirname "$$B") ; if [ "$$B" = "." ] ; then pwd ; else echo "$$B" ; fi ) ; fi)
+BASE=$(shell if [ "$$BASE" != "" ] ; then echo $$BASE ; else echo "$(MAKEFILE_LIST)" | (read A B ; B=$$(dirname "$$B") ; if [ "$$(expr substr $$B 1 1)" = "." ] ; then echo "$$(pwd)/$$B" ; else echo "$$B" ; fi ) ; fi)
 
 export BASE CC MAKE CFLAGS PATH
 
