@@ -461,9 +461,9 @@ void c_sauve(void* o, const char *nom_champ, const char *valeur)
       POUR_LES_CHAMPS(o, c,
 		      if ( tl_inclus(c->tl, &infos_L_metamorphe) )
       {
-	(*c->tl->sous_classe)((const void**)&o, (const Champ**)&c
-			      , &infos_L_void) ;
-	c_sauve(o, nom_champ, valeur) ;
+	if ( (*c->tl->sous_classe)((const void**)&o, (const Champ**)&c
+				   , &infos_L_void) )
+	  c_sauve(o, nom_champ, valeur) ;
 	return ;
       }
 		      ) ;
