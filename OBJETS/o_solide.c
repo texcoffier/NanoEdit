@@ -132,7 +132,11 @@ static void points_de_sphere(int nblat, int nblong, Grille *points)
   d_long = 2*M_PI/nblong ;
 
   s_putchar(&s, '[') ;
-  for( latitude = -M_PI/2 ; latitude < M_PI/2 + d_lat/2 ; latitude += d_lat )
+  s_putchar(&s, '(') ;
+  for( longitude = 0; longitude < 2*M_PI - d_long/2 ; longitude += d_long )
+      s_printf(&s, "0 0 -1\n") ;
+  s_putchar(&s, ')') ;
+  for( latitude = -M_PI/2+d_lat; latitude < M_PI/2 - d_lat/2;latitude += d_lat)
     {
       s_putchar(&s, '(') ;
       for( longitude = 0; longitude < 2*M_PI - d_long/2 ; longitude += d_long )
@@ -146,6 +150,10 @@ static void points_de_sphere(int nblat, int nblong, Grille *points)
 	}
       s_putchar(&s, ')') ;
     }
+  s_putchar(&s, '(') ;
+  for( longitude = 0; longitude < 2*M_PI - d_long/2 ; longitude += d_long )
+      s_printf(&s, "0 0 1\n") ;
+  s_putchar(&s, ')') ;
   s_putchar(&s, ']') ;
   MET_A_0(points) ;
   codec_sauve_texte(codec_grille_triplet, points, s_char(&s)) ;
