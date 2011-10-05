@@ -299,6 +299,7 @@ tar:soft_clean
 		-name SAUVE -prune -o \
 		-name OBJ -prune -o \
 		-name BLOB -prune -o \
+		-name .svn -prune -o \
 		-path 1.11/MODELES -prune -o \
 		! -name nanoedit \
 		! -name so_locations \
