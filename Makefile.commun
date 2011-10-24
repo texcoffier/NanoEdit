@@ -21,7 +21,7 @@ export BASE CC MAKE CFLAGS PATH
 		    echo "$$FIN" | sed 's/..$$//' ; fi` ; \
 	     if [ "" != "$$LIB" ] ; then echo $$LIB ; fi || true ; \
 	     [ "$(UTILISE_LIB)" = non ] && LIB="" ; \
-	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $$LIB -o $*.o ; \
+	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $(USER_LIB) $$LIB -o $*.o ; \
 	     rm obj.o ; \
 	     ;; \
 	*) echo "Compile statique  $*.cpp " ; \
@@ -43,7 +43,7 @@ export BASE CC MAKE CFLAGS PATH
 		    echo "$$FIN" | sed 's/..$$//' ; fi` ; \
 	     if [ "" != "$$LIB" ] ; then echo $$LIB ; fi || true ; \
 	     [ "$(UTILISE_LIB)" = non ] && LIB="" ; \
-	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $$LIB -o $*.o ; \
+	     $(LD) $(LDFLAGS) $(SHARED) obj.o $(LIBRD) $(USER_LIB) $$LIB -o $*.o ; \
 	     rm obj.o ; \
 	     ;; \
 	*) echo "Compile statique  $*.c " ; \
