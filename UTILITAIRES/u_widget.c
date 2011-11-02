@@ -80,15 +80,15 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
 
 
 	case XK_Shift_L   :
-	case XK_Shift_R   :
+	case XK_Shift_R   : iw->etat |= 1 ; return ;
 	case XK_Control_L :
-	case XK_Control_R :
+	case XK_Control_R : iw->etat |= 2 ; return ;
+	case XK_Alt_L     :
+	case XK_Alt_R     : iw->etat |= 4 ; return ;
 	case XK_Caps_Lock :
 	case XK_Shift_Lock:
 	case XK_Meta_L    :
 	case XK_Meta_R    :
-	case XK_Alt_L     :
-	case XK_Alt_R     : 
 	case XK_Super_L   :
 	case XK_Super_R   :
 	case XK_Hyper_L   :
