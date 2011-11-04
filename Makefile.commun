@@ -128,7 +128,7 @@ OBJ/$(ARCH)/nanoedit:$(LES_FONCTIONS)
 	fi
 
 Nanoedit-static_:client_ $(LES_FONCTIONS)
-	$(CC) $(LDFLAGS2) $(PRE_LIB) $(BASE)/{COEUR,OBJETS,TYPES,UTILITAIRES,PROFILER,TESTS}/OBJ/$(ARCH)/*.o $(DLDLIB) $(LIBR) -o OBJ/$(ARCH)/nanoedit
+	$(CC) $(LDFLAGS2) $(PRE_LIB) $(BASE)/*/OBJ/$(ARCH)/*.o $(DLDLIB) $(LIBR) -o OBJ/$(ARCH)/nanoedit
 
 
 client_:OBJ/$(ARCH)/client
