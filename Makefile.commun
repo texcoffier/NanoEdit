@@ -58,6 +58,7 @@ export BASE CC MAKE CFLAGS PATH
 #
 
 default strace tester rejoue all allt tags cpp_debug run go gdb lance cflow lint depend remove_include compile_directory Nanoedit full_clean Nanoedit-static dump lib depends demo lance_toutes_les_nuits variables Nanoedit_sans_x11 lance_sans_x11  lance_sans_fenetres but client lance_en_ecriture lance_debug profiler lance_sfm lance_partout rejouer valgrind:
+	if ! pkg-config --cflags sdl >/dev/null 2>&1 ; then echo "\n\n\nIl manque le paquet 'libsdl-dev' pour compiler NanoEdit" >&2 ; exit 1 ; fi
 	if [ ! -f Makefile.dep ] ; then $(MAKE) depend_ depends_ ; fi
 	if $(MAKE) --version >/dev/null 2>&1 ; then : ; else echo "Vous devez utiliser la commande 'make' du GNU" ; false ; fi
 	export LC_ALL="fr_FR.utf8" ; BASE="$(BASE)" DIRECTORY_A_AJOUTER="$(DIRECTORY_A_AJOUTER)" ; export BASE DIRECTORY_A_AJOUTER ; . $(BASE)/configuration >&2 ; $(MAKE) $(@)_
