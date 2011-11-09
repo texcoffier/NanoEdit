@@ -158,12 +158,14 @@ PROTOTYPE_CALLBACK_EVENT(u_ev_button_release, w, c, event)
   Interface_widget iw ;
 
   if ( u_initialiser_iw(&iw, w, c, event) ) FIN_CALLBACK_EVENT_CONTINUE ;
-
+  
+  iw.b = -iw.b - 1 ;
+  (*iw.ch->te->entree)(&iw);
   switch( iw.b )
     {
-    case 0:
-    case 1:
-    case 2: /* Ajout de ce cas précis le 16/01/2003 */
+    case -1:
+    case -2:
+    case -3: /* Ajout de ce cas précis le 16/01/2003 */
       widget_enleve_event_motion(w, u_ev_motion, iw.ch) ;
       widget_enleve_event_button_release(w, u_ev_button_release, iw.ch) ;
       FIN_CALLBACK_EVENT_ARRETE ;

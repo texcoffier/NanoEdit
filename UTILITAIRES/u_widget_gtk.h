@@ -521,8 +521,14 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
 	iw->b = 1 ;
       if ( ev->state & Button3Mask )
 	iw->b = 2 ;
+      if(ev->state & ShiftMask)
+	iw->etat |=1;
+      if(ev->state & ControlMask)
+	iw->etat |=2;
+      if(ev->state & Mod1Mask)
+	iw->etat |=4;
     }
-
+    
   if ( ev->type == GDK_SCROLL )
     {
       es = (GdkEventScroll*)e ;
