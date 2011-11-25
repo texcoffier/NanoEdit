@@ -169,6 +169,7 @@ lance_:core
 		N= ; \
 	fi ; \
 		echo $$N ; \
+	echo $(DIRECTORIES) ; \
 	$$VALGRIND OBJ/$(ARCH)/nanoedit $(USER_OPTIONS) $$N
 
 demo_:compile_directory_ Nanoedit

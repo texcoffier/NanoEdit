@@ -168,6 +168,8 @@ PROTOTYPE_CALLBACK_EVENT(u_ev_button_release, w, c, event)
     case -3: /* Ajout de ce cas précis le 16/01/2003 */
       widget_enleve_event_motion(w, u_ev_motion, iw.ch) ;
       widget_enleve_event_button_release(w, u_ev_button_release, iw.ch) ;
+      OBJET(iw.objet)->urgent = Vrai ;
+      evaluation(iw.objet) ;
       FIN_CALLBACK_EVENT_ARRETE ;
       break ;
     }
@@ -188,7 +190,7 @@ PROTOTYPE_CALLBACK_EVENT(u_ev_button_press, w, c, event)
     case 4:
       if ( TRACE(iw.objet) )
 	eprintf("u_input bouton 1 ou 2 ou 4 ou 5\n") ;
-      if ( (*iw.ch->te->entree)(&iw) && iw.b < 3 )
+      if ( (*iw.ch->te->entree)(&iw) && iw.b < 3 && iw.b>=0)
 	{
 	  widget_add_event_button_release (w, u_ev_button_release, iw.ch) ;
 	  widget_add_event_motion(w, u_ev_motion, iw.ch);
