@@ -940,10 +940,18 @@ DEFINITION_TYPE_EDITEUR(E_commande_menu, E_void,
 
 static Booleen option_menu_entree(const Interface_widget *iw)
 {
+   Interface_widget iw2 ;
   if ( OBJET(iw->objet)->edite )
-    widget_button_ecrit(widget_trouve_fils(OBJET(iw->objet)->edite
+	{	
+        widget_button_ecrit(widget_trouve_fils(OBJET(iw->objet)->edite
 					   , iw->ch->nom_champ)
 			, iw->texte) ;
+      iw2 = *iw ;
+      if(iw->ch->te_entree)
+      {
+	(*iw->ch->te_entree)(&iw2) ;
+      }
+       }
 
   return(0) ;
 }
