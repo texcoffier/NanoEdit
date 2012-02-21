@@ -461,6 +461,7 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
   EPRINTF("Début décode\n") ;
 
   iw->e = e ;
+  iw->etat = 0 ;
   ev = (GdkEventButton*)e ;
 
   switch( ev->type )
