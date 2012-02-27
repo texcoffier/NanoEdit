@@ -276,6 +276,7 @@ struct interface_widget
   char touche[30];		/* Nom de la touche appuyée */
   int configure_x, configure_y, configure_l, configure_h;
   void *objet_contextuel ;
+  int double_clique ;
 
   const char *texte;		/* Texte (touche clavier, ...) RECODÉE */
 };

@@ -466,11 +466,12 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
 
   switch( ev->type )
     {
-    case GDK_BUTTON_PRESS:
     case GDK_2BUTTON_PRESS:
     case GDK_3BUTTON_PRESS:
+    case GDK_BUTTON_PRESS:
     case GDK_BUTTON_RELEASE:
     case GDK_MOTION_NOTIFY:
+      iw->double_clique = (ev->type == GDK_2BUTTON_PRESS) ;
       iw->x = ev->x ;
       iw->y = ev->y ;
       iw->x_root = ev->x_root ;
