@@ -462,6 +462,7 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
 
   iw->e = e ;
   iw->etat = 0 ;
+  iw->double_clique = 0 ;
   ev = (GdkEventButton*)e ;
 
   switch( ev->type )
