@@ -56,6 +56,7 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
 	case XK_End         : strcpy(iw->touche, "End"       ); break ;
 	case XK_Begin       : strcpy(iw->touche, "Begin"     ); break ;
 	case XK_Delete      : strcpy(iw->touche, "Delete"    ); break ;
+	case XK_BackSpace   : strcpy(iw->touche, "BackSpace" ); break ;
 	case XK_F1          : strcpy(iw->touche, "F1"        ); break ;
 	case XK_F2          : strcpy(iw->touche, "F2"        ); break ;
 	case XK_F3          : strcpy(iw->touche, "F3"        ); break ;
