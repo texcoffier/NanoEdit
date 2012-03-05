@@ -70,6 +70,7 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
 	case XK_F12         : strcpy(iw->touche, "F12"       ); break ;
 	case XK_KP_Space    : strcpy(iw->touche, " "         ); break ;
 	case XK_KP_Tab      : strcpy(iw->touche, "\t"        ); break ;
+	case XK_Return      :
 	case XK_KP_Enter    : strcpy(iw->touche, "\n"        ); break ;
 	case XK_KP_Equal    : strcpy(iw->touche, "="         ); break ;
 	case XK_KP_Multiply : strcpy(iw->touche, "*"         ); break ;
