@@ -130,6 +130,7 @@ void w_applique(void *objet)
   if ( OBJET(objet)->edite == NULL )
     {
       eprintf("Edite est NULL!!!\n") ;
+
       return ;
     }
   if ( TRACE(objet) ) eprintf("w_applique\n") ;
