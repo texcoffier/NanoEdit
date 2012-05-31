@@ -119,7 +119,7 @@ LDFLAGS2="-export-dynamic"
 DLDLIB="-ldl"
 CXX="g++"
 COMPILE_SHARED_CXX=""
-LIBR="$LIBRD $LIBR"
+LIBRD="$LIBR" # Librairies pour la compilation des plugins
 CFLAGS="$CFLAGS $INCLUDES $XINCLUDE_DIR $CONSTANTES $DLFCN"
 
 # Pour Mandrake 9.1 décommenter :
