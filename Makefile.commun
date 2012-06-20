@@ -297,8 +297,8 @@ tar:soft_clean
 	echo
 	V=`pwd` ; \
 	V=`basename $$V` ; \
-	cd ../.. ; \
-	( find NE/$$V \
+	cd .. ; \
+	( find $$V/ \
 		-name SAUVE -prune -o \
 		-name OBJ -prune -o \
 		-name BLOB -prune -o \
@@ -309,7 +309,7 @@ tar:soft_clean
 		! -name ".*" \
 		! -name "*.ps" \
 		! -name "TAGS" \
-		! -type d -print ; echo NE/$$V/.client.c ) |\
+		! -type d -print ; echo $$V/.client.c ) |\
 	tar -cvf - --files-from - | gzip -9 >$(HOME)/public_html/ne-$$V.tar.gz
 	ls -ls $(HOME)/public_html/ne-*
 
