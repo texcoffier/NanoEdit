@@ -2445,19 +2445,20 @@ CLASSE(vue, Vue,
        FIN_BOITE
        DEBUT_BOITE(HORIZONTALE BoiteHomogene)
        NonLabel
-       CHAMP(observateur.point_de_vue, NOM("point_de_vue")                L_point3   DEFAUT("1 1 1")
+       CHAMP(observateur.point_de_vue, NOM("point_de_vue")                L_point3   DEFAUT("1 1 1") LABEL("Observateur") Edite
              BULLE_D_AIDE
              ("La position de l'observateur.\n")
              )
-       CHAMP(observateur.point_vise  , NOM("point_vise")                 L_point3   DEFAUT("0 0 0")
+       CHAMP(observateur.point_vise  , NOM("point_vise")                 L_point3   DEFAUT("0 0 0") LABEL("Point vise") Edite
              BULLE_D_AIDE
              ("Le point regardé (ou point visé).\n")
              )
-       CHAMP(observateur.haut        , NOM("haut")                L_point3   DEFAUT("0 0 1")
+       CHAMP(observateur.haut        , NOM("haut")                L_point3   DEFAUT("0 0 1") LABEL("Haut") Edite
              BULLE_D_AIDE
              ("Le vecteur indique le haut pour l'observateur.\n"
               "Pour avoir l'axe Z vers le haut : (0 0 1)\n")
              )
+       CHAMP(couleur_fond, L_couleur P_triplet DEFAUT("0 0 0") Edite Sauve LABEL("Couleur de fond"))
        FIN_BOITE
        Label
        /*
@@ -2601,7 +2602,7 @@ CLASSE(vue, Vue,
        DESTRUCTION(destruction_vue)
        PAQUET(NB_ACTIFS)
        CHAMP(geometrie   , L_geometrie Cree /* Modifiable */ Sauve DEFAUT("0 0 400 400"))
-       CHAMP(couleur_fond, L_couleur P_triplet DEFAUT("0 0 0") NonAffiche Sauve)
+       //CHAMP(couleur_fond, L_couleur P_triplet DEFAUT("0 0 0") NonAffiche Sauve)
        CHAMP_VIRTUEL(NOM("dump_image") L_fonction(dump_image))
        CHAMP_VIRTUEL(NOM("print_image") L_fonction(print_image))
 
