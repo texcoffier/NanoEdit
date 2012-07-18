@@ -122,6 +122,11 @@ void widget_enleve_event_repositionnement(NanoWidget w
 void widget_enleve_event_motion(NanoWidget w
 				, POINTEUR_CALLBACK_EVENT(fct)
 				, const Champ *c) ;
+///////////// Added By Houssam on 18 July 2012 ////////////////////////////////////////				
+void widget_enleve_event_button_press(NanoWidget w
+					, POINTEUR_CALLBACK_EVENT(fct)
+					, const Champ *c) ;
+///////////////////////////////////////////////////////////////////////////////
 void widget_enleve_event_button_release(NanoWidget w
 					, POINTEUR_CALLBACK_EVENT(fct)
 					, const Champ *c) ;

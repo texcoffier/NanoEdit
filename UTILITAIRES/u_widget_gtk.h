@@ -273,6 +273,20 @@ void widget_add_event_button_release(NanoWidget w
 		    (gpointer)c);  
 }
 
+///////////// Added By Houssam on 18 July 2012 ////////////////////////////////////////				
+void widget_enleve_event_button_press(NanoWidget w
+					, POINTEUR_CALLBACK_EVENT(fct)
+					, const Champ *c)
+{
+  EPRINTF("widget_enleve_event_button_release\n") ;
+  g_signal_handlers_disconnect_by_func(G_OBJECT(w)
+			      , (GCallback)fct
+			      , (gpointer)c) ;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+
 void widget_enleve_event_button_release(NanoWidget w
 					, POINTEUR_CALLBACK_EVENT(fct)
 					, const Champ *c)
