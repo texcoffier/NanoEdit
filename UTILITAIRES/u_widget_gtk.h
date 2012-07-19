@@ -274,13 +274,16 @@ void widget_add_event_button_release(NanoWidget w
 }
 
 ///////////// Added By Houssam on 18 July 2012 ////////////////////////////////////////				
-void widget_enleve_event_button_press(NanoWidget w
-					, POINTEUR_CALLBACK_EVENT(fct)
+void widget_enleve_all_event_button_press(NanoWidget w
 					, const Champ *c)
 {
-  EPRINTF("widget_enleve_event_button_release\n") ;
-  g_signal_handlers_disconnect_by_func(G_OBJECT(w)
-			      , (GCallback)fct
+  EPRINTF("widget_enleve_event_button_press\n") ;
+  g_signal_handlers_disconnect_matched(G_OBJECT(w)
+                              , /*G_SIGNAL_MATCH_DETAIL |*/ G_SIGNAL_MATCH_DATA | G_SIGNAL_MATCH_ID
+                              , g_signal_lookup("button-press-event", GTK_TYPE_WINDOW)
+                              , 0
+			      , NULL
+			      , NULL
 			      , (gpointer)c) ;
 }
 
