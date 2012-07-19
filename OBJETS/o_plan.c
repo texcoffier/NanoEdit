@@ -21,6 +21,7 @@
 #include <math.h>
 #include "o_objet.h"
 #include "u_vue.h"
+#include "u_modele.h"
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "u_etat_courant.h"
@@ -523,7 +524,7 @@ static void affiche(struct plan *o, const Champ *c, const char *qualite)
 	    /*
 	     * Réaffiche le modèle complet (pas propre)
 	     */
-	    affiche_gl( OBJET(u_modele(o))->fils, qualite) ;
+	    affiche_gl(contenu_modele( u_modele(o) ) , qualite) ;
 
 	    depile_matrices_courantes() ;
 	    
@@ -556,7 +557,7 @@ static void affiche(struct plan *o, const Champ *c, const char *qualite)
       if ( TRACE(o) )
 	eprintf("Affiche miroir sur le plan\n") ;
       /* affiche_modele(o, qualite) ; */
-      affiche_gl( OBJET(u_modele(o))->fils, qualite) ;
+      affiche_gl(contenu_modele( u_modele(o) ) , qualite) ;
       glCullFace(GL_BACK) ;
       depile_matrices_courantes() ;
     }
@@ -575,7 +576,7 @@ static void affiche(struct plan *o, const Champ *c, const char *qualite)
       if ( TRACE(o) )
 	eprintf("Affiche projection orthogonales sur le plan\n") ;
       /* affiche_modele(o, qualite) ; */
-      affiche_gl( OBJET(u_modele(o))->fils, qualite) ;
+      affiche_gl(contenu_modele( u_modele(o) ) , qualite) ;
       if ( o->projection_orthogonale_en_noir )
 	affiche_normal() ;
       depile_matrices_courantes() ;
