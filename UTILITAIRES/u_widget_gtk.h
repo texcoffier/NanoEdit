@@ -2017,6 +2017,8 @@ NanoWidget widget_button_menu_with_icon(NanoWidget w, const char *nom, const cha
 	  icone = widget_image(lar, hau) ;
 	  widget_image_update_open_file(icone, lar, hau, f) ;
 	  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), icone) ;
+	  gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(item),
+						    TRUE);
 	}
       fclose(f) ;
     }
