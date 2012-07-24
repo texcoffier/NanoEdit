@@ -39,7 +39,9 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
     {
       if ( isdigit(t) )
 	iw->etat &= ~1 ; /* Enleve le Shift au cas ou AZERTY */
-      iw->touche[0] = tolower(t) ;
+//       iw->touche[0] = tolower(t) ;
+//  Modified by Houssam on 24 July 2012 capital letter
+	iw->touche[0] = t ;
     }
   else
     {
