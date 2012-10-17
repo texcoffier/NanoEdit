@@ -85,13 +85,21 @@ int read_png_file(const char* file_name, Image *p)
 
   png_read_info(png_ptr, info_ptr);
 
-  LAR(p) = info_ptr->width;
-  HAU(p) = info_ptr->height;
+  // Modified by Houssam on 17/10/2012 to be able to work with libpng1.5
+  // because libpng1.5 prevents direct access to png_struct and png_info structure
+//   LAR(p) = info_ptr->width;
+  LAR(p) = png_get_image_width(png_ptr,info_ptr);
+//   HAU(p) = info_ptr->height;
+  HAU(p) = png_get_image_height(png_ptr,info_ptr);
   p->ratio = LAR(p)/(double)HAU(p) ;
 
-  color_type = info_ptr->color_type;
-  bit_depth = info_ptr->bit_depth;
-
+//   color_type = info_ptr->color_type;
+  color_type = png_get_color_type(png_ptr,info_ptr);
+//   bit_depth = info_ptr->bit_depth;
+  bit_depth = png_get_bit_depth(png_ptr,info_ptr);
+  
+  // End Houssam Modification
+  
   if ( color_type != PNG_COLOR_TYPE_RGB_ALPHA )
     {
       eprintf("Ne supporte que les PNG avec transparence\n") ;
