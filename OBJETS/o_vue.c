@@ -183,6 +183,41 @@ static void u_vue_matrice(const Vue *vue)
   u_vue_matrice_suite(vue) ;
 }
 
+
+void regarder(const Interface_widget *iw,Vue *vue, struct selection *selection,
+	      int surface)
+{
+  GLdouble mv[16], pr[16] ;
+  GLint vp[4] = { 0, 0, vue->gl.lar, vue->gl.hau }, dt ;
+  GLdouble xx, yy, zz, z ;
+
+  // Pourquoi cela ne retourne pas 32 mais 24 ???
+  // glGetIntegerv(GL_DEPTH_BITS, &dt) ;
+  dt = 32;
+
+  if ( surface )
+    z = (unsigned int)selection->zmin/pow(2,dt) ;
+  else
+    z = ((unsigned int)selection->zmin/pow(2,dt)
+	 +  (unsigned int)selection->zmax/pow(2,dt)) / 2 ;
+    
+
+  u_vue_matrice(vue) ;
+  glGetDoublev(GL_MODELVIEW_MATRIX,mv) ;
+  glGetDoublev(GL_PROJECTION_MATRIX,pr) ;
+  if ( gluUnProject( iw->x, vue->gl.hau - iw->y, z,
+		     mv, pr, vp, &xx, &yy, &zz)
+       != GL_TRUE )
+    eprintf("gluUnProject error\n") ;
+
+  vue->observateur.point_vise.x = xx ;
+  vue->observateur.point_vise.y = yy ;
+  vue->observateur.point_vise.z = zz ;
+  vue->regard = u_soustrait_triplet(&vue->observateur.point_vise,
+				    &vue->observateur.point_de_vue) ;
+}
+
+
 void u_vue_2d_3d(Vue* vue, int x, int y, Triplet *pt, int hau)
 {
   GLdouble mv[16], pr[16] ;
@@ -1534,6 +1569,10 @@ static Booleen menu_contextuel(const Interface_widget *iw)
 
       if ( OBJET_OU_NULL(o) )
 	{
+	  FSI("Regarder surface", regarder(&vue->menu_contextuel_iw,
+				   vue, &vue->designes[i], 1) ; ) ;
+	  FSI("Regarder dedans", regarder(&vue->menu_contextuel_iw,
+				   vue, &vue->designes[i], 0) ; ) ;
 	  FSI("Detruire", detruire_objet_remonte_fils(o) ; ) ;
 	  FSI("Editer",  ouvrir_fenetre(o) ;  ) ;
 	  FSI("Enleve DETRUIT", l_enleve(&OBJET(o)->fils, NULL) ;
@@ -2514,8 +2553,10 @@ CLASSE(vue, Vue,
              )
        CHAMP(menu_contextuel , L_commande_menu(menu_contextuel) NonCree
              TE_TEXTE("Editer\n"
-		      "Detruire\n"
+		      "Regarder surface\n"
+		      "Regarder dedans\n"
 		      "Enleve DETRUIT\n"
+		      "Detruire\n"
 		      "Duplique\n"
 		      "Aide\n"
 		      )
