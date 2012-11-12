@@ -31,6 +31,10 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
 {
   iw->touche[0] = '\0' ;
   iw->touche[1] = '\0' ;
+  
+  // Added by Houssam on 12 November 2012
+  iw->toucheminmaj[0]='\0';
+  iw->toucheminmaj[1]='\0';
 
   if ( t>=XK_KP_0 && t<= XK_KP_9 )
     t = t - XK_KP_0 + '0' ;
@@ -39,48 +43,48 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
     {
       if ( isdigit(t) )
 	iw->etat &= ~1 ; /* Enleve le Shift au cas ou AZERTY */
-//       iw->touche[0] = tolower(t) ;
-//  Modified by Houssam on 24 July 2012 capital letter
-	iw->touche[0] = t ;
+      iw->touche[0] = tolower(t) ;
+//  added by Houssam on 12 November 2012 capital letter
+	iw->toucheminmaj[0] = t ;
     }
   else
     {
       /* Le prend sans modifieur */
       switch( t2 )
 	{
-	case XK_Home        : strcpy(iw->touche, "Home"      ); break ;
-	case XK_Left        : strcpy(iw->touche, "Left"      ); break ;
-	case XK_Up          : strcpy(iw->touche, "Up"        ); break ;
-	case XK_Right       : strcpy(iw->touche, "Right"     ); break ;
-	case XK_Down        : strcpy(iw->touche, "Down"      ); break ;
-	case XK_Page_Up     : strcpy(iw->touche, "Page_Up"   ); break ;
-	case XK_Page_Down   : strcpy(iw->touche, "Page_Down" ); break ;
-	case XK_End         : strcpy(iw->touche, "End"       ); break ;
-	case XK_Begin       : strcpy(iw->touche, "Begin"     ); break ;
-	case XK_Delete      : strcpy(iw->touche, "Delete"    ); break ;
-	case XK_BackSpace   : strcpy(iw->touche, "BackSpace" ); break ;
-	case XK_F1          : strcpy(iw->touche, "F1"        ); break ;
-	case XK_F2          : strcpy(iw->touche, "F2"        ); break ;
-	case XK_F3          : strcpy(iw->touche, "F3"        ); break ;
-	case XK_F4          : strcpy(iw->touche, "F4"        ); break ;
-	case XK_F5          : strcpy(iw->touche, "F5"        ); break ;
-	case XK_F6          : strcpy(iw->touche, "F6"        ); break ;
-	case XK_F7          : strcpy(iw->touche, "F7"        ); break ;
-	case XK_F8          : strcpy(iw->touche, "F8"        ); break ;
-	case XK_F9          : strcpy(iw->touche, "F9"        ); break ;
-	case XK_F10         : strcpy(iw->touche, "F10"       ); break ;
-	case XK_F11         : strcpy(iw->touche, "F11"       ); break ;
-	case XK_F12         : strcpy(iw->touche, "F12"       ); break ;
-	case XK_KP_Space    : strcpy(iw->touche, " "         ); break ;
-	case XK_KP_Tab      : strcpy(iw->touche, "\t"        ); break ;
+	case XK_Home        : strcpy(iw->touche, "Home"      ); strcpy(iw->toucheminmaj, "Home"      ); break ;
+	case XK_Left        : strcpy(iw->touche, "Left"      ); strcpy(iw->toucheminmaj, "Left"      ); break ;
+	case XK_Up          : strcpy(iw->touche, "Up"        ); strcpy(iw->toucheminmaj, "Up"        ); break ;
+	case XK_Right       : strcpy(iw->touche, "Right"     ); strcpy(iw->toucheminmaj, "Right"     ); break ;
+	case XK_Down        : strcpy(iw->touche, "Down"      ); strcpy(iw->toucheminmaj, "Down"      ); break ;
+	case XK_Page_Up     : strcpy(iw->touche, "Page_Up"   ); strcpy(iw->toucheminmaj, "Page_Up"   ); break ;
+	case XK_Page_Down   : strcpy(iw->touche, "Page_Down" ); strcpy(iw->toucheminmaj, "Page_Down" ); break ;
+	case XK_End         : strcpy(iw->touche, "End"       ); strcpy(iw->toucheminmaj, "End"       ); break ;
+	case XK_Begin       : strcpy(iw->touche, "Begin"     ); strcpy(iw->toucheminmaj, "Begin"     ); break ;
+	case XK_Delete      : strcpy(iw->touche, "Delete"    ); strcpy(iw->toucheminmaj, "Delete"    ); break ;
+	case XK_BackSpace   : strcpy(iw->touche, "BackSpace" ); strcpy(iw->toucheminmaj, "BackSpace" ); break ;
+	case XK_F1          : strcpy(iw->touche, "F1"        ); strcpy(iw->toucheminmaj, "F1"        ); break ;
+	case XK_F2          : strcpy(iw->touche, "F2"        ); strcpy(iw->toucheminmaj, "F2"        ); break ;
+	case XK_F3          : strcpy(iw->touche, "F3"        ); strcpy(iw->toucheminmaj, "F3"        ); break ;
+	case XK_F4          : strcpy(iw->touche, "F4"        ); strcpy(iw->toucheminmaj, "F4"        ); break ;
+	case XK_F5          : strcpy(iw->touche, "F5"        ); strcpy(iw->toucheminmaj, "F5"        ); break ;
+	case XK_F6          : strcpy(iw->touche, "F6"        ); strcpy(iw->toucheminmaj, "F6"        ); break ;
+	case XK_F7          : strcpy(iw->touche, "F7"        ); strcpy(iw->toucheminmaj, "F7"        ); break ;
+	case XK_F8          : strcpy(iw->touche, "F8"        ); strcpy(iw->toucheminmaj, "F8"        ); break ;
+	case XK_F9          : strcpy(iw->touche, "F9"        ); strcpy(iw->toucheminmaj, "F9"        ); break ;
+	case XK_F10         : strcpy(iw->touche, "F10"       ); strcpy(iw->toucheminmaj, "F10"       ); break ;
+	case XK_F11         : strcpy(iw->touche, "F11"       ); strcpy(iw->toucheminmaj, "F11"       ); break ;
+	case XK_F12         : strcpy(iw->touche, "F12"       ); strcpy(iw->toucheminmaj, "F12"       ); break ;
+	case XK_KP_Space    : strcpy(iw->touche, " "         ); strcpy(iw->toucheminmaj, " "         ); break ;
+	case XK_KP_Tab      : strcpy(iw->touche, "\t"        ); strcpy(iw->toucheminmaj, "\t"        ); break ;
 	case XK_Return      :
-	case XK_KP_Enter    : strcpy(iw->touche, "\n"        ); break ;
-	case XK_KP_Equal    : strcpy(iw->touche, "="         ); break ;
-	case XK_KP_Multiply : strcpy(iw->touche, "*"         ); break ;
-	case XK_KP_Add      : strcpy(iw->touche, "+"         ); break ;
-	case XK_KP_Subtract : strcpy(iw->touche, "-"         ); break ;
-	case XK_KP_Decimal  : strcpy(iw->touche, "."         ); break ;
-	case XK_KP_Divide   : strcpy(iw->touche, "/"         ); break ;
+	case XK_KP_Enter    : strcpy(iw->touche, "\n"        ); strcpy(iw->toucheminmaj, "\n"        ); break ;
+	case XK_KP_Equal    : strcpy(iw->touche, "="         ); strcpy(iw->toucheminmaj, "="         ); break ;
+	case XK_KP_Multiply : strcpy(iw->touche, "*"         ); strcpy(iw->toucheminmaj, "*"         ); break ;
+	case XK_KP_Add      : strcpy(iw->touche, "+"         ); strcpy(iw->toucheminmaj, "+"         ); break ;
+	case XK_KP_Subtract : strcpy(iw->touche, "-"         ); strcpy(iw->toucheminmaj, "-"         ); break ;
+	case XK_KP_Decimal  : strcpy(iw->touche, "."         ); strcpy(iw->toucheminmaj, "."         ); break ;
+	case XK_KP_Divide   : strcpy(iw->touche, "/"         ); strcpy(iw->toucheminmaj, "/"         ); break ;
 
 
 	case XK_Shift_L   :
@@ -98,7 +102,7 @@ void widget_keyval_to_string(int t, int t2, Interface_widget *iw)
 	case XK_Hyper_L   :
 	case XK_Hyper_R   :
 	  return ;
-	default           : strcpy(iw->touche, "?") ;
+	default           : strcpy(iw->touche, "?"); strcpy(iw->toucheminmaj, "?");
 	}
     }
 }

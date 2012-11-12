@@ -274,6 +274,7 @@ struct interface_widget
   int x_root, y_root;		/* Position du curseur */
   int etat;			/* 1=shift 2=ctrl 4=alt */
   char touche[30];		/* Nom de la touche appuyée */
+  char toucheminmaj[30];       /* Nom de la touche appuyée en gardant son etat( minuscule ou majuscule). Added by Houssam on 12 November 2012*/
   int configure_x, configure_y, configure_l, configure_h;
   void *objet_contextuel ;
   int double_clique ;
