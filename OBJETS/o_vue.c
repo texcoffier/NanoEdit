@@ -1229,12 +1229,7 @@ static void u_deplace_tag(const Vue *vue, struct selection *s
 	  poids = q.h ;
 	case 2:
 	  i = numero_mauvaise_coordonnee(vue) ;
-	  /*
-	   * Je met le 1|| en commentaire le 22/10/2001
-	   * car cela empêche de déplacer plusieurs tag superposés
-	   * sans changer leur profondeur (voir les grilles)
-	   */
-	  if ( /* 1 || */ i >= 3 )
+	  if ( vue->b_persp.index || i >= 3 )
 	    {
 	      /*
 	       * Changement position dans ``vue 3d''
@@ -1250,6 +1245,10 @@ static void u_deplace_tag(const Vue *vue, struct selection *s
 	    }
 	  else
 	    {
+	      /*
+	       * cette procédure permet de déplacer plusieurs tag superposés
+	       * sans changer leur profondeur (voir les grilles)
+	       */
 	      /*
 	       * Changement position dans vue ``orthogonale''.
 	       * Le but est de ne pas changer l'une des coordonnées
