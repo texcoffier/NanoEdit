@@ -9,8 +9,12 @@ do
   J=`expr $J + 1`
 done
 
+# -b : debit (5000 pour du HD, 3000 pour de la tele)
+# -r : nombre d'image par seconde
+# -s : resolution
+avconv -i xxx.%d.jpg -r 25 -b 3000k -s 768x576 yyy.mpg
 
-ffmpeg -f image2 -vcodec mjpeg -i xxx.%d.jpg -target dvd yyy.mpg
+# ffmpeg -f image2 -vcodec mjpeg -i xxx.%d.jpg -target dvd yyy.mpg
 # ffmpeg -f image2 -vcodec mjpeg -i xxx.%d.jpg -target dvd yyy.mpg
 # ffmpeg -f image2 -vcodec mjpeg -i xxx.%d -target dvd yyy.avi
 
