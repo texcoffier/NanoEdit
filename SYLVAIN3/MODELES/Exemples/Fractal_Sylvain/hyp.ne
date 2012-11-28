@@ -48,7 +48,7 @@ fils (135265872 135266152 135266272 135266504)
 
 classe homothetie
 nom 135265872
-angle 2
+homo 2
 
 classe couleur
 nom 135266152
@@ -84,7 +84,7 @@ t_v3 1.3 0 1
 
 classe homothetie
 nom 135267368
-angle 0.5
+homo 0.5
 
 classe applique
 actif 14

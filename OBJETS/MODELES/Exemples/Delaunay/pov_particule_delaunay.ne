@@ -73,7 +73,7 @@ fils (137126272 137126560)
 
 classe homothetie
 nom 137126272
-angle 0.2
+homo 0.2
 
 classe sphere
 nom 137126560

@@ -53,7 +53,7 @@ fils (273157512 270676344)
 classe homothetie
 nom 273157512
 edite 0
-angle 2
+homo 2
 
 classe fractale
 nom 270676344
@@ -83,7 +83,7 @@ t_v3 1.3 0 1
 classe homothetie
 nom 272945832
 edite 0
-angle 0.5
+homo 0.5
 
 classe applique
 nom 270336824

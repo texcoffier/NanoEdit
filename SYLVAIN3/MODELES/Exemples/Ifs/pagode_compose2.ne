@@ -317,7 +317,7 @@ fils (136427696 136958944)
 
 classe homothetie
 nom 136427696
-angle 2
+homo 2
 
 classe cube
 nom 136958944

@@ -62,7 +62,7 @@ t_origine 1 0 0
 
 classe homothetie
 nom 135856456
-angle 0.5
+homo 0.5
 
 classe sphere
 nom 135856744
@@ -178,7 +178,7 @@ t_origine 0 -2 -1
 
 classe homothetie
 nom 135861704
-angle 4
+homo 4
 
 classe rotation
 nom 135861992

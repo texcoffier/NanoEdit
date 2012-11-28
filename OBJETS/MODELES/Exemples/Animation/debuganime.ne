@@ -72,7 +72,7 @@ affichage filaire
 
 classe homothetie
 nom 137647472
-angle 10
+homo 10
 cache_tag 1
 cache_tag_symetrie 1
 

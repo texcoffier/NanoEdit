@@ -26,7 +26,7 @@ observateur 9 10 48
 
 classe homothetie
 nom 135808568
-angle 4
+homo 4
 
 classe translation
 nom 135808848
@@ -44,7 +44,7 @@ l_nb 9
 classe homothetie
 nom 135809392
 edite 136042832
-angle 0.2
+homo 0.2
 
 classe sphere
 nom 135809672

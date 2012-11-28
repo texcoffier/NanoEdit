@@ -84,7 +84,7 @@ t_origine 1.97333 0.293333 -0.853333
 
 classe homothetie
 nom 139325784
-angle 0.5
+homo 0.5
 
 classe produit_de_repere
 nom 139326032
@@ -96,7 +96,7 @@ t_origine 0 -1.89333 -0.426667
 
 classe homothetie
 nom 139326528
-angle 0.5
+homo 0.5
 
 classe produit_de_repere
 nom 139326776
@@ -108,7 +108,7 @@ t_origine 0 -1.22667 -1.52
 
 classe homothetie
 nom 139327272
-angle 0.5
+homo 0.5
 
 classe fractale
 nom 139327520
@@ -129,7 +129,7 @@ t_origine 0.88 0.986667 1.73333
 
 classe homothetie
 nom 139328144
-angle 0.5
+homo 0.5
 
 classe produit_de_repere
 nom 139328392
@@ -140,7 +140,7 @@ nom 139328640
 
 classe homothetie
 nom 139328888
-angle 0.5
+homo 0.5
 
 classe facette
 nom 141960656

@@ -213,7 +213,7 @@ t (-1.83424 3.42656 1.1878
 
 classe homothetie
 nom 162629968
-angle 0.2
+homo 0.2
 cache_tag 1
 
 classe sphere
@@ -681,7 +681,7 @@ fils (149464912 164757696)
 
 classe homothetie
 nom 149464912
-angle 0.2
+homo 0.2
 cache_tag 1
 
 classe sphere

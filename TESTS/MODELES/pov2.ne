@@ -152,7 +152,7 @@ fils (136946432 136946720)
 
 classe homothetie
 nom 136946432
-angle 2
+homo 2
 
 classe ligne_brisee
 nom 136946720
@@ -192,7 +192,7 @@ fils (136947616 136947904)
 
 classe homothetie
 nom 136947616
-angle 1.5
+homo 1.5
 
 classe polygone
 nom 136947904
@@ -208,4 +208,4 @@ fils (136948552 136946840)
 
 classe homothetie
 nom 136948552
-angle 2.5
+homo 2.5

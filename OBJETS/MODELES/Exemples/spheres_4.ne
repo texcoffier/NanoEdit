@@ -138,7 +138,7 @@ fils (136423072)
 classe homothetie
 actif 2
 nom 136407416
-angle 0.5
+homo 0.5
 
 classe sphere
 nom 136407696

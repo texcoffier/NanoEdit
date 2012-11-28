@@ -20,7 +20,7 @@ t_origine -5.8 -5.9 0
 
 classe homothetie
 nom 138583144
-angle 0.5
+homo 0.5
 
 classe couleur
 actif 1
@@ -32,7 +32,7 @@ b 0
 
 classe homothetie
 nom 138808304
-angle 2
+homo 2
 
 classe translation
 nom 138808568

@@ -65,7 +65,7 @@ cache_tag 1
 classe homothetie
 actif 5
 nom 135344256
-angle 0.52
+homo 0.52
 cache_tag 1
 
 classe applique

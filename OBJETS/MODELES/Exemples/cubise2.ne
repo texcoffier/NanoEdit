@@ -61,7 +61,7 @@ fils (136636760 136144432)
 
 classe homothetie
 nom 136636760
-angle 0.5
+homo 0.5
 
 classe operateur
 nom 136144432

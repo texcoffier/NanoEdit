@@ -21,7 +21,7 @@ applique_toujours_visible 1
 
 classe homothetie
 nom 136843168
-angle 10
+homo 10
 
 classe couleur
 actif 1
@@ -57,7 +57,7 @@ t_origine -12.8341 -7.99794 0
 
 classe homothetie
 nom 136844880
-angle 5
+homo 5
 
 classe sphere
 nom 135363568

@@ -97,7 +97,7 @@ fils (164567696 164779864)
 
 classe homothetie
 nom 164567696
-angle 0.4
+homo 0.4
 cache_tag 1
 cache_tag_symetrie 1
 

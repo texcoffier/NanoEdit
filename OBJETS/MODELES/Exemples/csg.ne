@@ -69,7 +69,7 @@ t_origine 0 0 0.5
 
 classe homothetie
 nom 136640592
-angle 1.05
+homo 1.05
 
 classe sphere
 nom 136640872
@@ -102,7 +102,7 @@ fils (136642344 136642624 136642904)
 
 classe homothetie
 nom 136642344
-angle 1.3
+homo 1.3
 
 classe translation
 nom 136642624
@@ -117,7 +117,7 @@ fils (136134808 136135088 136643120)
 
 classe homothetie
 nom 136134808
-angle 5
+homo 5
 
 classe translation
 nom 136135088
@@ -132,7 +132,7 @@ fils (136135536 136135816 136135904 136136024)
 
 classe homothetie
 nom 136135536
-angle 0.3
+homo 0.3
 
 classe reflexion
 nom 136135816
