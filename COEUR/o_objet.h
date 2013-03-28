@@ -967,7 +967,7 @@ Mot_clef *CONCATENE(u_classe_,CLS)()			\
   TYPE_STRUCT m ;				\
   char nom_virtuel[100] ; \
   int virtuel ; \
-  char *cls = GUILLEMET(CLS) ; \
+  const char *cls = GUILLEMET(CLS) ; \
 						\
   la_position_dans_la_table_globale = 0 ;	\
   la_taille_de_la_table_globale	= 0 ;		\

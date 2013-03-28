@@ -870,6 +870,7 @@ void applique_fenetre(void *o)
 
 void detruire_objet(void *o)
 {
+    //printf("detruire_objet : %s\n",OBJET(o)->classe->nom);getchar();
   if ( TRACE2(o) )
     eprintf("detruire_objet\n") ;
   POUR_TOUS_LES_PARENTS_(OBJET(o), oo, NOTE_FILS_CHANGE( oo );) ;
