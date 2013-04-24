@@ -401,7 +401,7 @@ static void Geometrie_ecrit(const Interface_widget *iw)
        * Ne change la position que si cela bouge de beaucoup
        * (taille de l'encadrement fenetre
       */
-      if ( ABS(q.x-x)>40 || ABS(q.y-y)>40 )
+      if ( ABS(q.x-x)>80 || ABS(q.y-y)>80 )
 	widget_positionne(w, q.x, q.y) ;
       if ( ABS(q.z-l)>1 || ABS(q.h-h)>1 )
 	widget_resize(w, (int)q.z, (int)q.h) ;

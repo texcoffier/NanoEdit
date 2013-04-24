@@ -53,7 +53,9 @@ long Gl_start(Gl *gl)
   glLoadIdentity() ;
   glBindTexture(GL_TEXTURE_2D, 1);
 
-  glGetError() ;
+  glGetError() ; // Remet à 0 les erreurs.
+
+  if ( 1 ) // Toujours afficher les problèmes (même si pas d'erreur)
   {
     GLint d ;
     glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &d ) ;
