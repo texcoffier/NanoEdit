@@ -103,9 +103,9 @@ CONSTANTES="-DDIRECTORY_BASE=\\\"$BASE\\\" -DVERSION_NANOEDIT=\\\"$VERSION_NANOE
 
 
 CC="gcc"
-CFLAGS="-D_REENTRANT -O0 -Wall  -Wno-implicit-int -Wno-char-subscripts -Wno-strict-aliasing -ggdb $USER_CFLAGS `libpng-config --cflags` `pkg-config --cflags sdl gtk+-2.0 gtkglext-1.0` -DHAVE_VSNPRINTF -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1"
+CFLAGS="-D_REENTRANT -O0 -Wall -Wno-char-subscripts -Wno-strict-aliasing -ggdb $USER_CFLAGS `libpng-config --cflags` `pkg-config --cflags sdl gtk+-2.0 gtkglext-1.0` -DHAVE_VSNPRINTF -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1"
 LIBR="$USER_LIB -L/usr/local/lib -lstdc++ -L/usr/local/lib `libpng-config --libs` `pkg-config --libs sdl gtk+-2.0 gtkglext-1.0`"
-COMPILE_SHARED="-fPIC"
+COMPILE_SHARED="-fPIC -Wno-implicit-int"
 COMPILE_SHARED_CXX="-fPIC"
 XINCLUDE_DIR="-I/usr/include -I/vol/X11R6/include"
 DLFCN="-DHAVE_DLFCN_H"
