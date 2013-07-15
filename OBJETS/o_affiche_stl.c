@@ -25,6 +25,7 @@
 #include "t_geometrie.h"
 #include "u_graphique.h"
 #include "u_etat_courant.h"
+#include "stl.h"
 
 typedef struct
 {
@@ -247,6 +248,20 @@ static void ecrit_stl_pov( Objet_stl *o, const Champ *c,
   
 }
 
+static void ecrit_stl_stl(Objet_stl *o, const Champ *c, const char *v)
+{
+  FILE *f ;
+  int i, di ;
+  
+  f = (FILE*)atol(v) ;
+  if ( o->affichage.index == 2 )
+    di = 8 ;
+  else
+    di = 4 ;
+
+   for(i=0; i<o->tt.nb; i+=di)
+       t_triangle_stl(f, &o->tt.table[i],&o->tt.table[i+1],&o->tt.table[i+2]);
+}		     
 
 
 
@@ -276,6 +291,7 @@ CLASSE(objet_stl, Objet_stl,
 		     AFFICHAGE(Different_suivant_type_affichage)
 		     )
        CHAMP_VIRTUEL(L_affiche_pov(ecrit_stl_pov)) 
+       CHAMP_VIRTUEL(L_affiche_stl(ecrit_stl_stl))
        MENU("Afficheur fichier STL")
        EVENEMENT("ASTL")
        )
