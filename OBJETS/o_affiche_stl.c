@@ -26,6 +26,8 @@
 #include "u_graphique.h"
 #include "u_etat_courant.h"
 #include "stl.h"
+#include <arpa/inet.h>
+#include <assert.h>
 
 typedef struct
 {
@@ -63,16 +65,32 @@ int recupere_triplet(FILE *f, const char *mot_clef, Triplet *p)
   return(0) ;
 }
 
-int lire_facette(FILE *f, Triplet valeurs[4], Booleen normale_du_fichier)
+int lire_facette(FILE *f, Triplet valeurs[4], Booleen normale_du_fichier,
+		 int version_ascii)
 {
   Triplet normale, u, v ;
+  float triangle[3*4] ; // +1 padding
   int i ;
+  assert(sizeof(triangle) == 48) ;
 
-  if ( recupere_triplet(f, "NORMAL", &normale) )
-    return(1) ;
-  for(i=0;i<3;i++)
-    if ( recupere_triplet(f, "VERTEX", &valeurs[i]) )
-      return(1) ;
+  if ( version_ascii )
+    {
+      if ( recupere_triplet(f, "NORMAL", &normale) )
+	return(1) ;
+      for(i=0;i<3;i++)
+	if ( recupere_triplet(f, "VERTEX", &valeurs[i]) )
+	  return(1) ;
+    }
+  else
+    {
+      if ( fread(triangle, sizeof(triangle)+2, 1, f) <= 0 )
+	return 1 ;
+      for(i=0;i<3*4;i++)
+	(&valeurs[0].x)[i] = triangle[i] ;
+      normale = valeurs[0] ;
+      valeurs[0] = valeurs[3] ;
+      valeurs[3] = normale ;
+    }
 
   u = u_soustrait_triplet(&valeurs[1], &valeurs[0]) ;
   v = u_soustrait_triplet(&valeurs[2], &valeurs[0]) ;
@@ -100,8 +118,12 @@ int lire_facette(FILE *f, Triplet valeurs[4], Booleen normale_du_fichier)
 static void changement_stl(Objet_stl *o)
 {
   FILE *f ;
-  int i ;
+  int i, version_ascii ;
+  int nb_facettes_entete ;
   struct informations_table it ;
+  char entete_binaire[81] ;
+
+  assert(sizeof(nb_facettes_entete) == 4) ;
 
   if ( ! CHAMP_CHANGE(o, nom_fichier) )
     return ;
@@ -115,6 +137,19 @@ static void changement_stl(Objet_stl *o)
       NOTE_CHAMP_INVALIDE(o, nom_fichier) ;
       return ;
     }
+  version_ascii = 0 ;
+  fread(entete_binaire, 80, 1, f) ;
+  entete_binaire[80] = '\0' ;
+  if ( strstr(entete_binaire, "solid") )
+    {
+      version_ascii = 1 ;
+      rewind(f) ;
+    }
+  else
+    {
+       fread(&nb_facettes_entete, 4, 1, f) ;
+       // nb_facettes_entete = ntohl(nb_facettes_entete) ;
+    }
 
   for(;;)
     {
@@ -122,12 +157,19 @@ static void changement_stl(Objet_stl *o)
 	{
 	  codec_change_taille_table(&it, (int)(16 + o->tt.nb*1.5)) ;
 	}
-      if ( lire_facette(f, &o->tt.table[i], o->prend_les_normales_du_fichier) )
+      if ( lire_facette(f, &o->tt.table[i], o->prend_les_normales_du_fichier,
+			version_ascii) )
 	break ;
       i += 4 ;
     }
   codec_change_taille_table(&it, i) ;
   o->nb_triangles = i/4 ;
+  if ( ! version_ascii && o->nb_triangles != nb_facettes_entete )
+    {
+      NOTE_CHAMP_INVALIDE(o, nom_fichier) ;
+      eprintf("Nombre de triangle pas bon dans %s : %d != %d\n",
+	      o->nom_fichier,  o->nb_triangles, nb_facettes_entete) ;
+    }
 }  
 
 static void detruit_stl(Objet_stl *o)
