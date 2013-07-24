@@ -83,6 +83,7 @@ int lire_facette(FILE *f, Triplet valeurs[4], Booleen normale_du_fichier,
     }
   else
     {
+      // +2 because 2 attribute byte per facette
       if ( fread(triangle, sizeof(triangle)+2, 1, f) <= 0 )
 	return 1 ;
       for(i=0;i<3*4;i++)
@@ -149,6 +150,8 @@ static void changement_stl(Objet_stl *o)
     {
        fread(&nb_facettes_entete, 4, 1, f) ;
        // nb_facettes_entete = ntohl(nb_facettes_entete) ;
+       // 4 Triplet par facette
+       codec_change_taille_table(&it, nb_facettes_entete*4) ;
     }
 
   for(;;)
