@@ -1,3 +1,5 @@
+# Version
+V=2.5
 
 # -*- makefile -*-
 
@@ -295,10 +297,9 @@ tar:soft_clean
 	echo
 	echo "Ne fonctionne qu'avec le tar du GNU"
 	echo
-	V=`pwd` ; \
-	V=`basename $$V` ; \
 	cd .. ; \
-	( find $$V/ \
+	ln -s NE NE-$(V) ; \
+	( find NE-$(V)/ \
 		-name SAUVE -prune -o \
 		-name OBJ -prune -o \
 		-name BLOB -prune -o \
@@ -309,9 +310,11 @@ tar:soft_clean
 		! -name ".*" \
 		! -name "*.ps" \
 		! -name "TAGS" \
-		! -type d -print ; echo $$V/.client.c ) |\
-	tar -cvf - --files-from - | gzip -9 >$(HOME)/public_html/ne-$$V.tar.gz
+		! -type d -print ; echo $(V)/.client.c ) |\
+	tar -cvf - --files-from - | gzip -9 >$(HOME)/public_html/ne-$(V).tar.gz
 	ls -ls $(HOME)/public_html/ne-*
+	rm ../NE-$(V)
+	-cd $(HOME)/public_html/NanoEdit ; $(MAKE)
 
 tags_:
 	etags $(LES_SOURCES) $(LES_H) 2>/dev/null >&2 || true
