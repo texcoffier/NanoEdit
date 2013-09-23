@@ -310,7 +310,7 @@ tar:soft_clean
 		! -name ".*" \
 		! -name "*.ps" \
 		! -name "TAGS" \
-		! -type d -print ; echo $(V)/.client.c ) |\
+		! -type d -print ; echo NE-$(V)/.client.c ) |\
 	tar -cvf - --files-from - | gzip -9 >$(HOME)/public_html/ne-$(V).tar.gz
 	ls -ls $(HOME)/public_html/ne-*
 	rm ../NE-$(V)

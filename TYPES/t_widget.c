@@ -1096,7 +1096,7 @@ static void ascenseur_sb_ecrit(const Interface_widget *iw)
     }
 
   global_ne_tient_pas_compte_du_prochain_signal = 1 ;
-  widget_scrollbar_ecrit(widget_trouve_fils(iw->w, "sb"), min, max, v) ;
+  widget_scrollbar_ecrit(widget_trouve_fils(iw->w, "OsScrollbar"),min, max, v);
   global_ne_tient_pas_compte_du_prochain_signal = 0 ;
 }
 
@@ -1162,7 +1162,11 @@ static NanoWidget ascenseur_creer(const Interface_widget *iw)
   t = widget_texte(b, "te", 1) ;
   l_ajoute_fin(&a_manager, t) ;
 
-  w = widget_hscrollbar(b, "sb") ;
+  /* GTK bug: any other name for the widget will be erased
+     and replaced by "OsScrollbar".
+     Naming it "OsScrollbar" turn around the GTK bug
+  */
+  w = widget_hscrollbar(b, "OsScrollbar") ;
   l_ajoute_fin(&a_manager, w) ;
 
   widget_termine_boite(b, 0, 0, a_manager) ;
