@@ -467,6 +467,7 @@ void widget_timeout_remove(void *data)
 
 void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
 {
+  static int last_button = -1 ;
   GdkWindow *win ;
   GdkEventButton *ev ;
   GdkEventKey *ek ;
@@ -480,6 +481,7 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
   iw->e = e ;
   iw->etat = 0 ;
   iw->double_clique = 0 ;
+  iw->b = last_button ;
   ev = (GdkEventButton*)e ;
 
   switch( ev->type )
@@ -570,6 +572,8 @@ void widget_decode_evenement(NanoEvent e, Interface_widget *iw)
 
       widget_keyval_to_string( ek->keyval, ek->keyval, iw) ;
     }
+
+  last_button = iw->b ;
   EPRINTF("Fin décode\n") ;
 }
 
