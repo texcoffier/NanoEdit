@@ -1691,6 +1691,7 @@ static void u_page_memoire(FILE *c,char *url, void *a, char **args, int fildes)
 	   fprintf(c, "<TD>%d", tm.nb*cl->taille_structure ) ;
 	   somme = 0 ;
 	   POUR_TOUS_LES_CHAMPS(a, ch,
+				(void)ch ;
 				somme += tm.memoire[i_ch] ;
 				somme_totale_caractere += tm.memoire[i_ch] ;
 				) ;

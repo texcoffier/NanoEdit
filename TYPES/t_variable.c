@@ -136,6 +136,7 @@ void Variable_recupere(const void *o, const Champ *c)
   EPRINTF("%*sRecuperation des variables de %p\n", globale_prof_sauve*8, "",o) ;
   POUR_TOUS_LES_FILS(o, inutilisee,
 		     {
+		       (void)inutilisee ;
 		       tmp = depile() ;
 		       EPRINTF("%*scourante[%d] = %p (%s) nouvelle = %p (%s)\n",
 			       globale_prof_sauve*8, "",
@@ -192,12 +193,14 @@ void Variable_sauve(const void *o, const Champ *c)
    */
   POUR_TOUS_LES_FILS(o, f,
   {
+    (void)f ;
     empile(globale_etat_courant.variables[nb-1-i_f]) ;
   }
 		     ) ;
   
   POUR_TOUS_LES_FILS(o, f,
   {
+    (void)f ;
     if ( tmp[i_f] == NULL )
       tmp[i_f] = REALLY_NULL_POINTER ;
     globale_etat_courant.variables[i_f] = tmp[i_f] ;

@@ -638,7 +638,7 @@ void widget_popup(NanoWidget w)
 void widget_popdown(NanoWidget w)
 {
   COUCOU ;
-  gtk_widget_hide_all(w) ;
+  gtk_widget_hide(w) ;
 }
 
 int widget_event_pending(NanoAppContext app_context)
@@ -1949,37 +1949,32 @@ NanoWidget widget_button_menu(NanoWidget w, const char *nom, const char *label)
 
 NanoWidget widget_image(int lar, int hau)
 {
-  GdkImage *image ; 
+  GdkPixbuf *image ; 
   COUCOU ;
   
-  image = gdk_image_new(GDK_IMAGE_NORMAL
-			,gdk_visual_get_system()
-			, lar
-			, hau
-			) ;
-  
+  image = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, lar, hau) ;
 
-  return( gtk_image_new_from_image(image, NULL) ) ;
+  return gtk_image_new_from_pixbuf(image) ;
 }
 
 
 void widget_image_update_open_file(GtkWidget *w, int lar, int hau, FILE *f)
 {
-  GdkBitmap *mask ;
-  GdkImage *image ; 
-  guint32 pixel ;
+  GdkPixbuf *image ; 
+  guchar *pixels ;
   int i, j ;
   COUCOU ;
 
-  gtk_image_get_image(GTK_IMAGE(w), &image, &mask) ;
+
+  image = gtk_image_get_pixbuf(GTK_IMAGE(w)) ;
+  pixels = gdk_pixbuf_get_pixels(image); 
 
   for(j=0; j<hau; j++)
     for(i=0; i<lar; i++)
       {
-	pixel = fgetc(f) ;
-	pixel = (pixel<<8) | fgetc(f) ;
-	pixel = (pixel<<8) | fgetc(f) ;
-	gdk_image_put_pixel(image, i, j, pixel) ;
+	*pixels++ = fgetc(f) ;
+	*pixels++ = fgetc(f) ;
+	*pixels++ = fgetc(f) ;
       }
 }
 

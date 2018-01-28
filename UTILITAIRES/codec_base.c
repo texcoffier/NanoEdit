@@ -1147,13 +1147,12 @@ int change_taille_H_L_old(struct informations_table *it)
 int codec_H_L(void ***table, int *hau, int *lar, Codec tp)
 {
   int i, j ;
-  int taille, old_lar, old_lar2 ;
+  int old_lar, old_lar2 ;
   int max ;
   int err ;
   const Codec_informations *ci ;
 
   codec_ouvre_crochet() ;
-  taille = codec_taille(tp) ;
   err = 0 ;
 
   /*  eprintf("action=%d hau=%p(%d) lar=%p(%d) table=%p(%p)\n",G->action,  hau,*hau, lar,*lar, table, *table) ; */
@@ -1331,13 +1330,11 @@ int change_taille_P_H_L(struct informations_table *it)
 int codec_P_H_L(void ****table, int *pro, int *hau, int *lar, Codec tp)
 {
   int i, j, h, l, h2, l2 ;
-  int taille ;
   int max ;
   int err ;
   const Codec_informations *ci ;
 
   codec_ouvre_accolade() ;
-  taille = codec_taille(tp) ;
   err = 0 ;
 
   switch( G->action )

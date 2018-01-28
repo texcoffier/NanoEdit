@@ -19,6 +19,7 @@
     Contact: Thierry.EXCOFFIER@liris.univ-lyon1.fr
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include "io.h"
 
 

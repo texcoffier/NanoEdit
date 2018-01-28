@@ -40,6 +40,7 @@ struct decoupage
 
 static int calcul_code(const Flottant *p, const Flottant cloture[6])
 {
+  return 42 ;
 }
 
 /*
@@ -47,6 +48,7 @@ static int calcul_code(const Flottant *p, const Flottant cloture[6])
  */
 static void affiche_segment(const Flottant cloture[6], Triplet p, Triplet q)
 {
+  (void)calcul_code ;
 }
 
 

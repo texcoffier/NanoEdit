@@ -302,7 +302,7 @@ void l_sort(Liste *liste, int (*cmp)(const void*,const void*))
   t = l_liste_vers_table(liste, &l) ;
   qsort(t, l, sizeof(void*), cmp) ;
   u = t ;
-  POUR(void*, i, liste, ((Liste*)l__i)->objet = *u++ ; ) ;
+  POUR(void*, i, liste, (void)i ; ((Liste*)l__i)->objet = *u++ ; ) ;
   free(t) ;
 }
 

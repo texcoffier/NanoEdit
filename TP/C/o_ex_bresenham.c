@@ -54,6 +54,8 @@ static void affiche_segment_droite(struct segment_droite *o)
   /*******************/
   /* Votre programme */
   /*******************/
+  (void)dx ;
+  (void)dy ;
   glEnd() ;				
   /*
    * Trace le segment de droite que l'on veut approximer.

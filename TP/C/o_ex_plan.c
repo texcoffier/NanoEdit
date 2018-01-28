@@ -151,6 +151,7 @@ static void depile_matrices_courantes()
  */
 static int initialise_plan_decoupage_z0()
 {
+  return 42 ;
 }
 /*
  * Initialise et met en action le plan de découpage Z<d.
@@ -158,6 +159,7 @@ static int initialise_plan_decoupage_z0()
  */
 static int initialise_plan_decoupage_z(double d)
 {
+  return 42 ;
 }
 /*
  * Arête de découper suivant le plan de découpage indiqué
@@ -395,6 +397,7 @@ static void affiche(struct plan *o, const Champ *c, const char *qualite)
 
 
 CLASSE(tp_plan, struct plan,
+       (void)affiche_plan ;
        Edite Sauve
 
        BULLE_D_AIDE("Objet plan horizontal\n"

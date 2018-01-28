@@ -974,6 +974,8 @@ Mot_clef *CONCATENE(u_classe_,CLS)()			\
   la_table_globale = NULL ;			\
   virtuel = 0 ; \
   nom_virtuel[0] = '\0' ; \
+  (void)virtuel ; \
+  (void)nom_virtuel ; \
 						\
   TAILLE_STRUCTURE(sizeof(m)+sizeof(Objet))	\
   NOM_STRUCT(GUILLEMET(TYPE_STRUCT))		\

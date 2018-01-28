@@ -19,6 +19,7 @@
     Contact: Thierry.EXCOFFIER@liris.univ-lyon1.fr
 */
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include "t_gl.h"
 #include "o_objet.h"
 #include "t_geometrie.h"
@@ -47,7 +48,6 @@ static void image()
 
 static void offline_trace(const Interface_widget *iw)
 {
-  int i ;
   struct offline *o = iw->objet ;
 
   Gl_start(&o->gl) ;

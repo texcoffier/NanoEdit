@@ -597,6 +597,7 @@ static void affiche_lrifs_feuille_gl(struct lrifs_feuille *o
 }
 	     
 CLASSE(lrifs, struct lrifs_feuille,
+	(void)info_lrifs ;
        CHAMP_VIRTUEL(L_affiche_gl(affiche_lrifs_feuille_gl)
 		     AFFICHAGE(Toujours_different))
        SUR_CLASSE("lrifs_commun")

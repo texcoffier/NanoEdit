@@ -131,30 +131,6 @@ static void ecrit_pov_texte(struct texte *o, const Champ *c, const char *v)
       else
 	switch(o->valeur[i])
 	  {
-	  case 'É' :
-	  case 'È' :
-	  case 'Ê' :
-	  case 'é' :
-	  case 'è' :
-	  case 'ê' :
-	    p = "E" ;
-	    break ;
-	  case 'à' :
-	  case 'À' :
-	  case 'â' :
-	  case 'Â' :
-	    p = "A" ;
-	    break ;
-	  case 'Î':
-	  case 'Ï':
-	  case 'î':
-	  case 'ï':
-	    p = "I" ;
-	    break ;	
-	  case 'Ç':
-	  case 'ç':
-	    p = "C" ;
-	    break ;
 	  case '-' :
 	    p = "Dash" ;
 	    break ;

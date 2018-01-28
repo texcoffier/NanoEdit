@@ -75,6 +75,7 @@ static void affiche(struct exemple_raccourci *o, const Champ *ch, const char *ur
 
 
 CLASSE(exemple_raccourci, struct exemple_raccourci,
+       (void)decremente ; /* Unused */
        CHAMP(pt, L_point P_triplet Edite Sauve DEFAUT("0.5 0.5"))
        CHAMP(valeur, L_nombre P_entier Edite Sauve Extrait DEFAUT("10"))
        CHAMP(texte, L_chaine Affiche)

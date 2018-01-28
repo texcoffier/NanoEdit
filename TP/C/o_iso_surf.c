@@ -88,6 +88,8 @@ static void affiche_iso_surface(struct iso_surface *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
   /*
    * Affichage des normales à la surface aux sommets des facettes

@@ -78,6 +78,8 @@ static void affiche_arbre_recursif(int profondeur
 				   , const char *v
 				   )
 {
+  (void)affiche_tronc ;
+  (void)affiche_feuille ;
 }
 
 /*

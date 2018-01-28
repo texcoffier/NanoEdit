@@ -1287,12 +1287,12 @@ static const char *Angle_lit(const Interface_widget *iw)
 
 static void Angle_ecrit(const Interface_widget *iw)
 {
-  const char *valeur, *type ;
+  const char *valeur ;
   NanoWidget texte ;
   char *unite ;
 
   valeur = iw->texte ;
-  type = widget_button_lit(widget_trouve_fils(iw->w, "bouton_menu_choix")) ;
+  (void)widget_button_lit(widget_trouve_fils(iw->w, "bouton_menu_choix")) ;
 
   texte = widget_trouve_fils(iw->w, "te") ;
   widget_texte_ecrit(texte, valeur) ;

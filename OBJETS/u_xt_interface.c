@@ -350,13 +350,8 @@ static PROTOTYPE_CALLBACK_EVENT(repositionne_fenetre, w, c, event)
 
 static PROTOTYPE_CALLBACK_EVENT(elle_se_montre, w, c, event)
 {
-  void *o ;
-
   if ( DEBUG_GEOMETRIE )
     eprintf("MAP\n") ;
-  o = widget_vers_objet(w) ;
-  /*  u_positionne_fenetre(o, OBJET(o)->edite) ; */
-  // Commenté le 6/2/2004 puis decommenté
   widget_add_event_repositionnement(w, repositionne_fenetre) ;
   FIN_CALLBACK_EVENT_CONTINUE ;
 }

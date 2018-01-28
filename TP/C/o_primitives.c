@@ -50,6 +50,8 @@ static void affiche_carre(struct vide *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
 }
 
@@ -78,6 +80,8 @@ static void affiche_cercle(struct vide *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
 }
 
@@ -105,6 +109,8 @@ static void affiche_cube(struct vide *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
 }
 
@@ -133,6 +139,8 @@ static void affiche_cylindre(struct vide *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
 }
 
@@ -161,6 +169,8 @@ static void affiche_sphere(struct vide *o)
       break ;
     case Invisible:
       break ;
+    case AfficheDebug:
+      ICI ;
     }
 }
 

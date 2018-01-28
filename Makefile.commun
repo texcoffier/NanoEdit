@@ -1,5 +1,5 @@
 # Version
-V=2.5
+V=2.6
 
 # -*- makefile -*-
 
@@ -57,7 +57,7 @@ export BASE CC MAKE CFLAGS PATH
 
 #
 # Lancement de configuration et relancement du but.
-# C'est 2* la même liste de commandes.
+# C'est 2* la mÃªme liste de commandes.
 #
 
 default strace tester rejoue all allt tags cpp_debug run go gdb lance cflow lint depend remove_include compile_directory Nanoedit full_clean Nanoedit-static dump lib depends demo lance_toutes_les_nuits variables Nanoedit_sans_x11 lance_sans_x11  lance_sans_fenetres but client lance_en_ecriture lance_debug profiler lance_sfm lance_partout rejouer valgrind:
@@ -96,7 +96,7 @@ sauve:
 		done
 
 lib_:default_
-	echo "Création bibliothèque `pwd`"
+	echo "CrÃ©ation bibliothÃ¨que `pwd`"
 	cd OBJ/$(ARCH) ; \
 	F=`echo [!o]*.o o[!_]*.o | sed -e 's/[^ ]*\*\.o//g'` ; \
 	if [ " " != "$$F" ] ; \
@@ -161,8 +161,8 @@ lance_:core
         M=/tmp/nanoedit-$$LOGNAME/nom_modele ; \
 	if [ -f $$M -a -e "`tty`" ] ; \
 		then \
-		echo "Récupère la version du modèle qui a été" ; \
-		echo "sauvegardée juste avant le plantage ?" ; \
+		echo "RÃ©cupÃ¨re la version du modÃ¨le qui a Ã©tÃ©" ; \
+		echo "sauvegardÃ©e juste avant le plantage ?" ; \
 		read R ; \
 		M=`dirname $$M` ; \
 		case "$$R" in \
@@ -328,8 +328,8 @@ lance_toutes_les_nuits_:
 	echo ""
 	echo ""
 	echo "Toutes les nuits, le contenu du repertoire `Pwd`"
-	echo "va être compilé sur toutes les architectures."
-	echo "Ceci à condition que \"`hostname`\" soit dans le \".rhosts\""
+	echo "va Ãªtre compilÃ© sur toutes les architectures."
+	echo "Ceci Ã  condition que \"`hostname`\" soit dans le \".rhosts\""
 	echo "et qu'elle ai le droit d'utiliser la commande \"at\""
 	echo "CECI NE MARCHE QU'AU BATIMENT 710, VOIR nanoedit-nuit"
 	echo ""
@@ -348,11 +348,11 @@ variables_:
 	echo "export BASE='$(BASE)'"
 
 rejouer_:
-	-echo "AVANT DE LANCER CETTE MANIP, VOUS DEVEZ RECOPIÉ"
+	-echo "AVANT DE LANCER CETTE MANIP, VOUS DEVEZ RECOPIER"
 	-echo "/tmp/nanoedit-`logname` AILLEURS"
-	-echo "Si des images sont générées, elle le seront"
-	-echo "dans des répertoires nommés VUE ou POV"
-	-echo -n "Nom du répertoire : "
+	-echo "Si des images sont gÃ©nÃ©rÃ©es, elle le seront"
+	-echo "dans des rÃ©pertoires nommÃ©s VUE ou POV"
+	-echo -n "Nom du rÃ©pertoire : "
 	-read DIR ; \
 	if [ ! -d $$DIR ] ; then echo "INEXISTANT" ; exit 1 ; fi ; \
 	echo -n "Comment voulez-vous rejouer (ecran|vue|pov) : " ; \
@@ -360,7 +360,7 @@ rejouer_:
 	if [ "vue" = "$$COMMENT" ] ; then \
 	echo -n "Agrandissement : " ; \
 	read AGR ; \
-	echo -n "Réduction : " ; \
+	echo -n "RÃ©duction : " ; \
 	read RED ; \
 	fi ; \
 	echo -n "Tapez -comprime ou -mpeg ou rien : " ; \

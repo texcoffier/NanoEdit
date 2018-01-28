@@ -70,7 +70,7 @@ static void afficher(const struct ifs_test *o, int prof
 {
   int i ;
   Transfo tmp ;
-  Triplet p, q, pp,bas_gauche,haut_droit;
+  Triplet p, q, bas_gauche, haut_droit;
 
   bas_gauche.x=-1.;
   bas_gauche.y=-1.;

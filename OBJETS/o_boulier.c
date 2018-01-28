@@ -152,7 +152,7 @@ typedef struct
 
 void changement_boulier_voxels(Boulier *o)
 {
-  int i, j, k, vv[3] ;
+  int i, j, vv[3] ;
   Voxel *voxel ;
 
   o->voxels.lar = o->taille[0] * o->taille[1] * o->taille[2] ;
@@ -190,7 +190,6 @@ void changement_boulier_voxels(Boulier *o)
 
   // Pour toutes les boules requises, note les voxels recouverts
   j = 0 ;
-  k = -1 ;
   for(i=0; i<o->t.lar; i++)
     {
       eprintf("pixel dans boule requise %d/%d\r", i, o->t.lar) ;

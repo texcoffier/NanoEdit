@@ -60,7 +60,6 @@ int read_png_file(const char* file_name, Image *p)
   
   png_structp png_ptr;
   png_infop info_ptr;
-  int number_of_passes;
   png_bytep * row_pointers;
 
   unsigned char header[8];	// 8 is the maximum size that can be checked
@@ -112,7 +111,7 @@ int read_png_file(const char* file_name, Image *p)
     }
 
 
-  number_of_passes = png_set_interlace_handling(png_ptr);
+  (void)png_set_interlace_handling(png_ptr);
   png_read_update_info(png_ptr, info_ptr);
 
   CODEC_MALLOC(image, LAR(p)*HAU(p)*4) ;
