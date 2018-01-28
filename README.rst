@@ -8,4 +8,4 @@ to implement and test 3d modeling algorithms.
 
 But all the documentation is in french...
 
-The `home page <nanoedit.html>`__.
+The `home page <http://perso.univ-lyon1.fr/thierry.excoffier/NanoEdit/nanoedit.html>`__.
