@@ -69,7 +69,7 @@ static void destruction(struct joystick *o)
     SDL_JoystickClose(o->sdl_joy) ;
 
   if ( o->idle )
-    widget_timeout_remove((void*)o->idle) ;
+    widget_timeout_remove(o->idle) ;
 }
 
 static void changement(struct joystick *o)

@@ -35,7 +35,7 @@ typedef struct { long xxx[10] ; } NanoColor ;
 #ifndef GLX_H
 #ifndef __GLX_glx_h__
 #ifndef __glx_h__
-typedef int GLXContext ;
+typedef void* GLXContext ;
 #endif
 #endif
 #endif
@@ -87,7 +87,7 @@ NanoInputId widget_ajoute_fichier(NanoWidget w
 				  ) ;
 void widget_enleve_fichier(NanoInputId id) ;
 int widget_timeout_add(int (*fct)(void *obj), int interval, void *data) ;
-void widget_timeout_remove(void *data) ;
+void widget_timeout_remove(int source_id) ;
 NanoWidget widget_trouve_fils(NanoWidget w, const char *nom) ;
 void *widget_vers_objet(NanoWidget w) ;
 const char* widget_nom(NanoWidget w) ;

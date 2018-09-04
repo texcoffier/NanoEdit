@@ -717,6 +717,7 @@ static GLubyte rasters[][13] = {
 {0x00,0x00,0x00,0x00,0x00,0x00,0x06,0x8f,0xf1,0x60,0x00,0x00,0x00} 
 };
 
+int font_map = 0x8F00000 ;
 static void makeRasterFont(void)
 {
     GLuint i;
@@ -724,7 +725,7 @@ static void makeRasterFont(void)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for (i = 32; i < 127; i++) {
-        glNewList((int)makeRasterFont+i, GL_COMPILE);
+        glNewList(font_map+i, GL_COMPILE);
         glBitmap(8, 13, 0.0, 2.0, 10.0, 0.0, rasters[i-32]);
         glEndList();
     }
@@ -732,21 +733,21 @@ static void makeRasterFont(void)
 
 void t_chaine(const char *s)
 {
-  if ( ! glIsList((int)makeRasterFont+'a') )
+  if ( ! glIsList(font_map+'a') )
       makeRasterFont();
       
   glPushAttrib (GL_LIST_BIT);
-  glListBase((int)makeRasterFont);
+  glListBase(font_map);
   glCallLists(strlen(s), GL_UNSIGNED_BYTE, (GLubyte *) s);
   glPopAttrib ();
 }
 
 void t_caractere(char c)
 {
-  if ( ! glIsList((int)makeRasterFont+'a') )
+  if ( ! glIsList(font_map+'a') )
       makeRasterFont();
       
-  glCallList((int)makeRasterFont + c);
+  glCallList(font_map + c);
 }
 /* Comment multiplier à gauche ?
 void t_chaine_centree(const char *s)

@@ -455,10 +455,10 @@ int widget_timeout_add(int (*fct)(void *obj), int interval, void *data)
   return g_timeout_add(interval, fct, data) ;
 }
 
-void widget_timeout_remove(void *data)
+void widget_timeout_remove(int source_id)
 {
   COUCOU ;
-  g_source_remove( (gint)data ) ;
+  g_source_remove( source_id ) ;
   // gtk_timeout_remove((int)data) ;
 }
 

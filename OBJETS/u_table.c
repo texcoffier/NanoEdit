@@ -1954,17 +1954,17 @@ void t_tenseur(const void *t, const Codec_informations *tp
 	      }
 	    glEnd() ;
 	  }
-	for (k=0 ; k<mt.taille[0] ; k+=d)
-	  for (j=0 ; j<mt.taille[1] ; j+=d)
-	  {
-	    glBegin(GL_LINE_STRIP) ;
-	    for(i=0; i<mt.taille[2]; i+= d)
-	      {
-		recupere_point_kji(&mt, k, j, i, &pt) ;
-		glVertex3dv((GLdouble*)&pt) ;
-	      }
-	    glEnd() ;
-	  }
+      for (k=0 ; k<mt.taille[0] ; k+=d)
+        for (j=0 ; j<mt.taille[1] ; j+=d)
+        {
+          glBegin(GL_LINE_STRIP) ;
+          for(i=0; i<mt.taille[2]; i+= d)
+            {
+	      recupere_point_kji(&mt, k, j, i, &pt) ;
+	      glVertex3dv((GLdouble*)&pt) ;
+            }
+          glEnd() ;
+        }
     }
   if ( comment & T_PONCTUEL )
     {

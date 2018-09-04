@@ -414,7 +414,7 @@ static void ecrit_tag(Graphe *o,const Champ *c,const char *v)
  */
 static const char * lit_tag(Graphe *o, const Champ *c)
 {
-  static char buf[99] ;
+  static char buf[200] ;
   int i ;
 
   i = c->parametre - BASETAG ;
