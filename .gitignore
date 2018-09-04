@@ -1,0 +1,6 @@
+*.dep
+*~
+.NanoEdit.ad
+.gtkrc
+.secret
+*/OBJ/*
