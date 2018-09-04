@@ -1371,7 +1371,10 @@ static void destruction_vue(Vue *vue)
 static void destruction_bulle()
 {
   if ( global_timer )
-    widget_enleve_timeout(global_timer) ;
+    {
+      widget_enleve_timeout(global_timer) ;
+      global_timer = 0 ;
+    }
   if ( globale_bulle )
     {
       widget_detruit(globale_bulle) ;

@@ -341,7 +341,6 @@ void widget_add_event_resize(NanoWidget w, POINTEUR_CALLBACK(fct)
 			     , const Champ *c)
 {
   COUCOU ;
-  ICI;
   g_signal_connect(G_OBJECT(w), "configure-event", (GCallback)fct,(gpointer)c);
 }
 
