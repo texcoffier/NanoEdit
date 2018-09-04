@@ -228,7 +228,15 @@ static Champ *u_prend_champ(char **args, const Classe *cl)
 static void u_debut(FILE *c, char *label)
 {
   fprintf(c,
-	  "<HTML><HEAD><TITLE>%s</TITLE></HEAD><BODY><H1>%s</H1>\n",
+	  "<!DOCTYPE html>"
+	  "<HTML>"
+	  "<HEAD>"
+	  "<meta charset=\"utf-8\">"
+	  "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">"
+	  "<TITLE>%s</TITLE>"
+	  "</HEAD>"
+	  "<BODY>"
+	  "<H1>%s</H1>\n",
 	  label, label) ;
 }
 
